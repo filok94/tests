@@ -19,8 +19,6 @@ defineProps({
 })
 
 const store = useStore()
-const router = useRouter()
-
 const user = computed(() => 
   store.state.sjw.name
 )
@@ -29,7 +27,7 @@ const age = computed(() =>
 )
 const upTheAge = () => store.commit('changeEverything', ['Nikolay', 2])
 
-
+const router = useRouter()
 let politic = ref(false)
 const goToPolitic = ()=> {
   router.push({name: 'Politic'})
