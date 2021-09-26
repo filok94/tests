@@ -1,0 +1,18 @@
+$bcg: hsla(274, 100%, 1%, 0.856);
+$bcg-second:hsla(0, 1%, 17%, 0.842);
+$prim-text: #fff;
+$second-color: #005EF1;
+$prim-color: #6025C3;
+$semi-dark:#0081FF;
+$font:'Roboto Slab', serif;
+$disabled:hsla(0, 1%, 47%, 0.705);
+$gradient:linear-gradient(to right top, #6025c3, #5833cd, #4e3ed6, #4248df, #3252e7, #2859ec, #1a60f1, #0067f5, #006ef8, #0074fa, #007bfd, #0081ff);
+$right-gradient:linear-gradient(to right, #1d976c, #93f9b9);
+$bad-gradient:linear-gradient(to right, #ee0979, #ff6a00);
+$sjw-gradient:linear-gradient(124deg, rgba(212,6,6,0.9878326330532213) 13%, rgba(238,156,0,1) 30%, rgba(227,255,0,1) 47%, rgba(6,191,0,1) 68%, rgba(0,26,152,1) 90%);
+@mixin bcg-for-text() {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+$medium-screen:540px;
+$large-screen:900px;

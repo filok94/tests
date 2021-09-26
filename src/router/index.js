@@ -2,8 +2,10 @@ import {createRouter, createWebHistory } from "vue-router"
 import Home from "../pages/Home.vue"
 import SJW from "../pages/SJW.vue"
 import User from "../pages/User.vue"
-import auth from '../store/modules/global'
 import CurrentQuestion from "../pages/CurrentQuestion.vue"
+import Conclusion from '../pages/TestConclusion.vue'
+import Avatar from "../pages/Avatar.vue"
+import auth from '../store/modules/global'
 
 const routes = [
     {
@@ -34,6 +36,16 @@ const routes = [
                 component: CurrentQuestion
             }
         ]
+    },
+    {
+        path: '/:userName/SJW/conclusion',
+        name: "Conclusion",
+        component: Conclusion
+    },
+    {
+        path:'/:userName/avatar',
+        name:'Avatar',
+        component: Avatar
     }
 ]
 

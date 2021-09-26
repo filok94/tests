@@ -1,14 +1,23 @@
 <template>
   <nav>
-    <img src="./assets/logo.png" alt="logo_of_the_site" width="60">
-    <div>{{logo}}</div>
+    <div id="logo">
+      <p>
+        SocialJustice
+      </p>
+      <p>Tests</p>
+    </div>
+    <div class='nav-user'>
+    <img width="40" src="https://avatars.dicebear.com/api/micah/:seed.svg" alt="">
+    {{logo}}</div>
   </nav>
-  <router-view></router-view>
+  <main>
+    <router-view></router-view>
+  </main>
 </template>
 
 <script setup>
   import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import { useStore } from 'vuex';
 
 const route = useRoute()
@@ -18,16 +27,39 @@ const route = useRoute()
 
 <style lang='scss'>
 $color:green;
+@import './assets/vars.scss';
+
+body {
+  background: $bcg;
+  margin: 0;
+}
   #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: $font;
   text-align: center;
-  color: $color;
-  margin-top: 60px;
+  color: $prim-text;
+  margin: 0;
 }
 nav {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  background: linear-gradient(90deg, #cdd4dd 0%,#8692aa 95%);
+  border-radius: 5px;
+  #logo {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem;
+    p {
+      margin: 0;
+      align-self: flex-start;
+      @include bcg-for-text();
+      background-image: $gradient;
+    }
+  }
+  .nav-user {
+    @include bcg-for-text();
+    background-image: $sjw-gradient;
+  }
 }
 </style>

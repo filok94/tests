@@ -40,6 +40,11 @@ let image = computed(()=> `/${currentBlock.value.image}.png`)
 <style lang="scss" scoped>
 @import '../assets/vars.scss';
 
+    h1 {
+        background-image: $gradient;
+        @include bcg-for-text()
+    }
+
     img {
         border-radius: 15px;
         width: 100px;
@@ -50,7 +55,7 @@ let image = computed(()=> `/${currentBlock.value.image}.png`)
         gap: 1rem;
         justify-content: center;
         padding: .5rem;
-        background: linear-gradient(90deg, #707c8c 0%,#4d5565 100%);
+        // background: linear-gradient(90deg, #707c8c 0%,#4d5565 100%);
         border-radius: 15px;
         margin: 1rem 2rem;
     }
