@@ -1,7 +1,7 @@
 <template>
     <router-view></router-view>
-    <button v-if="!isTestEnded" @click="nextQuestion">Следующий вопрос</button>
-    <button v-if="isTestEnded" @click="endTestButton">Закончить тест</button>
+    <button :disabled='disabledButton' v-if="!isTestEnded" @click="nextQuestion">Следующий вопрос</button>
+    <button :disabled='disabledButton' v-if="isTestEnded" @click="endTestButton">Закончить тест</button>
 </template>
 
 <script setup>
@@ -27,6 +27,8 @@
     const endTestButton = ()=>{
         router.push({name:'Conclusion'})
     }
+
+    const disabledButton = computed(()=> store.state.sjw.isActive)
 </script>
 
 <style lang="scss" scoped>
@@ -39,13 +41,16 @@ button {
     padding: 1rem;
     font-size: 1rem;
     font-family: $font;
-    transition: .5s ease-out;
+    transition: 1s ease-out;
+    color: white;
     &:hover {
         transform: scale(104%);
-        color: white;
     }
     &:active {
         transform: scale(100%);
+    }
+    &:disabled{
+        background: grey;
     }
 }
 </style>

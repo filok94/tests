@@ -6,14 +6,13 @@
             <p>{{resultPerson.description}}</p>
             <p>Вы набрали {{finalUserRating}} из {{store.state.sjw.questionBlock.length}}</p>
         </div>
-        <div class="conclusion-results-container">
-            <p
+        <div id="conclusion-answers-container">
+            <div class="conclusion-answers-card"
             v-for="(question, i) of allQuestionsTitles"
-            :key="i"
-            >
-            {{question.question}}
-
-            </p>
+            :key="i">
+                <h2>Вопрос {{i+1}}: {{question.question}}</h2>
+                <p>Правильный ответ: {{question.answers[question.rightAnswer]}}</p>
+            </div>
         </div>
     </div>
 </template>
@@ -48,11 +47,11 @@ onMounted(()=>{
         }
     })
 
-    let parent = document.querySelector('.conclusion-results-container').children
-    for (let i=0;i<parent.length; i++){
+    let childrenOfAnwersContainer = document.querySelector('#conclusion-answers-container').children
+    for (let i=0;i<childrenOfAnwersContainer.length; i++){
         if (rightAnswersindexes.includes(i)){
-            parent[i].classList.add('questions-with-right-answers')
-        } else parent[i].classList.add('questions-with-wrong-answers')
+            childrenOfAnwersContainer[i].classList.add('questions-with-right-answers')
+        } else childrenOfAnwersContainer[i].classList.add('questions-with-wrong-answers')
     }
 })
 </script>
@@ -66,5 +65,34 @@ onMounted(()=>{
     .questions-with-right-answers {
         @include bcg-for-text();
         background-image: $right-gradient;
+    }
+    #conclusion-card {
+        margin: .1rem 1rem;
+        border-radius: 15px;
+        box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+        padding: 0.5rem;
+        img {
+            border-radius: 15px;
+        }
+    }
+    #conclusion-answers-container {
+        display: grid;
+        grid-gap: 1rem;
+        margin: .5rem 1rem;
+        box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+        border-radius: 15px;
+        padding: 0.5em;
+        .conclusion-answers-card {
+            border-bottom: white solid 1px;
+                h2 {
+                    text-align: start;
+                    font-size: 1.3rem;
+                }
+                p {
+                    text-align: start;
+                    font-size: .8rem;
+                }
+            
+            }
     }
 </style>
