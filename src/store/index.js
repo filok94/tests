@@ -1,4 +1,4 @@
-import {createStore} from 'vuex'
+import { createStore } from 'vuex'
 import sjw from './modules/sjwTest'
 import politic from './modules/politic'
 import global from './modules/global'

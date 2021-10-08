@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router"
 import Home from "../pages/Home.vue"
 import SJW from "../pages/SJW.vue"
 import User from "../pages/User.vue"
@@ -9,8 +9,8 @@ import auth from '../store/modules/global'
 
 const routes = [
     {
-        path:'/',
-        name:'Home',
+        path: '/',
+        name: 'Home',
         component: Home,
     },
     {
@@ -18,16 +18,16 @@ const routes = [
         name: 'User',
         component: User,
         beforeEnter: (to, from, next) => {
-            if (auth.state.auth){
+            if (auth.state.auth) {
                 next()
             } else {
-                next({name: 'Home'})
+                next({ name: 'Home' })
             }
         }
     },
     {
-        path:'/:userName/SJW',
-        name:'SJW',
+        path: '/:userName/SJW',
+        name: 'SJW',
         component: SJW,
         children: [
             {
@@ -43,8 +43,8 @@ const routes = [
         component: Conclusion
     },
     {
-        path:'/:userName/avatar',
-        name:'Avatar',
+        path: '/:userName/avatar',
+        name: 'Avatar',
         component: Avatar
     }
 ]
