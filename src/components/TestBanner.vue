@@ -23,10 +23,19 @@ const goToTest = () => router.push({ name: props.bannerInfo.route, params: { que
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../assets/vars.scss";
 
 .test-banner {
-    background-color: $bcg-second;
+    @include card-bcg();
+    box-shadow: $card-shadow;
+    border-radius: 25px;
+    justify-items: center;
+    padding: 0.5rem 1rem;
+
+    h2 {
+        text-align: center;
+        margin: 1rem;
+    }
 }
 </style>

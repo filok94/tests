@@ -18,14 +18,14 @@ const activeWindow = ref(true)
 //watch on which window is active and change the animation
 let nameOfTransition = ref('reg')
 watch(
-    () => activeWindow.value, (newValue, oldValue) => {
+    () => activeWindow.value, (newValue) => {
         if (newValue) {
             nameOfTransition.value = 'auth'
         } else nameOfTransition.value = 'reg'
     })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../assets/vars.scss";
 .home-navigation {
     border-radius: 25px;
@@ -42,9 +42,10 @@ watch(
         padding: 1rem;
         width: 100%;
         cursor: default;
+        @include card-bcg();
     }
     .active {
-        background: $prim-color;
+        background: $gradient;
     }
 }
 

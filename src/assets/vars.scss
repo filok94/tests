@@ -5,7 +5,6 @@ $second-color: #005ef1;
 $prim-color: #6025c3;
 $semi-dark: #0081ff;
 $font: "Roboto Slab", serif;
-$disabled: hsla(0, 1%, 47%, 0.705);
 $gradient: linear-gradient(
     to right top,
     #6025c3,
@@ -31,6 +30,14 @@ $sjw-gradient: linear-gradient(
     rgba(6, 191, 0, 1) 68%,
     rgba(0, 26, 152, 1) 90%
 );
+$grey-color:hsl(60, 3%, 25%);
+
+@mixin card-bcg() {
+    backdrop-filter: blur(30px);
+    background: hsla(60, 3%, 25%, 0.226);
+}
+$card-shadow:  0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+
 @mixin bcg-for-text() {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -39,16 +46,17 @@ $sjw-gradient: linear-gradient(
     box-shadow: 0 0 15px $circles-color, 0 0 13px $circles-color, 0 0 40px $circles-color, 0 0 2px $circles-color;
 }
 
-@mixin circle($speed, $width, $height, $this-color, $top, $right, $tl, $tr, $br, $bl) {
+@mixin circle($delay, $speed, $width, $height, $this-color, $top, $right, $tl, $tr, $br, $bl) {
     position: fixed;
     width: $width;
     height: $height;
 
-    background-color: $this-color;
+    background: $this-color;
     z-index: -1;
     top: $top;
     right: $right;
     animation: circleMovement $speed linear infinite;
+    animation-delay: $delay;
 
     @keyframes circleMovement {
         0%,

@@ -34,7 +34,7 @@ const submitName = () => {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
     padding: 1rem;
     margin: 3rem 1rem;
-
+    @include card-bcg();
     h1 {
         margin: 0 auto 4rem auto;
         &:hover {
@@ -52,7 +52,7 @@ const submitName = () => {
             font-size: 1rem;
             outline: none;
             background-color: transparent;
-            color: $prim-color;
+            color: $prim-text;
             font-family: $font;
             border: none;
             border-bottom: 1px solid $prim-text;
@@ -60,7 +60,7 @@ const submitName = () => {
                 border-bottom: 1px solid $prim-color;
             }
             &:placeholder {
-                color: gray;
+                color: $grey-color;
             }
         }
         label {
@@ -80,7 +80,7 @@ const submitName = () => {
             color: $prim-text;
             font-family: $font;
             &:disabled {
-                background: $disabled;
+                background: $grey-color;
                 cursor: default;
                 color: black;
                 transform: scale(90%);

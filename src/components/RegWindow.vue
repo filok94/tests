@@ -26,6 +26,7 @@ const registrationUser = ref('')
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
     padding: 1rem;
     margin: 3rem 1rem;
+    @include card-bcg();
 
     h1 {
         margin: 0 auto 4rem auto;
@@ -49,7 +50,7 @@ const registrationUser = ref('')
                 border-bottom: 1px solid $prim-color;
             }
             &:placeholder {
-                color: gray;
+                color: $grey-color;
             }
         }
         label {
@@ -59,7 +60,7 @@ const registrationUser = ref('')
             justify-self: center;
             border-radius: 25px;
             cursor: pointer;
-            background: $prim-color;
+            background: $gradient;
             border: none;
             box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
                 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -69,7 +70,7 @@ const registrationUser = ref('')
             color: $prim-text;
             font-family: $font;
             &:disabled {
-                background: $disabled;
+                background: $grey-color;
                 cursor: default;
                 color: black;
                 transform: scale(90%);

@@ -59,7 +59,7 @@ const currentImage = computed(() => `https://avatars.dicebear.com/api/${styledAv
 
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 .avatar-window {
     padding: 1rem 0;
     .avatar-choosing-container {

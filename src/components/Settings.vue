@@ -48,7 +48,7 @@ const changeMode = () => {
     img {
         cursor: pointer;
         border-radius: 45%;
-        transition: 2s ease;
+        transition: 0.3s ease-in-out;
     }
 }
 .is-dark {

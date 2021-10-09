@@ -36,7 +36,8 @@ watch(
             classObject.error = false
         }
 
-    })
+    }
+)
 </script>
 
 <style lang="scss" scoped>
