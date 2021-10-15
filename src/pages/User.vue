@@ -1,4 +1,5 @@
 <template >
+    <Loader v-if="isLoading" />
     <div
         class="user-block user-tests"
         :class="{ 'user-tests-full': isTestsExpanded, 'user-tests-low': !isTestsExpanded }"
@@ -45,10 +46,12 @@ import { useStore } from "vuex";
 import { ref, reactive, onMounted } from "vue";
 import Banner from '../components/TestBanner.vue'
 import Settings from '../components/Settings.vue'
+import Loader from '../components/Loader.vue'
 
 const store = useStore()
 const banners = store.state.global.banners
 
+const isLoading = ref(true)
 const isTestsExpanded = ref(false)
 const isSettingsExpanded = ref(false)
 let blocksSizes = reactive({
@@ -72,7 +75,11 @@ onMounted(() => {
         blocksSizes.settingsLargeSize = `${document.querySelector(".user-settings-full").clientHeight - 32}px`
         isTestsExpanded.value = !isTestsExpanded.value
         isSettingsExpanded.value = !isSettingsExpanded.value
+
     }, .2)
+    setTimeout(() => {
+        isLoading.value = !isLoading.value
+    }, 1000)
 
 })
 //надо повесить при загрузке страницы анимацию появления элементов, чтобы скрыть костыль с открытием и закрытием элементов
@@ -80,7 +87,6 @@ onMounted(() => {
 
 <style lang='scss' scoped>
 @import "../assets/vars.scss";
-
 .user-block {
     box-shadow: $card-shadow;
     border-radius: 25px;

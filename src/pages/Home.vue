@@ -12,7 +12,7 @@
 <script setup>
 import Auth from '../components/AuthWindow.vue'
 import Reg from '../components/RegWindow.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted, onMounted } from 'vue'
 const activeWindow = ref(true)
 
 //watch on which window is active and change the animation
@@ -23,6 +23,22 @@ watch(
             nameOfTransition.value = 'auth'
         } else nameOfTransition.value = 'reg'
     })
+
+// key_arrows directions
+let arrowDirections = (e) => {
+    if (e.code == "ArrowLeft") {
+        activeWindow.value = true
+    } else if (e.code == "ArrowRight") {
+        activeWindow.value = false
+    }
+}
+onMounted(() => {
+    document.addEventListener('keydown', arrowDirections, false)
+
+})
+onUnmounted(() => {
+    document.removeEventListener('keydown', arrowDirections, false)
+})
 </script>
 
 <style lang="scss" scoped>

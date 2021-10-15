@@ -8,6 +8,7 @@
 import { computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
+import Button from '../components/Button.vue'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
@@ -22,13 +23,18 @@ const nextQuestion = () => {
 }
 //для того, чтобы к вопросу можно было перейти из УРЛ_строки, передаем нужные параметры в стор для корректного рендера компонента
 const currentNumber = store.commit('NEXT_QUESTION', Number(newBlock.value - 1))
-onMounted(() => { currentNumber })
+
+onMounted(() => {
+    currentNumber
+})
 
 const endTestButton = () => {
     router.push({ name: 'Conclusion' })
 }
 
 const disabledButton = computed(() => store.state.sjw.isActive)
+
+
 </script>
 
 <style lang="scss" scoped>
