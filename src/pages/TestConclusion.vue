@@ -30,6 +30,7 @@
 import { useStore } from 'vuex'
 import { computed, reactive, onMounted, watch } from 'vue'
 const store = useStore()
+const storePrefix = store.state.sjw
 
 const userRatingInfoHelper = computed(() => {
     let userInfo = {
@@ -42,7 +43,6 @@ const userRatingInfoHelper = computed(() => {
     userInfo.questions = storePrefix.questionBlock
     return userInfo
 })
-const storePrefix = store.state.sjw
 const selectedQuestion = reactive({
     question: "",
     rightAnswer: "",
@@ -63,19 +63,19 @@ const activateQuestionFromList = (count) => {
 onMounted(() => {
     // найти индексы всех правильных ответов, и применить класс с зеленым текстом только для этих индексов
     let rightAnswersIndexes = []
-    let allQuestions = storePrefix.userAnswers
-    allQuestions.forEach((e, index) => {
+    let userAnswers = storePrefix.userAnswers
+    userAnswers.forEach((e, index) => {
         if (e[0]) {
             rightAnswersIndexes.push((index))
         }
     })
 
-    let childrenOfAnwersContainer = document.querySelector('#conclusion-dots-container').children
-    for (let i = 0; i < childrenOfAnwersContainer.length; i++) {
-        if (rightAnswersIndexes.includes(i)) {
-            childrenOfAnwersContainer[i].classList.add('conclusion-dots-right')
-        } else childrenOfAnwersContainer[i].classList.add('conclusion-dots-wrong')
-    }
+    let childrenOfAnwersContainer = Array.from(document.querySelector('#conclusion-dots-container').children)
+    childrenOfAnwersContainer.forEach((e, index) => {
+        if (rightAnswersIndexes.includes(index)) {
+            e.classList.add('conclusion-dots-right')
+        } else e.classList.add('conclusion-dots-wrong')
+    })
     selectedQuestion.question = storePrefix.questionBlock[0].question
     selectedQuestion.rightAnswer = storePrefix.questionBlock[0].answers[storePrefix.questionBlock[0].rightAnswer]
     selectedQuestion.yourAnswer = storePrefix.questionBlock[0].answers[storePrefix.userAnswers[0][1]]
