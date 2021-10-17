@@ -4,13 +4,12 @@
         class="user-block user-tests"
         :class="{ 'user-tests-full': isTestsExpanded, 'user-tests-low': !isTestsExpanded }"
     >
-        <div class="user-block-head user-tests-head">
+        <div class="user-block-head user-tests-head" @click="growBlock('tests')">
             <h2>Мои тесты</h2>
             <img
                 :class="{ 'img-left': isTestsExpanded }"
                 src="../assets/back.png"
                 alt="expand_button"
-                @click="growBlock"
             />
         </div>
         <transition name="tests">
@@ -23,13 +22,12 @@
         class="user-block"
         :class="{ 'user-settings-full': isSettingsExpanded, 'user-settings-low': !isSettingsExpanded }"
     >
-        <div class="user-block-head user-settings-head">
+        <div class="user-block-head user-settings-head" @click="growBlock('settings')">
             <h2>Мои настройки</h2>
             <img
                 :class="{ 'img-left': isSettingsExpanded }"
                 src="../assets/back.png"
                 alt="expand_button"
-                @click="isSettingsExpanded = !isSettingsExpanded"
             />
         </div>
         <transition name="settings">
@@ -60,8 +58,15 @@ let blocksSizes = reactive({
     settingsLargeSize: '',
     settingsSmallSize: ''
 })
-function growBlock() {
-    isTestsExpanded.value = !isTestsExpanded.value
+const growBlock = (block) => {
+    switch (block) {
+        case 'settings':
+            isSettingsExpanded.value = !isSettingsExpanded.value;
+            break;
+        case 'tests':
+            isTestsExpanded.value = !isTestsExpanded.value;
+            break;
+    }
 }
 
 onMounted(() => {
@@ -93,14 +98,15 @@ onMounted(() => {
     padding: 1rem;
     margin: 1rem;
     @include card-bcg();
+    animation: opening 2s;
 
     .user-block-head {
+        cursor: pointer;
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin: 0 1rem;
         img {
-            cursor: pointer;
             transition: 0.3s ease-in-out;
         }
         .img-left {
@@ -151,5 +157,14 @@ onMounted(() => {
 .user-settings-low {
     height: v-bind("blocksSizes.testSmallSize");
     transition: 0.3s ease-in-out;
+}
+
+@keyframes opening {
+    0%,20%,30%,40%,50%{
+        transform: translateX(-200vw);
+    }
+    60%,70%,80%,90%,100% {
+        transform: translateX(0);
+    }
 }
 </style>

@@ -16,9 +16,10 @@
 <style lang="scss">
 @import "../assets/vars.scss";
 #page-placeholder {
-    position: relative;
-    height: 100vh;
+    position: absolute;
+    height: 75vh;
     width: 100vw;
+    z-index: 3;
 }
 .lds-ellipsis {
     display: inline-block;

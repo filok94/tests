@@ -58,7 +58,7 @@ const state = {
         image: 'lgbt'
     },
     ],
-    rightAnswers: [],
+    userAnswers: [],
     isActive: true,
     isTestEnded: false,
     resultPersons: [{
@@ -136,7 +136,7 @@ const mutations = {
             state.isTestEnded = true
     },
     СHOOSE_QUESTION(state, payload) {
-        state.rightAnswers.splice(state.currentBlock, 1, payload)
+        state.userAnswers.splice(state.currentBlock, 1, payload)
         state.isActive = false
     }
 }

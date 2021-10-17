@@ -1,10 +1,10 @@
 <template>
     <div class="home-navigation">
-        <div @click="activeWindow = true" :class="{ active: activeWindow }">Авторизация</div>
-        <div @click="activeWindow = false" :class="{ active: !activeWindow }">Регистрация</div>
+        <div @click="nameOfActiveWindow = 'auth'" :class="{ active: nameOfActiveWindow=='auth' }">Авторизация</div>
+        <div @click="nameOfActiveWindow = 'reg'" :class="{ active: nameOfActiveWindow=='reg' }">Регистрация</div>
     </div>
-    <transition :name="nameOfTransition" mode="out-in">
-        <Auth v-if="activeWindow"></Auth>
+    <transition :name="nameOfActiveWindow" mode="out-in">
+        <Auth v-if="nameOfActiveWindow=='auth'"></Auth>
         <Reg v-else></Reg>
     </transition>
 </template>
@@ -12,24 +12,17 @@
 <script setup>
 import Auth from '../components/AuthWindow.vue'
 import Reg from '../components/RegWindow.vue'
-import { ref, watch, onUnmounted, onMounted } from 'vue'
-const activeWindow = ref(true)
+import { ref, onUnmounted, onMounted } from 'vue'
 
 //watch on which window is active and change the animation
-let nameOfTransition = ref('reg')
-watch(
-    () => activeWindow.value, (newValue) => {
-        if (newValue) {
-            nameOfTransition.value = 'auth'
-        } else nameOfTransition.value = 'reg'
-    })
+let nameOfActiveWindow = ref('auth')
 
 // key_arrows directions
 let arrowDirections = (e) => {
     if (e.code == "ArrowLeft") {
-        activeWindow.value = true
+        nameOfActiveWindow.value = 'auth'
     } else if (e.code == "ArrowRight") {
-        activeWindow.value = false
+        nameOfActiveWindow.value = 'reg'
     }
 }
 onMounted(() => {

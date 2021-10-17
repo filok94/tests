@@ -15,11 +15,11 @@ const props = defineProps({
 const checkIsActive = computed(() => store.state.sjw.isActive)
 const checkAnswer = () => {
     if (props.currentBlock.rightAnswer === props.thisNumber) {
-        store.commit('СHOOSE_QUESTION', true)
+        store.commit('СHOOSE_QUESTION', [true, props.thisNumber])
         classObject.right = true
 
     } else {
-        store.commit('СHOOSE_QUESTION', false)
+        store.commit('СHOOSE_QUESTION', [false, props.thisNumber])
         classObject.error = true
     }
 }
@@ -48,12 +48,13 @@ li {
     cursor: pointer;
     padding: 0.8rem;
     margin: 0;
-    background-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: $card-shadow;
     transition: 1s ease;
     &:active {
         transform: scale(95%);
     }
+    text-align: start;
+    @include card-bcg()
 }
 .active {
     transition: 1s ease;

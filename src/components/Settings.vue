@@ -1,22 +1,15 @@
 <template>
-    <div class="setting-type" id="avatar">
-        <p>Выбрать аватар</p>
+    <div class="setting-type" id="avatar" @click="chooseAvatar">
         <img
             src="https://avatars.dicebear.com/api/croodles/:m2n.svg?beardProbability=99"
             alt
             width="40"
-            @click="chooseAvatar"
         />
+        <p>Выбрать аватар</p>
     </div>
-    <div class="setting-type" id="night-mode">
+    <div class="setting-type" id="night-mode" @click="changeMode">
+        <img src="../assets/dark-mode.svg" alt width="40" :class="{ 'is-dark': darkMode }" />
         <p>Переключить на {{ mode }}</p>
-        <img
-            src="../assets/dark-mode.svg"
-            alt
-            width="40"
-            :class="{ 'is-dark': darkMode }"
-            @click="changeMode"
-        />
     </div>
 </template>
 
@@ -41,12 +34,17 @@ const changeMode = () => {
 <style lang="scss">
 .setting-type {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
+    gap: 1rem;
     align-items: center;
     margin: 0 1rem;
+    cursor: pointer;
+    transition: .3s ease-in-out;
+    &:hover {
+        transform: scale(105%);
+    }
 
     img {
-        cursor: pointer;
         border-radius: 45%;
         transition: 0.3s ease-in-out;
     }

@@ -3,7 +3,7 @@
         <h2>{{ bannerInfo.title }}</h2>
 
         <h3>{{ bannerInfo.subtitle }}</h3>
-        <p>Ваш результат</p>
+        <p>Ваш результат: {{ }}/{{ }}</p>
         <img :src="bannerInfo.img" alt />
     </div>
 </template>
@@ -32,6 +32,11 @@ const goToTest = () => router.push({ name: props.bannerInfo.route, params: { que
     border-radius: 25px;
     justify-items: center;
     padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: .3s ease-in-out;
+    &:hover {
+        transform: scale(105%);
+    }
 
     h2 {
         text-align: center;

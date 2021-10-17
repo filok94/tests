@@ -2,13 +2,13 @@
     <router-view></router-view>
     <button :disabled="disabledButton" v-if="!isTestEnded" @click="nextQuestion">Следующий вопрос</button>
     <button :disabled="disabledButton" v-if="isTestEnded" @click="endTestButton">Закончить тест</button>
+    <Button />
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
-import Button from '../components/Button.vue'
 const store = useStore()
 const router = useRouter()
 const route = useRoute()
@@ -23,7 +23,6 @@ const nextQuestion = () => {
 }
 //для того, чтобы к вопросу можно было перейти из УРЛ_строки, передаем нужные параметры в стор для корректного рендера компонента
 const currentNumber = store.commit('NEXT_QUESTION', Number(newBlock.value - 1))
-
 onMounted(() => {
     currentNumber
 })
@@ -36,6 +35,8 @@ const disabledButton = computed(() => store.state.sjw.isActive)
 
 
 </script>
+
+
 
 <style lang="scss" scoped>
 @import "../assets/vars.scss";
@@ -56,7 +57,7 @@ button {
         transform: scale(100%);
     }
     &:disabled {
-        background: grey;
+        background: $grey-color;
     }
 }
 </style>
