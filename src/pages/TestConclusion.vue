@@ -1,102 +1,174 @@
 <template>
     <div class="conclusion-wrapper">
         <div id="conclusion-card">
-            <img :src="resultPerson.img" alt width="150" />
-            <h2>Вы {{ resultPerson.title }}</h2>
-            <p>{{ resultPerson.description }}</p>
-            <p>Вы набрали {{ finalUserRating }} из {{ store.state.sjw.questionBlock.length }}</p>
+            <img :src="userRatingInfoHelper.person.img" alt width="150" />
+            <h2>Вы {{ userRatingInfoHelper.person.title }}</h2>
+            <p>{{ userRatingInfoHelper.person.description }}</p>
+            <p>Ваш результат: {{ userRatingInfoHelper.userRating }} из {{ storePrefix.questionBlock.length }}</p>
         </div>
-        <div id="conclusion-answers-container">
-            <div
-                class="conclusion-answers-card"
-                v-for="(question, i) of allQuestionsTitles"
+        <ul id="conclusion-dots-container">
+            <li
+                class="conclusion-dots"
+                v-for="(question,i) in userRatingInfoHelper.questions"
                 :key="i"
-            >
-                <h2>Вопрос {{ i + 1 }}: {{ question.question }}</h2>
-                <p>Правильный ответ: {{ question.answers[question.rightAnswer] }}</p>
-            </div>
+                @click="activateQuestionFromList(i)"
+            ></li>
+        </ul>
+
+        <div class="conclusion-answer-card">
+            <h2 class="conclusion-answer-card-head">{{ selectedQuestion.question }}</h2>
+            <p>
+                <span>Правильный ответ:</span>
+                {{ selectedQuestion.rightAnswer }}
+            </p>
+            <p>Ваш ответ: {{ selectedQuestion.yourAnswer }}</p>
         </div>
     </div>
 </template>
 
 <script setup>
 import { useStore } from 'vuex'
-import { computed, ref, onMounted } from 'vue'
+import { computed, reactive, onMounted, watch } from 'vue'
 const store = useStore()
 
-const finalUserRating = computed(() => {
-    let userRating = store.state.sjw.rightAnswers.filter(trueValues => trueValues == true).length
-    return userRating
+const userRatingInfoHelper = computed(() => {
+    let userInfo = {
+        userRating: null,
+        person: null,
+        questions: null,
+    }
+    userInfo.userRating = storePrefix.userAnswers.filter(trueValues => trueValues == true).length
+    userInfo.person = storePrefix.resultPersons[userInfo.userRating]
+    userInfo.questions = storePrefix.questionBlock
+    return userInfo
 })
-
-const resultPerson = computed(() => {
-    let person = store.state.sjw.resultPersons[finalUserRating.value]
-    return person
+const storePrefix = store.state.sjw
+const selectedQuestion = reactive({
+    question: "",
+    rightAnswer: "",
+    yourAnswer: ""
 })
-
-const allQuestionsTitles = computed(() => {
-    let allQuestions = store.state.sjw.questionBlock
-    return allQuestions
-})
-
+const activateQuestionFromList = (count) => {
+    let listOfDots = Array.from(document.querySelector('#conclusion-dots-container').children)
+    listOfDots.forEach((e, index) => {
+        e.classList.remove('conclusion-chosen-dot')
+        if (index == count) {
+            e.classList.add('conclusion-chosen-dot')
+            selectedQuestion.question = storePrefix.questionBlock[index].question
+            selectedQuestion.rightAnswer = storePrefix.questionBlock[index].answers[storePrefix.questionBlock[index].rightAnswer]
+            selectedQuestion.yourAnswer = storePrefix.questionBlock[index].answers[storePrefix.userAnswers[index][1]]
+        }
+    })
+}
 onMounted(() => {
     // найти индексы всех правильных ответов, и применить класс с зеленым текстом только для этих индексов
-    let rightAnswersindexes = []
-    let allQuestions = store.state.sjw.rightAnswers
+    let rightAnswersIndexes = []
+    let allQuestions = storePrefix.userAnswers
     allQuestions.forEach((e, index) => {
-        if (e) {
-            rightAnswersindexes.push((index))
+        if (e[0]) {
+            rightAnswersIndexes.push((index))
         }
     })
 
-    let childrenOfAnwersContainer = document.querySelector('#conclusion-answers-container').children
+    let childrenOfAnwersContainer = document.querySelector('#conclusion-dots-container').children
     for (let i = 0; i < childrenOfAnwersContainer.length; i++) {
-        if (rightAnswersindexes.includes(i)) {
-            childrenOfAnwersContainer[i].classList.add('questions-with-right-answers')
-        } else childrenOfAnwersContainer[i].classList.add('questions-with-wrong-answers')
+        if (rightAnswersIndexes.includes(i)) {
+            childrenOfAnwersContainer[i].classList.add('conclusion-dots-right')
+        } else childrenOfAnwersContainer[i].classList.add('conclusion-dots-wrong')
     }
+    selectedQuestion.question = storePrefix.questionBlock[0].question
+    selectedQuestion.rightAnswer = storePrefix.questionBlock[0].answers[storePrefix.questionBlock[0].rightAnswer]
+    selectedQuestion.yourAnswer = storePrefix.questionBlock[0].answers[storePrefix.userAnswers[0][1]]
+    document.querySelector('#conclusion-dots-container').children[0].classList.add('conclusion-chosen-dot')
 })
+
+watch(
+    () => selectedQuestion.question, (newValue, oldValue) => {
+        let animatedElement = document.querySelector('.conclusion-answer-card')
+        if (newValue != oldValue) {
+            animatedElement.classList.add('animated-element')
+            setTimeout(() => {
+                animatedElement.classList.remove('animated-element')
+            }, 300)
+        }
+    })
 </script>
 
 <style lang="scss" scoped>
 @import "../assets/vars.scss";
-.questions-with-wrong-answers {
-    @include bcg-for-text();
-    background-image: $bad-gradient;
-}
-.questions-with-right-answers {
-    @include bcg-for-text();
-    background-image: $right-gradient;
-}
 #conclusion-card {
     margin: 3rem 1rem;
     border-radius: 15px;
-    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
-    padding: 0.5rem;
+    box-shadow: $card-shadow;
+    padding: 1rem;
     img {
         border-radius: 100px;
-        margin: -3rem 0 .5rem 0;
+        margin: -3rem 0 0.5rem 0;
     }
-    backdrop-filter: blur(15px);
-    background: hsla(0, 1%, 33%, 0.274);
+    p {
+        color: lightgray;
+    }
+    @include card-bcg();
 }
-#conclusion-answers-container {
-    display: grid;
-    grid-gap: 1rem;
-    margin: 0.5rem 1rem;
-    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
+#conclusion-dots-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 0;
+    .conclusion-dots {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 100%;
+        list-style-type: none;
+        transition: 0.3s ease-in-out;
+        cursor: pointer;
+    }
+    .conclusion-dots-right {
+        background-image: $right-gradient;
+    }
+    .conclusion-dots-wrong {
+        background-image: $bad-gradient;
+    }
+    .conclusion-chosen-dot {
+        transform: scale(180%);
+    }
+}
+
+.conclusion-answer-card {
+    @include card-bcg();
     border-radius: 15px;
-    padding: 0.5em;
-    .conclusion-answers-card {
-        border-bottom: white solid 1px;
-        h2 {
-            text-align: start;
-            font-size: 1.3rem;
+    padding: 1rem;
+    margin: 1rem;
+    h2 {
+        text-align: start;
+        font-size: 1.5rem;
+    }
+    p {
+        text-align: start;
+        font-size: 1rem;
+        span {
+            font-weight: bold;
         }
-        p {
-            text-align: start;
-            font-size: 0.8rem;
-        }
+    }
+}
+.animated-element {
+    animation: 0.3s card-animation ease-in-out;
+}
+@keyframes card-animation {
+    from {
+        opacity: 0;
+        transform: translateX(-3rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (min-width: $large-screen) {
+    #conclusion-dots-container {
+        width: 50%;
     }
 }
 </style>
