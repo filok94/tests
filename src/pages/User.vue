@@ -4,7 +4,7 @@
         class="user-block user-tests"
         :class="{ 'user-tests-full': isTestsExpanded, 'user-tests-low': !isTestsExpanded }"
     >
-        <div class="user-block-head user-tests-head" @click="growBlock('tests')">
+        <div class="user-block-head user-tests-head" @click.prevent="growBlock('tests')">
             <h2>Мои тесты</h2>
             <img
                 :class="{ 'img-left': isTestsExpanded }"
@@ -87,11 +87,9 @@ onMounted(() => {
     }, 1000)
 
 })
-//надо повесить при загрузке страницы анимацию появления элементов, чтобы скрыть костыль с открытием и закрытием элементов
 </script>
 
 <style lang='scss' scoped>
-@import "../assets/vars.scss";
 .user-block {
     box-shadow: $card-shadow;
     border-radius: 25px;

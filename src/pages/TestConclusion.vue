@@ -95,7 +95,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/vars.scss";
 #conclusion-card {
     margin: 3rem 1rem;
     border-radius: 15px;

@@ -35,11 +35,7 @@ const disabledButton = computed(() => store.state.sjw.isActive)
 
 
 </script>
-
-
-
 <style lang="scss" scoped>
-@import "../assets/vars.scss";
 button {
     cursor: pointer;
     background: $gradient;

@@ -24,7 +24,7 @@ const goToTest = () => router.push({ name: props.bannerInfo.route, params: { que
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/vars.scss";
+
 
 .test-banner {
     @include card-bcg();

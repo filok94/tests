@@ -1,26 +1,135 @@
 <template>
     <div id="reg-window">
-        <h1>Регистрация</h1>
         <form action="reg">
-            <label for="new-user">Логин</label>
-            <input id="new-user" type="text" v-model="registrationUser" placeholder="example94" />
-            <label for="new-password">Пароль</label>
-            <input id="new-password" type="password" placeholder="Не менее 6 знаков" />
-            <label for="confirm-password">Подтвердите пароль</label>
-            <input id="confirm-password" type="password" placeholder="Повторите пароль" />
-            <button :disabled="!registrationUser" @click="submitName">Подтвердить</button>
+            <label for="new-user" class='unactive-form'></label>
+            <input id="new-user" type="text" v-model="newUser.login" @click="isActive()" />
+            <label for="new-password" class='unactive-form'></label>
+            <input id="new-password" type="password" v-model="newUser.password" @click="isActive()" />
+            <label v-if="addConfirmPassword" for="confirm-password" class='unactive-form'></label>
+            <input
+                v-if="addConfirmPassword"
+                id="confirm-password"
+                type="password"
+                v-model="newUser.confirmationPassowrd"
+                @click="isActive()"
+            />
+            <button @click.prevent="register()" :disabled="disableButton">Подтвердить</button>
         </form>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, defineProps, watch, ref, computed } from "vue";
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+const props = defineProps({
+    activeWindow: String
+})
+const auth = getAuth();
 
-const registrationUser = ref('')
+let addConfirmPassword = ref(false)
+let newUser = reactive({
+    login: '',
+    password: '',
+    confirmationPassowrd: ''
+})
+const disableButton = computed(() => {
+    let sum = 0
+    let condition = [newUser.password.length <= 6, newUser.login.length <= 1]
+    condition.forEach((e) => {
+        if (!e) {
+            sum++
+        }
+    })
+    if (sum > 1) {
+        return false
+    } else {
+        return true
+    }
+})
+let isActive = () => {
+    let labels = Array.prototype.slice.call(document.querySelectorAll('label'))
+    let filteredLabels = labels.filter(e => e.htmlFor == document.activeElement.id)[0]
+    filteredLabels.classList.remove('unactive-form')
+    for (let label of labels) {
+        label.classList.add('unactive-form')
+        label.classList.remove('active-form')
+    }
+    filteredLabels.classList.add('active-form')
+}
+const register = () => {
+    if (newUser.password === newUser.confirmationPassowrd && newUser.password.length >= 6) {
+        createUserWithEmailAndPassword(auth, newUser.login, newUser.password)
+            .then((data) => {
+                const user = data.user
+                console.log('good', user)
+            })
+            .catch(error => {
+                console.log(error.code)
+                console.log(error.message)
+            });
+    } else {
+        console.log('wrong')
+    }
+
+}
+
+let animationProperties = reactive({
+    to: null,
+    from: null,
+    timeout: null,
+    get translatedTimeout() {
+        return (this.timeout / 1000).toString() + 's'
+    }
+})
+watch(
+    props, () => {
+        let reg = document.querySelector('#reg-window')
+        let changeActiveWindow = (classToAnimate, to, from, timeout) => {
+            reg.classList.add(classToAnimate)
+            animationProperties.to = to
+            animationProperties.from = from
+            animationProperties.timeout = timeout
+            setTimeout(() => {
+                reg.classList.remove(classToAnimate)
+            }, timeout)
+            setTimeout(() => {
+                addConfirmPassword.value = !addConfirmPassword.value
+            }, timeout / 2)
+        }
+        if (props.activeWindow == 'auth') {
+            changeActiveWindow('animationing', '-30rem', '30rem', 300)
+        } else {
+            changeActiveWindow('animationing', '30rem', '-30rem', 300)
+        }
+    }
+)
 </script>
 
 <style lang="scss">
-@import "../assets/vars.scss";
+.animationing {
+    @include going-away(
+        v-bind("animationProperties.to"),
+        v-bind("animationProperties.from"),
+        v-bind("animationProperties.translatedTimeout")
+    );
+}
+.unactive-form {
+    &:before {
+        content: "Login";
+        position: relative;
+        top: 2.5rem;
+    }
+}
+.active-form {
+    &:before {
+        content: "Login";
+        position: relative;
+        top: 1rem;
+        background: $prim-color;
+        @include bcg-for-text();
+        transition: ease-in-out .3s;
+    }
+}
 #reg-window {
     border-radius: 25px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -39,6 +148,7 @@ const registrationUser = ref('')
         margin: 1rem;
 
         input {
+            display: block;
             border: none;
             font-size: 1rem;
             outline: none;

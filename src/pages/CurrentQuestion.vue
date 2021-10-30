@@ -38,16 +38,24 @@ let image = computed(() => `/${currentBlock.value.image}.png`)
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/vars.scss";
+.question-block {
+    margin: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    h1 {
+        background-image: $gradient;
+        @include bcg-for-text();
+        font-size: 1.5rem;
+        text-align: start;
+        display: inline;
+    }
 
-h1 {
-    background-image: $gradient;
-    @include bcg-for-text();
-}
-
-img {
-    border-radius: 15px;
-    width: 100px;
+    img {
+        border-radius: 100%;
+        width: 100px;
+        height: 100px;
+    }
 }
 ul {
     display: grid;
@@ -55,8 +63,7 @@ ul {
     gap: 1rem;
     justify-content: center;
     padding: 0.5rem;
-    // background: linear-gradient(90deg, #707c8c 0%,#4d5565 100%);
     border-radius: 15px;
-    margin: 1rem 2rem;
+    margin: 1rem 1rem;
 }
 </style>

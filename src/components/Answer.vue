@@ -41,7 +41,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/vars.scss";
 li {
     list-style-type: none;
     border-radius: 15px;

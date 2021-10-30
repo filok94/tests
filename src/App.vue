@@ -29,12 +29,10 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute()
 let classesForCircles = reactive(['circle-1', 'circle-2', 'circle-3'])
+let footerLinks = reactive([])
 </script>
 
 <style lang='scss'>
-$color: green;
-@import "./assets/vars.scss";
-
 body {
   background: $bcg;
   margin: 0;

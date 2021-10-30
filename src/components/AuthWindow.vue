@@ -6,7 +6,7 @@
             <input id="user" type="text" v-model="user" placeholder="example94" />
             <label for="password">Пароль</label>
             <input id="password" type="password" placeholder="Минимум 6 знаков" />
-            <button :disabled="!user" @click="submitName">Войти</button>
+            <button :disabled="!user" @click.prevent="submitName">Войти</button>
         </form>
     </div>
 </template>
@@ -28,7 +28,6 @@ const submitName = () => {
 }
 </script>
 <style lang="scss" scoped>
-@import "../assets/vars.scss";
 #auth-window {
     border-radius: 25px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);

@@ -14,7 +14,7 @@
 </script>
 
 <style lang="scss">
-@import "../assets/vars.scss";
+
 #page-placeholder {
     position: absolute;
     height: 75vh;
