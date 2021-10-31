@@ -1,17 +1,27 @@
 <template>
     <div id="reg-window">
         <form action="reg">
-            <label for="new-user" class='unactive-form'></label>
-            <input id="new-user" type="text" v-model="newUser.login" @click="isActive()" />
-            <label for="new-password" class='unactive-form'></label>
-            <input id="new-password" type="password" v-model="newUser.password" @click="isActive()" />
-            <label v-if="addConfirmPassword" for="confirm-password" class='unactive-form'></label>
+            <label for="new-user">Login</label>
+            <input
+                id="new-user"
+                type="text"
+                v-model="newUser.login"
+                @click="inputIsActive($event.target)"
+            />
+            <label for="new-password">Password</label>
+            <input
+                id="new-password"
+                type="password"
+                v-model="newUser.password"
+                @click="inputIsActive($event.target)"
+            />
+            <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
             <input
                 v-if="addConfirmPassword"
                 id="confirm-password"
                 type="password"
                 v-model="newUser.confirmationPassowrd"
-                @click="isActive()"
+                @click="inputIsActive($event.target)"
             />
             <button @click.prevent="register()" :disabled="disableButton">Подтвердить</button>
         </form>
@@ -46,16 +56,6 @@ const disableButton = computed(() => {
         return true
     }
 })
-let isActive = () => {
-    let labels = Array.prototype.slice.call(document.querySelectorAll('label'))
-    let filteredLabels = labels.filter(e => e.htmlFor == document.activeElement.id)[0]
-    filteredLabels.classList.remove('unactive-form')
-    for (let label of labels) {
-        label.classList.add('unactive-form')
-        label.classList.remove('active-form')
-    }
-    filteredLabels.classList.add('active-form')
-}
 const register = () => {
     if (newUser.password === newUser.confirmationPassowrd && newUser.password.length >= 6) {
         createUserWithEmailAndPassword(auth, newUser.login, newUser.password)
@@ -103,9 +103,23 @@ watch(
         }
     }
 )
+let inputIsActive = (el) => {
+    let labels = Array.prototype.slice.call(document.querySelectorAll('label'))
+    let activeLabel = labels.filter(e => e.htmlFor == el.id)[0]
+    activeLabel.classList.add('label_up')
+    let changeClass = () => {
+        if (el.value.length == 0) {
+            activeLabel.classList.remove('label_up')
+        }
+    }
+    el.addEventListener('blur', changeClass)
+}
 </script>
-
 <style lang="scss">
+// state dynamic classes
+.label_up {
+    transform: translateY(-1rem);
+}
 .animationing {
     @include going-away(
         v-bind("animationProperties.to"),
@@ -113,23 +127,7 @@ watch(
         v-bind("animationProperties.translatedTimeout")
     );
 }
-.unactive-form {
-    &:before {
-        content: "Login";
-        position: relative;
-        top: 2.5rem;
-    }
-}
-.active-form {
-    &:before {
-        content: "Login";
-        position: relative;
-        top: 1rem;
-        background: $prim-color;
-        @include bcg-for-text();
-        transition: ease-in-out .3s;
-    }
-}
+//static styles
 #reg-window {
     border-radius: 25px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -164,7 +162,11 @@ watch(
             }
         }
         label {
+            position: relative;
+            top: 2rem;
             justify-self: start;
+            color: rgba(255, 255, 255, 0.568);
+            transition: .3s ease-in-out;
         }
         button {
             justify-self: center;
@@ -192,6 +194,7 @@ watch(
     }
 }
 
+//media queries
 @media (min-width: $medium-screen) {
     #reg-window {
         max-width: 80%;
