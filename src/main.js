@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
+import { initializeApp } from 'firebase/app'
+import { onAuthStateChanged, getAuth } from 'firebase/auth'
 import store from './store'
 import router from './router'
 import App from './App.vue'
-import { initializeApp } from 'firebase/app'
 
 const firebaseConfig = {
   apiKey: "AIzaSyDo305GTXwGcEcRLuPb3-GG_aZS6jbE6Nc",
@@ -15,8 +16,18 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 
-createApp(App)
-  .use(store)
-  .use(router)
-  .mount('#app')
+let auth = getAuth()
+onAuthStateChanged(auth, (user) => {
+    createApp(App)
+      .use(store)
+      .use(router)
+      .mount('#app')
+      if (user) {
+        console.log(user)
+      } else {
+        console.log('не залогинен')
+      }
+})
+
+
 
