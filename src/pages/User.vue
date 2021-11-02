@@ -39,16 +39,19 @@
 </template>
 
 <script setup>
-
 import { useStore } from "vuex";
 import { ref, reactive, onMounted } from "vue";
 import Banner from '../components/TestBanner.vue'
 import Settings from '../components/Settings.vue'
 import Loader from '../components/Loader.vue'
+import { useStorage } from "@vueuse/core"
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 
+let authedStoreInfo = useStorage('is-authed-with')
 const store = useStore()
+const route = useRoute()
+const router = useRouter()
 const banners = store.state.global.banners
-
 const isLoading = ref(true)
 const isTestsExpanded = ref(false)
 const isSettingsExpanded = ref(false)
@@ -85,7 +88,9 @@ onMounted(() => {
     setTimeout(() => {
         isLoading.value = !isLoading.value
     }, 1000)
-
+    if (route.params !=  authedStoreInfo.value) {
+        router.replace({name:"User", params: {userName: authedStoreInfo.value}})
+    }
 })
 </script>
 

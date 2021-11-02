@@ -1,50 +1,58 @@
 <template>
-    <div id="reg-window">
-        <form action="reg">
+    <div id="regAndAuth-window">
+        <form action="register">
             <label for="new-user">Login</label>
             <input
                 id="new-user"
                 type="text"
-                v-model="newUser.login"
-                @click="inputIsActive($event.target)"
+                v-model="userInputs.login"
+                @click.prevent="inputIsActive($event.target)"
             />
             <label for="new-password">Password</label>
             <input
                 id="new-password"
                 type="password"
-                v-model="newUser.password"
-                @click="inputIsActive($event.target)"
+                v-model="userInputs.password"
+                @click.prevent="inputIsActive($event.target)"
             />
             <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
             <input
                 v-if="addConfirmPassword"
                 id="confirm-password"
                 type="password"
-                v-model="newUser.confirmationPassowrd"
-                @click="inputIsActive($event.target)"
+                v-model="userInputs.confirmationPassowrd"
+                @click.prevent="inputIsActive($event.target)"
             />
-            <button @click.prevent="register()" :disabled="disableButton">Подтвердить</button>
+            <button @click.prevent="registerAndSigniIn()" :disabled="disableButton">Подтвердить</button>
         </form>
+        <p v-show="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <button @click="localStore = true">kasdlkamsd</button>
+        <button @click="localStore = null">kasdlkamsd</button>
     </div>
 </template>
 
 <script setup>
-import { reactive, defineProps, watch, ref, computed } from "vue";
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { reactive, defineProps, watch, ref, computed, onMounted } from "vue";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { useStorage } from "@vueuse/core"
+const router = useRouter()
+const store = useStore()
 const props = defineProps({
     activeWindow: String
 })
 const auth = getAuth();
 
 let addConfirmPassword = ref(false)
-let newUser = reactive({
+let userInputs = reactive({
     login: '',
     password: '',
     confirmationPassowrd: ''
 })
 const disableButton = computed(() => {
     let sum = 0
-    let condition = [newUser.password.length <= 6, newUser.login.length <= 1]
+    let condition = [userInputs.password.length < 6, userInputs.login.length < 1]
     condition.forEach((e) => {
         if (!e) {
             sum++
@@ -56,21 +64,47 @@ const disableButton = computed(() => {
         return true
     }
 })
-const register = () => {
-    if (newUser.password === newUser.confirmationPassowrd && newUser.password.length >= 6) {
-        createUserWithEmailAndPassword(auth, newUser.login, newUser.password)
+const registerAndSigniIn = () => {
+    const signIn = (userInputLogin, userPassword) => {
+        signInWithEmailAndPassword(auth, userInputLogin, userPassword)
             .then((data) => {
-                const user = data.user
-                console.log('good', user)
+                let user = data.user
+                console.log(user)
+                const storingAuthInfo = useStorage('is-authed-with', user.email)
+                router.push({ name: 'User', params: { userName: storingAuthInfo.value} })
             })
-            .catch(error => {
-                console.log(error.code)
-                console.log(error.message)
-            });
-    } else {
-        console.log('wrong')
+            .catch((error) => {
+                isErrorShown(error.code)
+            })
+    }
+    switch (props.activeWindow) {
+        case 'register':
+            if (userInputs.password === userInputs.confirmationPassowrd && userInputs.password.length >= 6) {
+                createUserWithEmailAndPassword(auth, userInputs.login, userInputs.password)
+                    .then((data) => {
+                        const user = data.user
+                        signIn(userInputs.login, userInputs.password)
+                    })
+                    .catch(error => {
+                        isErrorShown(error.code)
+                    });
+            } else {
+                isErrorShown('Пароли не совпадают')
+            };
+            break;
+        case 'auth':
+            signIn(userInputs.login, userInputs.password)
+            break
+
     }
 
+}
+const errorMessage = ref('')
+const isErrorShown = (error) => {
+    errorMessage.value = error
+    setTimeout(() => {
+        errorMessage.value = ''
+    }, 5000)
 }
 
 let animationProperties = reactive({
@@ -83,7 +117,9 @@ let animationProperties = reactive({
 })
 watch(
     props, () => {
-        let reg = document.querySelector('#reg-window')
+        document.querySelectorAll('label').forEach(e => e.classList.remove('label_up'))
+        userInputs.login = userInputs.password = userInputs.confirmationPassowrd = ''
+        let reg = document.querySelector('#regAndAuth-window')
         let changeActiveWindow = (classToAnimate, to, from, timeout) => {
             reg.classList.add(classToAnimate)
             animationProperties.to = to
@@ -128,7 +164,7 @@ let inputIsActive = (el) => {
     );
 }
 //static styles
-#reg-window {
+#regAndAuth-window {
     border-radius: 25px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
     padding: 1rem;
@@ -166,7 +202,7 @@ let inputIsActive = (el) => {
             top: 2rem;
             justify-self: start;
             color: rgba(255, 255, 255, 0.568);
-            transition: .3s ease-in-out;
+            transition: 0.3s ease-in-out;
         }
         button {
             justify-self: center;
@@ -192,18 +228,47 @@ let inputIsActive = (el) => {
             }
         }
     }
+    .error-message {
+        background: $bad-gradient;
+        @include bcg-for-text();
+        animation: error-shaking 0.9s ease-in-out;
+        @keyframes error-shaking {
+            0% {
+                transform: translateY(-2rem);
+                opacity: 0;
+            }
+            20% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            40%,
+            60%,
+            80% {
+                transform: translateX(1rem);
+            }
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-1rem);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+    }
 }
 
 //media queries
 @media (min-width: $medium-screen) {
-    #reg-window {
+    #regAndAuth-window {
         max-width: 80%;
         margin: 3rem auto;
     }
 }
 
 @media (min-width: $large-screen) {
-    #reg-window {
+    #regAndAuth-window {
         max-width: 718px;
         margin: 3rem auto;
     }

@@ -18,16 +18,15 @@
     </div>
     <div class="bottom-menu bottom-user">
       <img width="40" src="https://avatars.dicebear.com/api/micah/:seed.svg" alt />
-      {{ logo }}
     </div>
   </footer>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import { useRoute } from 'vue-router';
+import { reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter()
 
-const route = useRoute()
 let classesForCircles = reactive(['circle-1', 'circle-2', 'circle-3'])
 let footerLinks = reactive([])
 </script>
@@ -69,7 +68,7 @@ nav {
     }
   }
 }
-.circle-1 {
+/*.circle-1 {
   @include circle(
     0s,
     120s,
@@ -143,7 +142,7 @@ nav {
     53px,
     81px
   );
-}
+}*/
 footer {
   position: fixed;
   padding: 0.5rem;
