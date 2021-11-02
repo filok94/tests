@@ -6,14 +6,14 @@
                 id="new-user"
                 type="text"
                 v-model="userInputs.login"
-                @click.prevent="inputIsActive($event.target)"
+                @focus.prevent="inputIsActive($event.target)"
             />
             <label for="new-password">Password</label>
             <input
                 id="new-password"
                 type="password"
                 v-model="userInputs.password"
-                @click.prevent="inputIsActive($event.target)"
+                @focus.prevent="inputIsActive($event.target)"
             />
             <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
             <input
@@ -21,22 +21,21 @@
                 id="confirm-password"
                 type="password"
                 v-model="userInputs.confirmationPassowrd"
-                @click.prevent="inputIsActive($event.target)"
+                @focus.prevent="inputIsActive($event.target)"
             />
             <button @click.prevent="registerAndSigniIn()" :disabled="disableButton">Подтвердить</button>
         </form>
         <p v-show="errorMessage" class="error-message">{{ errorMessage }}</p>
-        <button @click="localStore = true">kasdlkamsd</button>
-        <button @click="localStore = null">kasdlkamsd</button>
     </div>
 </template>
 
 <script setup>
-import { reactive, defineProps, watch, ref, computed, onMounted } from "vue";
+import { reactive, watch, ref, computed } from "vue";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { useStorage } from "@vueuse/core"
+const localStorageGet = (key) => JSON.parse(window.localStorage.getItem(key))
+const localStorageSet = (key, value) => JSON.stringify(window.localStorage.setItem(key, value))
 const router = useRouter()
 const store = useStore()
 const props = defineProps({
@@ -70,10 +69,12 @@ const registerAndSigniIn = () => {
             .then((data) => {
                 let user = data.user
                 console.log(user)
-                const storingAuthInfo = useStorage('is-authed-with', user.email)
-                router.push({ name: 'User', params: { userName: storingAuthInfo.value} })
+                localStorageSet('isAuthed', true)
+                localStorageSet('isAuthedBy', user.email)
+                router.push({ name: 'User', params: { userName: window.localStorage.getItem('isAuthedBy') } })
             })
             .catch((error) => {
+                localStorageSet('isAuthed', false)
                 isErrorShown(error.code)
             })
     }

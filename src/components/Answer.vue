@@ -3,7 +3,7 @@
     <li v-else class="nonActive" :class="classObject">{{ thisAnswer }}</li>
 </template>
 <script setup>
-import { computed, defineProps, reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useStore } from 'vuex';
 const store = useStore()
 const props = defineProps({

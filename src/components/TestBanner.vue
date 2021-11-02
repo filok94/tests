@@ -10,7 +10,6 @@
 
 <script setup>
 //С родительского компонента берем данные для баннера теста
-import { defineProps } from 'vue'
 const props = defineProps({
     bannerInfo: Object
 })

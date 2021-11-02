@@ -1,5 +1,4 @@
 <template >
-    <Loader v-if="isLoading" />
     <div
         class="user-block user-tests"
         :class="{ 'user-tests-full': isTestsExpanded, 'user-tests-low': !isTestsExpanded }"
@@ -19,7 +18,8 @@
         </transition>
     </div>
     <div
-        class="user-block"
+        class="user-block user-settings"
+        :style="settingsStyles"
         :class="{ 'user-settings-full': isSettingsExpanded, 'user-settings-low': !isSettingsExpanded }"
     >
         <div class="user-block-head user-settings-head" @click="growBlock('settings')">
@@ -44,13 +44,8 @@ import { ref, reactive, onMounted } from "vue";
 import Banner from '../components/TestBanner.vue'
 import Settings from '../components/Settings.vue'
 import Loader from '../components/Loader.vue'
-import { useStorage } from "@vueuse/core"
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 
-let authedStoreInfo = useStorage('is-authed-with')
 const store = useStore()
-const route = useRoute()
-const router = useRouter()
 const banners = store.state.global.banners
 const isLoading = ref(true)
 const isTestsExpanded = ref(false)
@@ -61,10 +56,19 @@ let blocksSizes = reactive({
     settingsLargeSize: '',
     settingsSmallSize: ''
 })
+const settingsStyles = reactive({
+    height:'5rem',
+})
 const growBlock = (block) => {
     switch (block) {
         case 'settings':
             isSettingsExpanded.value = !isSettingsExpanded.value;
+            if(isSettingsExpanded.value){
+                settingsStyles.height = '12rem'
+            } else {
+                settingsStyles.height = '5rem'
+            }
+
             break;
         case 'tests':
             isTestsExpanded.value = !isTestsExpanded.value;
@@ -72,26 +76,26 @@ const growBlock = (block) => {
     }
 }
 
-onMounted(() => {
-    blocksSizes.settingsSmallSize = blocksSizes.testSmallSize = `${document.querySelector(".user-block").clientHeight - 32}px`
-    setTimeout(() => {
-        isTestsExpanded.value = !isTestsExpanded.value
-        isSettingsExpanded.value = !isSettingsExpanded.value
-    }, .1)
-    setTimeout(() => {
-        blocksSizes.testLargeSize = `${document.querySelector(".user-tests-full").clientHeight - 32}px`
-        blocksSizes.settingsLargeSize = `${document.querySelector(".user-settings-full").clientHeight - 32}px`
-        isTestsExpanded.value = !isTestsExpanded.value
-        isSettingsExpanded.value = !isSettingsExpanded.value
+// onMounted(() => {
+//     blocksSizes.settingsSmallSize = blocksSizes.testSmallSize = `${document.querySelector(".user-block").clientHeight - 32}px`
+//     setTimeout(() => {
+//         isTestsExpanded.value = !isTestsExpanded.value
+//         isSettingsExpanded.value = !isSettingsExpanded.value
+//     }, .1)
+//     setTimeout(() => {
+//         blocksSizes.testLargeSize = `${document.querySelector(".user-tests-full").clientHeight - 32}px`
+//         blocksSizes.settingsLargeSize = `${document.querySelector(".user-settings-full").clientHeight - 32}px`
+//         isTestsExpanded.value = !isTestsExpanded.value
+//         isSettingsExpanded.value = !isSettingsExpanded.value
 
-    }, .2)
-    setTimeout(() => {
-        isLoading.value = !isLoading.value
-    }, 1000)
-    if (route.params !=  authedStoreInfo.value) {
-        router.replace({name:"User", params: {userName: authedStoreInfo.value}})
-    }
-})
+//     }, .2)
+//     setTimeout(() => {
+//         isLoading.value = !isLoading.value
+//     }, 1000)
+// setTimeout(()=> {
+//     settingsStyles.minimalHeight=document.querySelector('.user-settings').style.height
+// },300)
+// })
 </script>
 
 <style lang='scss' scoped>
@@ -102,6 +106,7 @@ onMounted(() => {
     margin: 1rem;
     @include card-bcg();
     animation: opening 2s;
+    transition: 3s ease-in-out;
 
     .user-block-head {
         cursor: pointer;
@@ -163,10 +168,18 @@ onMounted(() => {
 }
 
 @keyframes opening {
-    0%,20%,30%,40%,50%{
+    0%,
+    20%,
+    30%,
+    40%,
+    50% {
         transform: translateX(-200vw);
     }
-    60%,70%,80%,90%,100% {
+    60%,
+    70%,
+    80%,
+    90%,
+    100% {
         transform: translateX(0);
     }
 }

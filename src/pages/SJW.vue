@@ -2,7 +2,6 @@
     <router-view></router-view>
     <button :disabled="disabledButton" v-if="!isTestEnded" @click="nextQuestion">Следующий вопрос</button>
     <button :disabled="disabledButton" v-if="isTestEnded" @click="endTestButton">Закончить тест</button>
-    <Button />
 </template>
 
 <script setup>

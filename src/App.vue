@@ -9,26 +9,26 @@
     </div>
   </nav>
   <main>
-    <div :class="circleClass" v-for="circleClass in classesForCircles"></div>
     <router-view></router-view>
   </main>
-  <footer>
-    <div class="bottom-menu home">
-      <img src="./assets/home.png" alt />
-    </div>
-    <div class="bottom-menu bottom-user">
-      <img width="40" src="https://avatars.dicebear.com/api/micah/:seed.svg" alt />
-    </div>
-  </footer>
+  <FooterNavigation
+  v-if ="localStorageGet('isAuthed')"/>
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import FooterNavigation from './components/FooterNavigation.vue'
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter()
+const localStorageGet = (key) => JSON.parse(window.localStorage.getItem(key))
 
-let classesForCircles = reactive(['circle-1', 'circle-2', 'circle-3'])
-let footerLinks = reactive([])
+onMounted(() => {
+  if (localStorageGet('isAuthed')) {
+    router.push({ name: 'User', params: { userName: window.localStorage.getItem('isAuthedBy') } })
+  } else {
+    router.push('/login')
+  }
+})
 </script>
 
 <style lang='scss'>
@@ -155,9 +155,8 @@ footer {
   bottom: 0;
   border-radius: 5px 5px 0 0;
   .bottom-user {
-    @include bcg-for-text();
-    background-image: $sjw-gradient;
     margin-right: 1rem;
+    cursor: pointer;
   }
 }
 </style>

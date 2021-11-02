@@ -5,16 +5,9 @@ import User from "../pages/User.vue"
 import CurrentQuestion from "../pages/CurrentQuestion.vue"
 import Conclusion from '../pages/TestConclusion.vue'
 import Avatar from "../pages/Avatar.vue"
-import { getAuth } from 'firebase/auth'
-import { useStorage } from "@vueuse/core"
-let authedStore = useStorage('is-authed-with')
-const routes = [
-    {
-        path:"/",
+const routes = [{
+        path: "/",
         name: "redirect",
-        redirect: to =>{
-            return { name: 'User', params: { userName: authedStore.value} }
-        },
         component: User,
         meta: { requireAuth: true }
     },
@@ -34,13 +27,11 @@ const routes = [
         name: 'SJW',
         component: SJW,
         meta: { requireAuth: true },
-        children: [
-            {
-                path: '/:userName/SJW/:questionNumber',
-                name: 'QuestionNumber',
-                component: CurrentQuestion
-            }
-        ]
+        children: [{
+            path: '/:userName/SJW/:questionNumber',
+            name: 'QuestionNumber',
+            component: CurrentQuestion
+        }]
     },
     {
         path: '/:userName/SJW/conclusion',
@@ -60,9 +51,9 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
-router.beforeEach((to, from, next)=> {
+router.beforeEach((to, from, next) => {
     const requireAuth = to.matched.some(record => record.meta.requireAuth);
-    const isAuthed = getAuth().currentUser
+    const isAuthed = JSON.parse(window.localStorage.getItem('isAuthed'))
     if (requireAuth && !isAuthed) {
         console.log(requireAuth, isAuthed)
         next('/login');
