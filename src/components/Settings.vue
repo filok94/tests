@@ -39,7 +39,7 @@ const changeMode = () => {
     align-items: center;
     margin: 0 1rem;
     cursor: pointer;
-    transition: .3s ease-in-out;
+    transition: 0.3s ease-in-out;
     &:hover {
         transform: scale(105%);
     }

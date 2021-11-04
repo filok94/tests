@@ -1,27 +1,29 @@
 @mixin card-bcg() {
     backdrop-filter: blur(30px);
     background: hsla(60, 3%, 25%, 0.226);
+    box-shadow: $card-shadow;
+    border-radius: 25px;
 }
 
 @mixin bcg-for-text() {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 @mixin circles-shadow($circles-color) {
     box-shadow: 0 0 15px $circles-color, 0 0 13px $circles-color, 0 0 40px $circles-color, 0 0 2px $circles-color;
 }
+
 @mixin circle($delay, $speed, $width, $height, $this-color, $top, $right, $tl, $tr, $br, $bl) {
     position: fixed;
     width: $width;
     height: $height;
-
     background: $this-color;
     z-index: -1;
     top: $top;
     right: $right;
     animation: circleMovement $speed linear infinite;
     animation-delay: $delay;
-
     @keyframes circleMovement {
         0%,
         100% {
@@ -81,5 +83,4 @@
             transform: translateX(0);
         }
     }
-
 }
