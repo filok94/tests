@@ -1,5 +1,10 @@
 <template>
-    <div class="nav-circle" @click.stop="activateNavCircle">
+    <div
+        class="nav-circle"
+        @click.stop="activateNavCircle"
+        :class="{ 'nav-circle-is-active': isCirclesActive }"
+        ref="navCircle"
+    >
         <img src="https://avatars.dicebear.com/api/open-peeps/filya.svg" alt="navigation_circle" />
         <p>Click to navigate</p>
         <div
@@ -14,20 +19,51 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import gsap from 'gsap'
-let props = defineProps({
-    tabs: Array
-})
-let emit = defineEmits(['activation'])
+import { onClickOutside } from '@vueuse/core'
+
+//default borders
 let stringifiedBordersOfMainCircle = ref('76px 53px 45px 92px')
 let stringifiedBordersOfActiveTarget = ref('63px 78% 92% 45%')
+//change borders
 let changingBorders = (stringToChange) => {
     let arrayHelper = []
     for (let i = 0; i < 4; i++) {
         arrayHelper.push((Math.random() * (99 - 45) + 45).toFixed())
     }
     stringToChange.value = arrayHelper.join('% ') + '%'
+}
+
+//activate circle navigation and eventlisteners
+const isCirclesActive = ref(false)
+const circles = ref([])
+let navCircle = ref(null)
+
+let activateNavCircle = () => {
+
+    if (!isCirclesActive.value) {
+        isCirclesActive.value = true
+        let tl = gsap.timeline({ defaults: { duration: .1, ease: 'ease' } })
+            .from(circles.value[0], { x: '5rem', opacity: 0 })
+            .from(circles.value[1], { y: '10rem', opacity: 0 })
+        if (circles.value.length > 2) {
+            tl.fromTo(circles.value[2], { x: '-6rem', y: '-8rem', opacity: 0 }, { y: '-12rem', x: '-3rem', opacity: 1 })
+        }
+    } else {
+        isCirclesActive.value = false
+    }
+    changingBorders(stringifiedBordersOfMainCircle)
+}
+
+//controll opened tabs
+let emit = defineEmits(['activation'])
+const activeTabIs = ref(0)
+let button = (elem) => {
+    let indexOfElem = Array.from(document.querySelectorAll('.target-circle')).indexOf(elem)
+    emit('activation', indexOfElem)
+    activeTabIs.value = indexOfElem
+    changingBorders(stringifiedBordersOfActiveTarget)
 }
 let keyControls = (e) => {
     if (e.code == 'ArrowLeft') {
@@ -46,33 +82,21 @@ let keyControls = (e) => {
     changingBorders(stringifiedBordersOfActiveTarget)
     emit('activation', activeTabIs.value)
 }
-const isCirclesActive = ref(false)
-const circles = ref([])
-let activateNavCircle = () => {
-    
-    if (!isCirclesActive.value) {
-        isCirclesActive.value = true
-        document.addEventListener('keydown', keyControls)
-        let tl = gsap.timeline({ defaults: { duration: .1, ease: 'ease' } })
-            .from(circles.value[0], { x: '5rem', opacity: 0 })
-            .from(circles.value[1], { y: '10rem', opacity: 0 })
-            if (circles.value.length>2){
-                tl.fromTo(circles.value[2], { x: '-6rem', y: '-8rem', opacity: 0 }, { y: '-12rem', x: '-3rem', opacity: 1 })
-            }
-    } else {
-        isCirclesActive.value = false
-        document.removeEventListener('keydown', keyControls)
-    }
-    changingBorders(stringifiedBordersOfMainCircle)
-}
 
-const activeTabIs = ref(0)
-let button = (elem) => {
-    let indexOfElem = Array.from(document.querySelectorAll('.target-circle')).indexOf(elem)
-    emit('activation', indexOfElem)
-    activeTabIs.value = indexOfElem
-    changingBorders(stringifiedBordersOfActiveTarget)
-}
+//deactivate circle navigation and watch the status
+onClickOutside(navCircle, () => isCirclesActive.value = false)
+let props = defineProps({
+    tabs: Array
+})
+watch(
+    () => isCirclesActive.value, (newValue, oldValue) => {
+        if (newValue) {
+            document.addEventListener('keydown', keyControls)
+        } else {
+            document.removeEventListener('keydown', keyControls)
+        }
+    }
+)
 onMounted(() => {
     setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000)
 })
@@ -101,6 +125,10 @@ onMounted(() => {
         margin: 0;
         color: $grey-color;
     }
+    &-is-active {
+        transform: scale(110%);
+        background: $second-color;
+    }
 
     .target-circle {
         font-size: 0.8rem;
@@ -109,7 +137,7 @@ onMounted(() => {
         width: 4rem;
         height: 4rem;
         border-radius: 100%;
-        background: $prim-color;
+        background: $second-color;
         color: $grey-color;
         cursor: pointer;
     }
@@ -130,7 +158,7 @@ onMounted(() => {
     }
 }
 .active-target {
-    background: $second-color !important;
+    background: $prim-color !important;
     transform: scale(130%);
     transition: 0.3s ease-in-out;
     border-radius: v-bind("stringifiedBordersOfActiveTarget") !important;

@@ -1,94 +1,66 @@
 <template >
     <div class="activated-window">
-        <transition name="tests">
-            <div class="tests-collection" v-if="activeTabIndex==0">
-                <Banner v-for="(banner, i) in banners" :key="i" :bannerInfo="banner" />
-            </div>
-        </transition>
-        <transition name="settings">
-            <div class="settings-collection" v-if="activeTabIndex==1">
-                <Settings />
-            </div>
+        <h1 ref="header">{{ tabs[activeTabIndex].name }}</h1>
+        <transition :css="false" @enter="enter" @leave="leave" mode="out-in">
+            <component :is="activeTabIndex == 0 ? GameCollection : Settings"></component>
         </transition>
     </div>
     <navigation-circle :tabs="tabs" @activation="activeTarget"></navigation-circle>
 </template>
 
 <script setup>
+import { ref, onMounted, reactive, watch } from "vue";
+import { getDatabase, onValue, ref as fireRef } from "firebase/database";
 import { useStore } from "vuex";
-import { ref, onMounted, reactive, computed } from "vue";
-import Banner from '../components/TestBanner.vue'
+import gsap from "gsap";
 import navigationCircle from "../components/navigationCircle.vue";
 import Settings from '../components/Settings.vue'
+import GameCollection from "../components/GameCollection.vue";
 const store = useStore()
-const banners = store.state.global.banners
+const db = getDatabase()
+
 const activeTabIndex = ref(0)
 const activeTarget = (target) => {
     activeTabIndex.value = target
 }
 const tabs = reactive([
     {
-        name: 'Game',
+        name: 'Games',
         target: '',
     }, {
         name: 'Settings',
         target: '',
-    },{
-        name: 'Settings',
-        target: '',
     }
 ])
+
+const enter = (el, done) => {
+    gsap.from(el, { y: -100, duration: .3, opacity: 0, onComplete: done })
+}
+const leave = (el, done) => {
+    gsap.to(el, { y: 100, duration: .3, opacity: 0, onComplete: done })
+}
+
+const header = ref(null)
+watch(
+    activeTabIndex, () => {
+        gsap.from(header.value, { x: -50, opacity: 0, duration: .3 })
+    }
+)
 onMounted(() => {
+    const games = fireRef(db, 'global/test-list');
+    onValue(games, (snapshot) => {
+        const data = snapshot.val();
+        store.dispatch('getGames', data)
+    });
+
 })
 </script>
 
 <style lang='scss' scoped>
-.tab-selector-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    .tab-selector {
-        @include card-bcg();
-        padding: 1rem 2rem;
-        margin: 1rem;
-        border-radius: 25px;
-        box-shadow: $card-shadow;
+.activated-window {
+    margin: 2rem;
+    h1 {
         text-align: start;
-        cursor: pointer;
-    }
-    .activated-window {
-        @include card-bcg();
-        padding: 3rem;
-        margin: 1rem;
-    }
-}
-.user-block {
-    box-shadow: $card-shadow;
-    border-radius: 25px;
-    padding: 1rem;
-    margin: 1rem;
-    @include card-bcg();
-
-    .user-block-head {
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 0 1rem;
-        img {
-            transition: 0.3s ease-in-out;
-        }
-        .img-left {
-            transform: rotate(90deg);
-            transition: 0.3s ease-in-out;
-        }
-    }
-}
-.user-tests {
-    .user-tests-collection {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(auto, 250px));
-        grid-gap: 1rem;
-        justify-content: center;
     }
 }
 </style>

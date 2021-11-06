@@ -45,7 +45,7 @@ nav {
   display: block;
   #logo {
     display: flex;
-    margin: 1rem 1rem 2rem 1rem;
+    margin: 1rem 2rem 2rem 2rem;
     font-size: 1rem;
     font-weight: bold;
     #circled-logo {

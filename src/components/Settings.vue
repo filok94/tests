@@ -1,15 +1,17 @@
 <template>
-    <div class="setting-type" id="avatar" @click="chooseAvatar">
-        <img
-            src="https://avatars.dicebear.com/api/croodles/:m2n.svg?beardProbability=99"
-            alt
-            width="40"
-        />
-        <p>Выбрать аватар</p>
-    </div>
-    <div class="setting-type" id="night-mode" @click="changeMode">
-        <img src="../assets/dark-mode.svg" alt width="40" :class="{ 'is-dark': darkMode }" />
-        <p>Переключить на {{ mode }}</p>
+    <div>
+        <div class="setting-type" id="avatar" @click="chooseAvatar">
+            <img
+                src="https://avatars.dicebear.com/api/croodles/:m2n.svg?beardProbability=99"
+                alt
+                width="40"
+            />
+            <p>Выбрать аватар</p>
+        </div>
+        <div class="setting-type" id="night-mode" @click="changeMode">
+            <img src="../assets/dark-mode.svg" alt width="40" :class="{ 'is-dark': darkMode }" />
+            <p>Переключить на {{ mode }}</p>
+        </div>
     </div>
 </template>
 
