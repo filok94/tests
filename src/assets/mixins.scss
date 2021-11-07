@@ -10,59 +10,6 @@
     -webkit-text-fill-color: transparent;
 }
 
-@mixin circles-shadow($circles-color) {
-    box-shadow: 0 0 15px $circles-color, 0 0 13px $circles-color, 0 0 40px $circles-color, 0 0 2px $circles-color;
-}
-
-@mixin circle($delay, $speed, $width, $height, $this-color, $top, $right, $tl, $tr, $br, $bl) {
-    position: fixed;
-    width: $width;
-    height: $height;
-    background: $this-color;
-    z-index: -1;
-    top: $top;
-    right: $right;
-    animation: circleMovement $speed linear infinite;
-    animation-delay: $delay;
-    @keyframes circleMovement {
-        0%,
-        100% {
-            border-radius: $tl $tr $br $bl;
-            @include circles-shadow($this-color);
-            transform: translateX(0) translateY(0) scale(100%);
-        }
-        10%,
-        90% {
-            border-radius: calc(#{$tl} * 1.6) calc(#{$tr} * 1.1) calc(#{$br} * 1.3) calc(#{$bl} * 1.41);
-            @include circles-shadow($this-color);
-            transform: translateX(calc(#{$right} * -1.1)) rotate(15deg) translateY(calc(#{$top} * -0.3)) scale(90%);
-        }
-        20%,
-        80% {
-            border-radius: calc(#{$tl} * 1.21) calc(#{$tr} * 1.51) calc(#{$br} * 1.66) calc(#{$bl} * 1.59);
-            @include circles-shadow($this-color);
-            transform: translateX(calc(#{$right} * -1.5)) rotate(30deg) translateY(calc(#{$top} * -0.4)) scale(60%);
-        }
-        30%,
-        70% {
-            border-radius: calc(#{$tl} * 2.51) calc(#{$tr} * 1.68) calc(#{$br} * 1.75) calc(#{$bl} * 1.48);
-            @include circles-shadow($this-color);
-            transform: translateX(calc(#{$right} * -0.7)) rotate(45deg) translateY(calc(#{$top} * -0.1)) scale(40%);
-        }
-        40%,
-        60% {
-            border-radius: calc(#{$tl} * 1.88) calc(#{$tr} * 1.54) calc(#{$br} * 3.38) calc(#{$bl} * 1.51);
-            @include circles-shadow($this-color);
-            transform: translateX(calc(#{$right} * 0.1)) rotate(55deg) translateY(calc(#{$top} * 0.1)) scale(30%);
-        }
-        50% {
-            border-radius: calc(#{$tl} * 1.2) calc(#{$tr} * 2.27) calc(#{$br} * 1.23) calc(#{$bl} * -1.87);
-            @include circles-shadow($this-color);
-            transform: translateX(calc(#{$right} * 0.6)) rotate(75deg) translateY(calc(#{$top} * 0.4)) scale(20%);
-        }
-    }
-}
-
 @mixin going-away($toEnd, $from, $time) {
     animation: going-away $time ease-in-out;
     @keyframes going-away {

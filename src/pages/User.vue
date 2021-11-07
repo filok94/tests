@@ -52,8 +52,7 @@ onMounted(() => {
         const data = snapshot.val();
         store.dispatch('getGames', data)
     });
-
-})
+});
 </script>
 
 <style lang='scss' scoped>

@@ -22,7 +22,9 @@
 import { ref, onMounted, watch } from 'vue'
 import gsap from 'gsap'
 import { onClickOutside } from '@vueuse/core'
-
+let props = defineProps({
+    tabs: Array
+})
 //default borders
 let stringifiedBordersOfMainCircle = ref('76px 53px 45px 92px')
 let stringifiedBordersOfActiveTarget = ref('63px 78% 92% 45%')
@@ -85,9 +87,7 @@ let keyControls = (e) => {
 
 //deactivate circle navigation and watch the status
 onClickOutside(navCircle, () => isCirclesActive.value = false)
-let props = defineProps({
-    tabs: Array
-})
+
 watch(
     () => isCirclesActive.value, (newValue, oldValue) => {
         if (newValue) {

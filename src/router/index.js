@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router"
 import RegAndAuth from "../pages/RegAndAuth.vue"
 import SJW from "../pages/SJW.vue"
 import User from "../pages/User.vue"
-import CurrentQuestion from "../pages/CurrentQuestion.vue"
+import SJWQuestion from "../pages/SJWQuestion.vue"
 import Conclusion from '../pages/TestConclusion.vue'
 import Avatar from "../pages/Avatar.vue"
 const routes = [{
@@ -28,16 +28,15 @@ const routes = [{
         component: SJW,
         meta: { requireAuth: true },
         children: [{
-            path: '/:userName/SJW/:questionNumber',
-            name: 'QuestionNumber',
-            component: CurrentQuestion
+            path: ':step',
+            name: 'sjw-question',
+            component: SJWQuestion,
+        }, {
+            path: 'conclusion',
+            name: "Conclusion",
+            component: Conclusion,
+            meta: { requireAuth: true }
         }]
-    },
-    {
-        path: '/:userName/SJW/conclusion',
-        name: "Conclusion",
-        component: Conclusion,
-        meta: { requireAuth: true }
     },
     {
         path: '/:userName/avatar',

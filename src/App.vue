@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <div id="logo">
+    <div id="logo" @click.prevent="goHomeByLogo">
       <p id="circled-logo">
         S
         J
@@ -20,12 +20,11 @@ const router = useRouter()
 const localStorageGet = (key) => JSON.parse(window.localStorage.getItem(key))
 
 onMounted(() => {
-  if (localStorageGet('isAuthed')) {
-    router.push({ name: 'User', params: { userName: window.localStorage.getItem('isAuthedBy') } })
-  } else {
-    router.push('/login')
-  }
+
 })
+const goHomeByLogo = () => {
+  router.push({ name: 'User', params: { userName: window.localStorage.getItem('isAuthedBy') } })
+}
 </script>
 
 <style lang='scss'>
@@ -65,6 +64,4 @@ nav {
     }
   }
 }
-
-
 </style>

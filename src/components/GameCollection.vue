@@ -1,9 +1,9 @@
 <template>
     <div class="games-collection">
-        <div v-for="(game, i) in games" :key="i" class="game-banner" @click="goToTest">
+        <div v-for="(game, i) in games" :key="i" class="game-banner" @click.stop="goToTest(i)">
             <h2>{{ game.title }}</h2>
             <h3>{{ game.subtitle }}</h3>
-            <p>Ваш результат: {{}}</p>
+            <p>Ваш результат: {{ }}</p>
             <img :src="game.img" alt />
         </div>
     </div>
@@ -14,10 +14,13 @@ import { computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router'
 const router = useRouter()
-const goToTest = () => router.push({ name: props.bannerInfo.route, params: { questionNumber: 1 } })
+    const store = useStore()
+    
+const goToTest = (i) => {
+    router.push({name:games.value[i].route, params: {step:games.value[i].firstStep}})
+}
 
-const store = useStore()
-const games = computed(()=> store.state.global.games)
+const games = computed(() => store.state.global.games)
 </script>
 
 <style lang="scss" scoped>
