@@ -1,166 +1,195 @@
 <template>
+  <div
+    class="wrapper-for-circle"
+    ref="wrapperForCircle"
+    style="position: fixed; touch-action: none"
+    :style="style"
+  >
     <div
-        class="nav-circle"
-        @click.stop="activateNavCircle"
-        :class="{ 'nav-circle-is-active': isCirclesActive }"
-        ref="navCircle"
+      class="nav-circle"
+      @click.stop="activateNavCircle"
+      :class="{ 'nav-circle-is-active': isCirclesActive }"
+      ref="navCircle"
     >
-        <img src="https://avatars.dicebear.com/api/open-peeps/filya.svg" alt="navigation_circle" />
-        <p>Click to navigate</p>
-        <div
-            v-show="isCirclesActive"
-            :ref="el => { if (el) circles[i] = el }"
-            @click.self.stop="button($event.target)"
-            :class="{ 'active-target': activeTabIs == i }"
-            v-for="(tab, i) of props.tabs"
-            class="target-circle"
-        >{{ tab.name }}</div>
+      <img
+        src="https://avatars.dicebear.com/api/open-peeps/filya.svg"
+        alt="navigation_circle"
+      />
+      <p>Click to navigate</p>
+      <div
+        v-show="isCirclesActive"
+        :ref="
+          (el) => {
+            if (el) circles[i] = el;
+          }
+        "
+        @click.self.stop="button($event.target)"
+        :class="{ 'active-target': activeTabIs == i }"
+        v-for="(tab, i) of props.tabs"
+        :key="i"
+        class="target-circle"
+      >
+        {{ tab.name }}
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import gsap from 'gsap'
-import { onClickOutside } from '@vueuse/core'
+import { ref, onMounted, watch } from "vue";
+import gsap from "gsap";
+import { onClickOutside } from "@vueuse/core";
+import { useDraggable } from "@vueuse/core";
+
 let props = defineProps({
-    tabs: Array
-})
+  tabs: Array,
+});
 //default borders
-let stringifiedBordersOfMainCircle = ref('76px 53px 45px 92px')
-let stringifiedBordersOfActiveTarget = ref('63px 78% 92% 45%')
+let stringifiedBordersOfMainCircle = ref("76px 53px 45px 92px");
+let stringifiedBordersOfActiveTarget = ref("63px 78% 92% 45%");
 //change borders
 let changingBorders = (stringToChange) => {
-    let arrayHelper = []
-    for (let i = 0; i < 4; i++) {
-        arrayHelper.push((Math.random() * (99 - 45) + 45).toFixed())
-    }
-    stringToChange.value = arrayHelper.join('% ') + '%'
-}
+  let arrayHelper = [];
+  for (let i = 0; i < 4; i++) {
+    arrayHelper.push((Math.random() * (99 - 45) + 45).toFixed());
+  }
+  stringToChange.value = arrayHelper.join("% ") + "%";
+};
 
 //activate circle navigation and eventlisteners
-const isCirclesActive = ref(false)
-const circles = ref([])
-let navCircle = ref(null)
+const isCirclesActive = ref(false);
+const circles = ref([]);
+let navCircle = ref(null);
+let wrapperForCircle = ref(null);
+const { x, y, style } = useDraggable(wrapperForCircle, {
+  initialValue: { x: window.innerWidth / 1.5, y: window.innerHeight / 1.5 },
+  preventDefault: true,
+});
 
 let activateNavCircle = () => {
-
-    if (!isCirclesActive.value) {
-        isCirclesActive.value = true
-        let tl = gsap.timeline({ defaults: { duration: .1, ease: 'ease' } })
-            .from(circles.value[0], { x: '5rem', opacity: 0 })
-            .from(circles.value[1], { y: '10rem', opacity: 0 })
-        if (circles.value.length > 2) {
-            tl.fromTo(circles.value[2], { x: '-6rem', y: '-8rem', opacity: 0 }, { y: '-12rem', x: '-3rem', opacity: 1 })
-        }
-    } else {
-        isCirclesActive.value = false
+  if (!isCirclesActive.value) {
+    isCirclesActive.value = true;
+    let tl = gsap
+      .timeline({ defaults: { duration: 0.1, ease: "ease" } })
+      .from(circles.value[0], { x: "5rem", opacity: 0 })
+      .from(circles.value[1], { y: "10rem", opacity: 0 });
+    if (circles.value.length > 2) {
+      tl.fromTo(
+        circles.value[2],
+        { x: "-6rem", y: "-8rem", opacity: 0 },
+        { y: "-12rem", x: "-3rem", opacity: 1 }
+      );
     }
-    changingBorders(stringifiedBordersOfMainCircle)
-}
+  } else {
+    isCirclesActive.value = false;
+  }
+  changingBorders(stringifiedBordersOfMainCircle);
+};
 
 //controll opened tabs
-let emit = defineEmits(['activation'])
-const activeTabIs = ref(0)
+let emit = defineEmits(["activation"]);
+const activeTabIs = ref(0);
 let button = (elem) => {
-    let indexOfElem = Array.from(document.querySelectorAll('.target-circle')).indexOf(elem)
-    emit('activation', indexOfElem)
-    activeTabIs.value = indexOfElem
-    changingBorders(stringifiedBordersOfActiveTarget)
-}
+  let indexOfElem = Array.from(
+    document.querySelectorAll(".target-circle")
+  ).indexOf(elem);
+  emit("activation", indexOfElem);
+  activeTabIs.value = indexOfElem;
+  changingBorders(stringifiedBordersOfActiveTarget);
+};
 let keyControls = (e) => {
-    if (e.code == 'ArrowLeft') {
-        if (activeTabIs.value == 0) {
-            activeTabIs.value = props.tabs.length - 1
-        } else {
-            activeTabIs.value--
-        }
-    } else if (e.code == 'ArrowRight') {
-        if (activeTabIs.value == props.tabs.length - 1) {
-            activeTabIs.value = 0
-        } else {
-            activeTabIs.value++
-        }
+  if (e.code == "ArrowLeft") {
+    if (activeTabIs.value == 0) {
+      activeTabIs.value = props.tabs.length - 1;
+    } else {
+      activeTabIs.value--;
     }
-    changingBorders(stringifiedBordersOfActiveTarget)
-    emit('activation', activeTabIs.value)
-}
+  } else if (e.code == "ArrowRight") {
+    if (activeTabIs.value == props.tabs.length - 1) {
+      activeTabIs.value = 0;
+    } else {
+      activeTabIs.value++;
+    }
+  }
+  changingBorders(stringifiedBordersOfActiveTarget);
+  emit("activation", activeTabIs.value);
+};
 
 //deactivate circle navigation and watch the status
-onClickOutside(navCircle, () => isCirclesActive.value = false)
+onClickOutside(navCircle, () => (isCirclesActive.value = false));
 
 watch(
-    () => isCirclesActive.value, (newValue, oldValue) => {
-        if (newValue) {
-            document.addEventListener('keydown', keyControls)
-        } else {
-            document.removeEventListener('keydown', keyControls)
-        }
+  () => isCirclesActive.value,
+  (newValue, oldValue) => {
+    if (newValue) {
+      document.addEventListener("keydown", keyControls);
+    } else {
+      document.removeEventListener("keydown", keyControls);
     }
-)
+  }
+);
 onMounted(() => {
-    setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000)
-})
+  setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
+});
 </script>
 <style lang="scss" scoped>
 .nav-circle {
-    position: fixed;
-    top: 70vh;
-    right: 15vw;
+  position: relative;
 
-    border-radius: v-bind("stringifiedBordersOfMainCircle");
-    width: 7rem;
-    height: 7rem;
-    padding: 1rem;
-    background: $prim-color;
-    box-shadow: 0 10px 20px rgba(85, 39, 160, 0.486),
-        0 6px 6px rgba(78, 17, 219, 0.23);
-    transition: 1.5s ease-in-out;
+  border-radius: v-bind("stringifiedBordersOfMainCircle");
+  width: 3rem;
+  height: 3rem;
+  padding: 1rem;
+  background: $prim-color;
+  box-shadow: 0 10px 30px rgba(85, 39, 160, 0.486),
+    0 26px 26px rgba(0, 0, 0, 0.23);
+  cursor: pointer;
+  transition: 0.3s ease;
+  img {
+    max-width: 80%;
+    max-height: 80%;
+  }
+  p {
+    font-size: 0.1rem;
+    margin: 0;
+    color: $grey-color;
+  }
+  &-is-active {
+    transform: scale(110%);
+    background: $second-color;
+  }
+
+  .target-circle {
+    font-size: 0.8rem;
+    line-height: 4rem;
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 100%;
+    background: $second-color;
+    color: $grey-color;
     cursor: pointer;
-    img {
-        max-width: 80%;
-        max-height: 80%;
-    }
-    p {
-        font-size: 0.6rem;
-        margin: 0;
-        color: $grey-color;
-    }
-    &-is-active {
-        transform: scale(110%);
-        background: $second-color;
-    }
-
-    .target-circle {
-        font-size: 0.8rem;
-        line-height: 4rem;
-        position: relative;
-        width: 4rem;
-        height: 4rem;
-        border-radius: 100%;
-        background: $second-color;
-        color: $grey-color;
-        cursor: pointer;
-    }
-    div:nth-of-type(1) {
-        right: 6rem;
-        top: -1rem;
-        z-index: -1;
-    }
-    div:nth-of-type(2) {
-        right: 6rem;
-        top: -12rem;
-        z-index: -2;
-    }
-    div:nth-of-type(3) {
-        right: -1rem;
-        top: -9rem;
-        z-index: -3;
-    }
+  }
+  div:nth-of-type(1) {
+    right: 6rem;
+    top: -1rem;
+    z-index: -1;
+  }
+  div:nth-of-type(2) {
+    right: 6rem;
+    top: -12rem;
+    z-index: -2;
+  }
+  div:nth-of-type(3) {
+    right: -1rem;
+    top: -9rem;
+    z-index: -3;
+  }
 }
 .active-target {
-    background: $prim-color !important;
-    transform: scale(130%);
-    transition: 0.3s ease-in-out;
-    border-radius: v-bind("stringifiedBordersOfActiveTarget") !important;
+  background: $prim-color !important;
+  transform: scale(130%);
+  transition: 0.3s ease-in-out;
+  border-radius: v-bind("stringifiedBordersOfActiveTarget") !important;
 }
 </style>

@@ -39,11 +39,11 @@ const changeMode = () => {
     justify-content: start;
     gap: 1rem;
     align-items: center;
-    margin: 0 1rem;
+    margin: 0;
     cursor: pointer;
     transition: 0.3s ease-in-out;
     &:hover {
-        transform: scale(105%);
+        transform: scale(101%);
     }
 
     img {

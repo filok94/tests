@@ -57,7 +57,6 @@ onMounted(() => {
 
 <style lang='scss' scoped>
 .activated-window {
-    margin: 2rem;
     h1 {
         text-align: start;
     }
