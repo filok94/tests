@@ -5,33 +5,33 @@ const state = {
     games: [],
 
     choosenOptions: [{
-            uri: '',
-            value: ''
-        },
-        {
-            uri: '',
-            value: ''
-        },
-        {
-            uri: '',
-            value: ''
-        },
-        {
-            uri: '',
-            value: ''
-        },
-        {
-            uri: '',
-            value: ''
-        },
-        {
-            uri: '',
-            value: ''
-        },
-        {
-            uri: '',
-            value: ''
-        }
+        uri: '',
+        value: ''
+    },
+    {
+        uri: '',
+        value: ''
+    },
+    {
+        uri: '',
+        value: ''
+    },
+    {
+        uri: '',
+        value: ''
+    },
+    {
+        uri: '',
+        value: ''
+    },
+    {
+        uri: '',
+        value: ''
+    },
+    {
+        uri: '',
+        value: ''
+    }
     ]
 }
 
@@ -45,7 +45,7 @@ const mutations = {
     }
 }
 const actions = {
-    async getGames({ commit }, context) {
+    getGames({ commit }, context) {
         commit('GET_GAMES', context)
     }
 }

@@ -29,11 +29,13 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted } from "vue-demi";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+const store = useStore();
 const router = useRouter();
 const localStorageGet = (key) => JSON.parse(window.localStorage.getItem(key));
-onMounted(() => {});
+
 const goHomeByLogo = () => {
   router.push({
     name: "User",
@@ -49,6 +51,7 @@ body {
   .blob {
     position: fixed;
     z-index: -1;
+    opacity: 0.7;
     &_1 {
       top: 10vh;
       left: -20rem;

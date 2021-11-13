@@ -1,8 +1,8 @@
 <template>
-  <router-view></router-view>
+  <router-view @is-button-shown="(e) => (isButtonShown = !e)"></router-view>
   <button
     @click.prevent="nextQuestion(route.params.step)"
-    v-show="!isButtonDisabled"
+    v-show="isButtonShown"
     ref="button"
   >
     {{ buttonName }}
@@ -10,36 +10,63 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
+import { getDatabase, set, ref as fireRef } from "firebase/database";
 import gsap from "gsap";
 const store = useStore();
 const router = useRouter();
 const route = useRoute();
-
+const postUserFinalResult = async (data) => {
+  let userId = window.localStorage.getItem("isAuthedById");
+  const db = getDatabase();
+  try {
+    await set(fireRef(db, `users/${userId}/SJW_result/`), data);
+  } catch (err) {
+    console.log(err.message);
+  }
+};
 //нажатие на кнопку передает в стор, какой блок вопросов сейчас рендерить, и пушит следующий роут в УРЛ
-const isButtonDisabled = computed(() => {
-  return store.state.sjw.userAnswers.length < route.params.step ? true : false;
-});
+const isButtonShown = ref(false);
 let button = ref(null);
-
 const buttonName = ref("Next");
 const nextQuestion = (i) => {
   if (route.params.step < store.state.sjw.questions.length) {
     router.push({ name: "sjw-question", params: { step: Number(i) + 1 } });
+  } else if (route.name == "Conclusion") {
+    console.log("this is " + route.name);
+    router.push({
+      name: "User",
+      params: { userName: window.localStorage.getItem("isAuthedBy") },
+    });
   } else {
+    postUserFinalResult(store.state.sjw.userAnswers);
     router.push({ name: "Conclusion" });
   }
 };
+
 onBeforeRouteUpdate((to, from) => {
-  if (Number(to.params.step) == 8) {
-    buttonName.value = "End";
-  }
+  Number(to.params.step) == store.state.sjw.questions.length
+    ? (buttonName.value = "End")
+    : (buttonName.value = "Next");
 });
-watch(isButtonDisabled, () => {
+watch(isButtonShown, () => {
+  gsap.set(button.value, { opacity: 1, y: 0 });
   gsap.from(button.value, { y: 100, opacity: 0 });
 });
+//key contolls
+let keyContolls = (e) => {
+  if (button.value.style.display != "none")
+    if (e.key == "Enter") {
+      nextQuestion(route.params.step);
+    }
+};
+onMounted(() => {
+  //
+  document.addEventListener("keydown", keyContolls);
+});
+onUnmounted(() => document.removeEventListener("keydown", keyContolls));
 </script>
 <style lang="scss" scoped>
 button {

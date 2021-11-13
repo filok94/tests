@@ -1,79 +1,120 @@
 <template>
-  <div class="question-block">
-    <h1>{{ shownNowQuestion.question }}</h1>
-  </div>
-  <div class="answer-block">
-    <ul>
-      <li
-        v-for="(answer, i) of shownNowQuestion.answers"
-        :key="i"
-        @click.prevent="chooseAnswer(i)"
-        :ref="setAllAnswersRefs"
-        :class="{
-          'active-answer': isActive,
-          right:
-            usersChoice == i &&
-            usersChoice != null &&
-            usersChoice == shownNowQuestion.rightAnswer,
-          wrong:
-            usersChoice == i &&
-            usersChoice != null &&
-            usersChoice != shownNowQuestion.rightAnswer,
-        }"
-      >
-        <p>{{ answer }}</p>
-      </li>
-    </ul>
-  </div>
+  <transition @enter="enteringFrom" mode="out-in">
+    <div v-if="shownNowQuestion" class="sjw-wrapper">
+      <div class="question-block" ref="questionElement">
+        <h1>{{ shownNowQuestion.question }}</h1>
+      </div>
+
+      <div class="answer-block" ref="answerElement">
+        <ul>
+          <li
+            v-for="(answer, i) of shownNowQuestion.answers"
+            :key="i"
+            @click.prevent="chooseAnswer(i)"
+            :ref="
+              (el) => {
+                if (el) allAnswersRefs[i] = el;
+              }
+            "
+            :class="{
+              'active-answer': isActive,
+              right:
+                usersChoice == i &&
+                usersChoice != null &&
+                usersChoice == shownNowQuestion.rightAnswer,
+              wrong:
+                usersChoice == i &&
+                usersChoice != null &&
+                usersChoice != shownNowQuestion.rightAnswer,
+            }"
+          >
+            <p class="answer-count-label">{{ i + 1 }}</p>
+            <p class="answer-text">{{ answer }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <Loading v-else />
+  </transition>
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from "vue";
-import {
-  onBeforeRouteLeave,
-  onBeforeRouteUpdate,
-  useRoute,
-  useRouter,
-} from "vue-router";
+import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useStore } from "vuex";
-const router = useRouter();
+import gsap from "gsap/all";
+import Loading from "../components/Loading.vue";
+
 const route = useRoute();
 const store = useStore();
+const emit = defineEmits(["is-button-shown"]);
+
 //отрендеренный вопрос
 const shownNowQuestion = computed(() => {
-  return store.state.sjw.questions[route.params.step - 1];
+  return store.state.sjw.questions[Number(route.params.step) - 1];
 });
 //answers are inActive and active
 const isActive = ref(true);
-const allAnswersRefs = [];
+const allAnswersRefs = ref([]);
 const usersChoice = ref(null);
-let setAllAnswersRefs = (el) => {
-  if (el) allAnswersRefs.push(el);
-};
 const chooseAnswer = (i) => {
   if (isActive.value) {
-    let isAnswerTrue = null;
-    if (i === shownNowQuestion.value.rightAnswer) {
-      isAnswerTrue = true;
-    } else {
-      isAnswerTrue = false;
-    }
     store.commit("СHOOSE_QUESTION", {
-      answer: isAnswerTrue,
+      answer: i,
       number: route.params.step - 1,
     });
     isActive.value = false;
     usersChoice.value = i;
+    emit("is-button-shown", isActive.value);
   }
 };
+
+//key controlls
+let keyContolls = (event) => {
+  allAnswersRefs.value.forEach((e, index) => {
+    if (event.key == index + 1) {
+      chooseAnswer(index);
+    }
+  });
+};
+const isLoading = ref(true);
+const questionElement = ref(null);
+const answerElement = ref(null);
+let enteringFrom = () => {
+  gsap.set(answerElement.value, { opacity: 1, x: 0 });
+  gsap.set(questionElement.value, { opacity: 1, y: 0 });
+  gsap.from(answerElement.value, {
+    opacity: 0,
+    x: -100,
+    ease: "ease",
+  });
+  gsap.from(questionElement.value, {
+    opacity: 0,
+    y: -150,
+    ease: "ease",
+  });
+};
+onMounted(() => {
+  store.dispatch("getInfoFromServer");
+  isLoading.value = false;
+});
+onMounted(() => {
+  document.addEventListener("keydown", keyContolls);
+});
+onUnmounted(() => {
+  document.removeEventListener("keydown", keyContolls);
+});
 //delete all classes and instance value everytime
 onBeforeRouteUpdate((to, from) => {
   isActive.value = true;
   usersChoice.value = null;
+  emit("is-button-shown", isActive.value);
+  enteringFrom();
 });
 </script>
 
 <style lang="scss" scoped>
+//static classes
 .question-block {
   margin: 0 0 2rem 0;
   display: flex;
@@ -96,7 +137,7 @@ onBeforeRouteUpdate((to, from) => {
     justify-content: start;
     min-width: 70vw;
     li {
-      padding: 1rem;
+      padding: 1.3rem;
       list-style-type: none;
       margin: 0;
       text-align: start;
@@ -104,10 +145,17 @@ onBeforeRouteUpdate((to, from) => {
       color: $grey-color;
       transition: 0.3s ease-in-out;
       @include card-bcg();
-    }
-    p {
-      margin: 0;
-      padding: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      p {
+        margin: 0;
+        padding: 0;
+      }
+      .answer-count-label {
+        font-size: 2rem;
+        color: $prim-text;
+      }
     }
     .right {
       @include right-wrong($right-gradient);
@@ -120,7 +168,11 @@ onBeforeRouteUpdate((to, from) => {
     cursor: pointer;
 
     &:hover {
-      @include right-wrong($gradient, 101%);
+      .answer-count-label {
+        transform: scale(101%);
+        background: $gradient;
+        @include bcg-for-text();
+      }
     }
   }
 }

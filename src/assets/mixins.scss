@@ -1,6 +1,6 @@
 @mixin card-bcg() {
-    -webkit-backdrop-filter: blur(60px);
-    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
     background: hsla(240, 1%, 16%, 0.521);
     box-shadow: $card-shadow;
     border-radius: 25px;

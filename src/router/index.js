@@ -9,8 +9,11 @@ import CLientError from "../pages/CLientError.vue"
 const routes = [{
     path: "/",
     name: "redirect",
-    component: User,
-    meta: { requireAuth: true }
+    redirect: {
+        name: "User", params: { userName: window.localStorage.getItem('isAuthedBy') ? window.localStorage.getItem('isAuthedBy') : 'noneAuth' },
+        component: User,
+        meta: { requireAuth: true }
+    }
 },
 {
     path: '/login',
@@ -33,6 +36,13 @@ const routes = [{
         name: 'sjw-question',
         component: SJWQuestion,
         meta: { requireAuth: true, questionsCount: 8 },
+        beforeEnter: (to, from, next) => {
+            if (Number(to.params.step) != 1) {
+                next({ name: 'sjw-question', params: { userName: window.localStorage.getItem('isAuthedBy'), step: 1 } })
+            } else {
+                next()
+            }
+        }
     }, {
         path: 'conclusion',
         name: "Conclusion",
@@ -58,14 +68,11 @@ const router = createRouter({
     routes
 })
 router.beforeEach((to, from, next) => {
-    console.log(to.matched)
     const requireAuth = to.matched.some(record => record.meta.requireAuth);
     const isAuthed = JSON.parse(window.localStorage.getItem('isAuthed'))
     if (requireAuth && !isAuthed) {
-        console.log(requireAuth, isAuthed)
         next('/login');
     } else {
-        console.log(requireAuth, isAuthed)
         next();
     }
 })

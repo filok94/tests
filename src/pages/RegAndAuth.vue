@@ -1,64 +1,106 @@
 <template>
+  <div class="has-rights-to-login" v-if="doesUserHasRightToLogin">
     <div class="home-navigation">
-        <div @click="nameOfActiveWindow = 'auth'" :class="{ active: nameOfActiveWindow=='auth' }">Авторизация</div>
-        <div @click="nameOfActiveWindow = 'register'" :class="{ active: nameOfActiveWindow=='register' }">Регистрация</div>
+      <div
+        @click="nameOfActiveWindow = 'auth'"
+        :class="{ active: nameOfActiveWindow == 'auth' }"
+      >
+        Авторизация
+      </div>
+      <div
+        @click="nameOfActiveWindow = 'register'"
+        :class="{ active: nameOfActiveWindow == 'register' }"
+      >
+        Регистрация
+      </div>
     </div>
-        <Reg :activeWindow='nameOfActiveWindow'></Reg>
+    <Reg :activeWindow="nameOfActiveWindow"></Reg>
+  </div>
+  <div class="has-no-rights-to-login" v-else>
+    <h1>Вы уже вошли в систему, пожалуйста, вернитесь на главную страницу</h1>
+    <button @click.prevent="backToMainPage">Вернуться</button>
+  </div>
 </template>
 
 <script setup>
-import Reg from '../components/RegWindow.vue'
-import { ref, onUnmounted, onMounted } from 'vue'
+import Reg from "../components/RegWindow.vue";
+import { ref, onUnmounted, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 
 //watch on which window is active and change the animation
-let nameOfActiveWindow = ref('auth')
+let nameOfActiveWindow = ref("auth");
 
 // key_arrows directions
 let arrowDirections = (e) => {
-    if (e.code == "ArrowLeft") {
-        nameOfActiveWindow.value = 'auth'
-    } else if (e.code == "ArrowRight") {
-        nameOfActiveWindow.value = 'register'
-    }
-}
+  if (e.code == "ArrowLeft") {
+    nameOfActiveWindow.value = "auth";
+  } else if (e.code == "ArrowRight") {
+    nameOfActiveWindow.value = "register";
+  }
+};
+const doesUserHasRightToLogin = computed(() => {
+  return !JSON.parse(window.localStorage.getItem("isAuthed"));
+});
 onMounted(() => {
-    document.addEventListener('keydown', arrowDirections, false)
-
-
-})
+  document.addEventListener("keydown", arrowDirections, false);
+});
 onUnmounted(() => {
-    document.removeEventListener('keydown', arrowDirections, false)
-})
+  document.removeEventListener("keydown", arrowDirections, false);
+});
+const router = useRouter();
+const backToMainPage = () => {
+  router.push({
+    name: "User",
+    params: { userName: window.localStorage.getItem("isAuthedBy") },
+  });
+};
 </script>
 
 <style lang="scss" scoped>
-
 .home-navigation {
-    border-radius: 25px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    display: inline-flex;
-    justify-content: center;
+  border-radius: 25px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  display: inline-flex;
+  justify-content: center;
 
-    flex-wrap: wrap;
-    font-size: 2rem;
-    margin: 0 1rem;
-    div {
-        border-radius: 25px;
-        max-width: 100%;
-        padding: 1rem;
-        width: 100%;
-        cursor: default;
-        @include card-bcg();
-        cursor: pointer;
+  flex-wrap: wrap;
+  font-size: 2rem;
+  margin: 0 1rem;
+  div {
+    border-radius: 25px;
+    max-width: 100%;
+    padding: 1rem;
+    width: 100%;
+    cursor: default;
+    @include card-bcg();
+    cursor: pointer;
+  }
+  .active {
+    background: $gradient;
+  }
+}
+.has-no-rights-to-login {
+  button {
+    outline: none;
+    border: none;
+    border-radius: 15px;
+    background: $prim-color;
+    font-size: 3rem;
+    padding: 1rem;
+    color: $prim-text;
+    box-shadow: $card-shadow;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    &:hover {
+      background: $second-color;
+      transform: scale(102%);
     }
-    .active {
-        background: $gradient;
-    }
+  }
 }
 
 @media (min-width: $medium-screen) {
-    .home-navigation {
-        flex-wrap: nowrap;
-    }
+  .home-navigation {
+    flex-wrap: nowrap;
+  }
 }
 </style>

@@ -31,12 +31,13 @@
       >
         {{ tab.name }}
       </div>
+      <div class="main-user-actions"></div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, reactive } from "vue";
 import gsap from "gsap";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
@@ -115,6 +116,12 @@ let keyControls = (e) => {
   emit("activation", activeTabIs.value);
 };
 
+//main-user-actions tabs
+const mainActionsTabs = reactive([
+  { name: "Logout", action: null },
+  { name: "Back", action: null },
+]);
+
 //deactivate circle navigation and watch the status
 onClickOutside(navCircle, () => (isCirclesActive.value = false));
 
@@ -150,7 +157,7 @@ onMounted(() => {
     max-height: 80%;
   }
   p {
-    font-size: 0.1rem;
+    font-size: 0.5rem;
     margin: 0;
     color: $grey-color;
   }

@@ -19,13 +19,15 @@ const firebaseConfig = {
 const fireApp = initializeApp(firebaseConfig);
 const localStorageSet = (key, value) => JSON.stringify(window.localStorage.setItem(key, value))
 let auth = getAuth()
-onAuthStateChanged(auth, async(user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         localStorageSet('isAuthed', true)
         localStorageSet('isAuthedBy', user.email)
+        localStorageSet('isAuthedById', user.uid)
     } else {
         localStorageSet('isAuthed', false)
         localStorageSet('isAuthedBy', null)
+        localStorageSet('isAuthedById', null)
         console.log('не залогинен')
     }
 })
