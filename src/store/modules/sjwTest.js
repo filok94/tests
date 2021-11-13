@@ -1,3 +1,4 @@
+import { async } from '@firebase/util'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getDatabase, onValue, set, ref as fireRef } from 'firebase/database'
 
@@ -5,8 +6,7 @@ const state = {
     questions: [
     ],
     userAnswers: [],
-    person: {
-    }
+    person: null
 }
 
 const mutations = {
@@ -39,35 +39,29 @@ const actions = {
             }
         });
     },
-    async getPersonFromServer({ commit }) {
-        let db = getDatabase()
-        const persons = fireRef(db, `global/sjw-results/`);
-        onValue(persons, async (snapshot) => {
-            const personData = await snapshot.val();
-            await commit('GET_PERSON', personData)
-        })
-    },
-    async getResultsFromServer({ commit }) {
+    async getFinalPerson({ commit, getters, state }) {
         const db = getDatabase()
-        const userId = window.localStorage.getItem("isAuthedById");
+        const userId = window.localStorage.getItem('isAuthedById')
         const results = fireRef(db, `users/${userId}/SJW_result`);
         try {
             onValue(results, async (snapshot) => {
                 let resultData = await snapshot.val()
                 await commit('GET_RESULTS', resultData)
+                let person = fireRef(db, `global/sjw-results/${getters.computedFinalPerson}`);
+                onValue(person, async (snapshot) => {
+                    let personData = await snapshot.val()
+                    await commit('GET_PERSON', personData)
+                })
             })
         } catch (err) {
-            console.log(err.message);
+            console.log(err);
         }
-
     }
 }
 const getters = {
-    computedFinalPerson(state) {
-        let countOfRightAnswers = state.userAnswers.filter((e) => e.isRight).length
-        return state.person[countOfRightAnswers]
-    }
+    computedFinalPerson: (state) => state.userAnswers.filter((e) => e.isRight).length
 }
+
 
 export default {
     state,

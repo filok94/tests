@@ -26,8 +26,7 @@ let circlesMovement = (circle) => {
     .to(loaderCirclesArray.value[circle], { x: -50, background: "#005ef1" })
     .to(loaderCirclesArray.value[circle], { y: 50, background: "#6025c3" })
     .to(loaderCirclesArray.value[circle], { x: 0, background: "#005ef1" })
-    .to(loaderCirclesArray.value[circle], { y: 0, background: "#6025c3" })
-    .from(".loader-square-container", { opacity: 0 }, 0);
+    .to(loaderCirclesArray.value[circle], { y: 0, background: "#6025c3" });
 };
 let changingBorders = (stringToChange) => {
   let arrayHelper = [];
