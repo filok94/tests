@@ -7,7 +7,7 @@
   >
     <div
       class="nav-circle"
-      @click.stop="activateNavCircle"
+      @click.prevent.stop="activateNavCircle"
       :class="{ 'nav-circle-is-active': isCirclesActive }"
       ref="navCircle"
     >
@@ -23,7 +23,7 @@
             if (el) circles[i] = el;
           }
         "
-        @click.self.stop="button($event.target)"
+        @click.self.stop.prevent="button($event.target)"
         :class="{ 'active-target': activeTabIs == i }"
         v-for="(tab, i) of props.tabs"
         :key="i"

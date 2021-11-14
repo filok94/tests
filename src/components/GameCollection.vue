@@ -1,5 +1,5 @@
 <template>
-  <div class="games-collection">
+  <div class="games-collection" v-if="games">
     <div
       v-for="(game, i) in games"
       :key="i"
@@ -8,20 +8,24 @@
     >
       <h2>{{ game.title }}</h2>
       <h3>{{ game.subtitle }}</h3>
-      <p>Ваш результат: {{}}</p>
+      <p>Ваш результат: {{ results[i].filter((e) => e.isRight) }}</p>
       <img :src="game.img" alt />
     </div>
   </div>
+  <Loading v-else />
 </template>
 
 <script setup>
 import { computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import Loading from "../components/Loading.vue";
+
 const router = useRouter();
 const store = useStore();
 
 const games = computed(() => store.state.global.games);
+const results = computed(() => store.state.global.gamesResults);
 const goToTest = (i) => {
   router.push({
     name: games.value[i].route,

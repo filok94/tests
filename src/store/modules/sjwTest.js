@@ -1,5 +1,3 @@
-import { async } from '@firebase/util'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getDatabase, onValue, set, ref as fireRef } from 'firebase/database'
 
 const state = {
@@ -23,6 +21,9 @@ const mutations = {
     },
     GET_RESULTS(state, payload) {
         state.userAnswers = payload
+    },
+    CLEAN_SJW(state) {
+        state.questions = null
     }
 }
 

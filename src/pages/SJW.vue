@@ -1,5 +1,5 @@
 <template>
-  <router-view @is-button-shown="(e) => (isButtonShown = !e)"></router-view>
+  <router-view @is-button-shown="(e) => (isButtonShown = e)"></router-view>
   <button
     @click.prevent="nextQuestion(route.params.step)"
     v-show="isButtonShown"
@@ -63,7 +63,6 @@ let keyContolls = (e) => {
     }
 };
 onMounted(() => {
-  //
   document.addEventListener("keydown", keyContolls);
 });
 onUnmounted(() => document.removeEventListener("keydown", keyContolls));
@@ -82,14 +81,14 @@ button {
   max-width: 25rem;
   width: 50%;
 
+  margin: 2rem auto;
   position: fixed;
-  margin: -7rem auto;
+  top: 80vh;
   right: 0;
   left: 0;
-
   z-index: 2;
   &:hover {
-    transform: scale(102%);
+    transform: scale(130%);
   }
 }
 @media (min-width: $medium-screen) {

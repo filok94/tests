@@ -55,8 +55,8 @@ onMounted(() => {
   height: 100vh;
   .loader-square {
     position: fixed;
-    width: 3%;
-    height: 3%;
+    width: 2rem;
+    height: 2rem;
     border-radius: 100%;
     background: $prim-color;
     border-radius: v-bind("borders");

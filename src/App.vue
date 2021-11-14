@@ -34,7 +34,6 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 const store = useStore();
 const router = useRouter();
-const localStorageGet = (key) => JSON.parse(window.localStorage.getItem(key));
 
 const goHomeByLogo = () => {
   router.push({
@@ -46,6 +45,8 @@ const goHomeByLogo = () => {
 
 <style lang='scss'>
 body {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
   background: $bcg;
   margin: 0;
   .blob {

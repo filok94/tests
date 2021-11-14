@@ -14,15 +14,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, watch } from "vue";
-import { getDatabase, onValue, ref as fireRef } from "firebase/database";
+import { ref, onMounted, reactive, watch, computed } from "vue";
 import { useStore } from "vuex";
 import gsap from "gsap";
 import navigationCircle from "../components/navigationCircle.vue";
 import Settings from "../components/Settings.vue";
 import GameCollection from "../components/GameCollection.vue";
 const store = useStore();
-const db = getDatabase();
 
 const activeTabIndex = ref(0);
 const activeTarget = (target) => {
@@ -51,15 +49,7 @@ watch(activeTabIndex, () => {
   gsap.from(header.value, { x: -50, opacity: 0, duration: 0.3 });
 });
 onMounted(() => {
-  const games = fireRef(db, "global/test-list");
-  onValue(games, async (snapshot) => {
-    try {
-      const data = await snapshot.val();
-      await store.dispatch("getGames", data);
-    } catch (error) {
-      console.error(error.code);
-    }
-  });
+  store.dispatch("getGames");
 });
 </script>
 

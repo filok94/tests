@@ -65,7 +65,7 @@ const chooseAnswer = (i) => {
     });
     isActive.value = false;
     usersChoice.value = i;
-    emit("is-button-shown", isActive.value);
+    emit("is-button-shown", !isActive.value);
   }
 };
 
@@ -108,7 +108,7 @@ onUnmounted(() => {
 onBeforeRouteUpdate((to, from) => {
   isActive.value = true;
   usersChoice.value = null;
-  emit("is-button-shown", isActive.value);
+  emit("is-button-shown", !isActive.value);
   enteringFrom();
 });
 </script>
