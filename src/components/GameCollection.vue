@@ -8,7 +8,12 @@
     >
       <h2>{{ game.title }}</h2>
       <h3>{{ game.subtitle }}</h3>
-      <p>Ваш результат: {{ results[i].filter((e) => e.isRight) }}</p>
+      <p>
+        Ваш результат:
+        <a @click.prevent.stop="goToConclusion(i)" class="result-of-test">{{
+          finalPerson.title
+        }}</a>
+      </p>
       <img :src="game.img" alt />
     </div>
   </div>
@@ -16,7 +21,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import Loading from "../components/Loading.vue";
@@ -25,11 +30,18 @@ const router = useRouter();
 const store = useStore();
 
 const games = computed(() => store.state.global.games);
-const results = computed(() => store.state.global.gamesResults);
+const finalPerson = computed((e) => {
+  return store.state.sjw.person ? store.state.sjw.person : "Не пройдено";
+});
 const goToTest = (i) => {
   router.push({
     name: games.value[i].route,
     params: { step: games.value[i].firstStep },
+  });
+};
+const goToConclusion = (i) => {
+  router.push({
+    name: "Conclusion",
   });
 };
 </script>
@@ -50,6 +62,13 @@ const goToTest = (i) => {
     h3,
     p {
       color: $grey-color;
+      .result-of-test {
+        font-size: 1.6rem;
+        color: $prim-color;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
     &:hover {
       transform: scale(102%);

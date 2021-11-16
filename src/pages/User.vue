@@ -50,6 +50,7 @@ watch(activeTabIndex, () => {
 });
 onMounted(() => {
   store.dispatch("getGames");
+  store.dispatch("getFinalPerson");
 });
 </script>
 

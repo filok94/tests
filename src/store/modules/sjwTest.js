@@ -4,7 +4,8 @@ const state = {
     questions: [
     ],
     userAnswers: [],
-    person: null
+    person: null,
+    allPersons: null,
 }
 
 const mutations = {
@@ -14,10 +15,12 @@ const mutations = {
     },
     GET_QUESTIONS(state, payload) {
         state.questions = payload
-        state.isLoaded = true
     },
     GET_PERSON(state, payload) {
         state.person = payload
+    },
+    GET_ALL_PERSONS(state, payload) {
+        state.allPersons = payload
     },
     GET_RESULTS(state, payload) {
         state.userAnswers = payload
@@ -28,7 +31,7 @@ const mutations = {
 }
 
 const actions = {
-    async getInfoFromServer({ commit }, context) {
+    async getQusetions({ commit }) {
         let db = getDatabase()
         const question = fireRef(db, `global/sjw-test`);
         onValue(question, async (snapshot) => {
@@ -36,31 +39,56 @@ const actions = {
                 const data = await snapshot.val();
                 await commit('GET_QUESTIONS', data)
             } catch (err) {
-                console.log("Error is " + err);
+                console.error(err);
             }
         });
     },
-    async getFinalPerson({ commit, getters, state }) {
+    async getAllPersons({ commit }) {
+        let db = getDatabase()
+        const persons = fireRef(db, `global/sjw-results`);
+        try {
+            onValue(persons, async (snapshot) => {
+                const personsData = await snapshot.val()
+                await commit('GET_ALL_PERSONS', personsData)
+            })
+        } catch (err) {
+            console.error(err)
+        }
+    },
+    async getFinalPerson({ commit }) {
         const db = getDatabase()
         const userId = window.localStorage.getItem('isAuthedById')
-        const results = fireRef(db, `users/${userId}/SJW_result`);
+        const person = fireRef(db, `users/${userId}/SJW_result/person`)
+        try {
+            onValue(person, async (snapshot) => {
+                let personData = await snapshot.val()
+                await commit('GET_PERSON', personData)
+            })
+        } catch (err) {
+            console.error(err);
+        }
+    },
+    async getUserResults({ commit }) {
+        const db = getDatabase()
+        const userId = window.localStorage.getItem('isAuthedById')
+        const results = fireRef(db, `users/${userId}/SJW_result/answers/`)
         try {
             onValue(results, async (snapshot) => {
                 let resultData = await snapshot.val()
-                await commit('GET_RESULTS', resultData)
-                let person = fireRef(db, `global/sjw-results/${getters.computedFinalPerson}`);
-                onValue(person, async (snapshot) => {
-                    let personData = await snapshot.val()
-                    await commit('GET_PERSON', personData)
-                })
+                await commit("GET_RESULTS", resultData)
             })
         } catch (err) {
-            console.log(err);
+            console.error(err)
         }
     }
 }
+
 const getters = {
-    computedFinalPerson: (state) => state.userAnswers.filter((e) => e.isRight).length
+    computedFinalPerson: (state) => {
+        let rightCount = state.userAnswers.filter((e) => e.isRight).length
+        let computedFinalPerson = state.allPersons[rightCount]
+        return computedFinalPerson
+    }
 }
 
 

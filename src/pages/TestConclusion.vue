@@ -8,7 +8,11 @@
         </h2>
         <p>{{ renderData.person.description }}</p>
         <p>
-          Результат: <span>{{ storeVuex.getters.computedFinalPerson }}</span> из
+          Результат:
+          <span>{{
+            renderData.userAnswers.filter((e) => e.isRight).length
+          }}</span>
+          из
           {{ renderData.questions.length }}
         </p>
       </div>
@@ -145,7 +149,10 @@ let xPathArray = [];
 onMounted(() => {
   storeVuex.dispatch("getFinalPerson");
   if (!store.questions.length) {
-    storeVuex.dispatch("getInfoFromServer");
+    storeVuex.dispatch("getQusetions");
+  }
+  if (!store.userAnswers.length) {
+    storeVuex.dispatch("getUserResults");
   }
   emit("is-button-shown", true);
 });

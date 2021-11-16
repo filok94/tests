@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
@@ -31,6 +31,7 @@ const postUserFinalResult = async (data) => {
 const isButtonShown = ref(false);
 let button = ref(null);
 const buttonName = ref("Next");
+
 const nextQuestion = (i) => {
   if (route.params.step < store.state.sjw.questions.length) {
     router.push({ name: "sjw-question", params: { step: Number(i) + 1 } });
@@ -41,7 +42,10 @@ const nextQuestion = (i) => {
       params: { userName: window.localStorage.getItem("isAuthedBy") },
     });
   } else {
-    postUserFinalResult(store.state.sjw.userAnswers);
+    postUserFinalResult({
+      answers: store.state.sjw.userAnswers,
+      person: store.getters.computedFinalPerson,
+    });
     router.push({ name: "Conclusion" });
   }
 };

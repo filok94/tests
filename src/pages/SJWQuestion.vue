@@ -94,8 +94,9 @@ let enteringFrom = () => {
     ease: "ease",
   });
 };
-onMounted(() => {
-  store.dispatch("getInfoFromServer");
+onMounted(async () => {
+  await store.dispatch("getQusetions");
+  await store.dispatch("getAllPersons");
   isLoading.value = false;
 });
 onMounted(() => {

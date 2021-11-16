@@ -64,7 +64,6 @@ const actions = {
                     onValue(results, async (snapshot) => {
                         const resultsData = await snapshot.val();
                         arrayWithGamesResults.push(resultsData)
-                        console.log(resultsData);
                     })
                 })
                 await commit('GET_USER_RESULTS', arrayWithGamesResults)
