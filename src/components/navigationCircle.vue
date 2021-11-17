@@ -15,7 +15,7 @@
         src="https://avatars.dicebear.com/api/open-peeps/filya.svg"
         alt="navigation_circle"
       />
-      <p>Click to navigate</p>
+      <p>Navigate</p>
       <div
         v-show="isCirclesActive"
         :ref="

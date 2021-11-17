@@ -1,26 +1,27 @@
 <template>
   <transition mode="out-in" @enter="enteringFrom">
-    <div class="is-conclusion-loaded" v-if="renderData.person">
+    <div
+      class="is-conclusion-loaded"
+      v-if="userAnswers.length > 0 && person && questions.length > 0"
+    >
       <div class="person-card" ref="card">
-        <img :src="renderData.person.img" alt width="150" />
+        <img :src="person.img" alt width="150" />
         <h2>
-          <a :href="renderData.person.src">Вы {{ renderData.person.title }}</a>
+          <a :href="{ 'person.src': person.title }">Вы {{ person.title }}</a>
         </h2>
-        <p>{{ renderData.person.description }}</p>
+        <p>{{ person.description }}</p>
         <p>
           Результат:
-          <span>{{
-            renderData.userAnswers.filter((e) => e.isRight).length
-          }}</span>
+          <span>{{ userAnswers.filter((e) => e.isRight).length }}</span>
           из
-          {{ renderData.questions.length }}
+          {{ questions.length }}
         </p>
       </div>
       <div class="result-qusetions-block">
         <div class="dots-list-constainer">
           <div
             class="dot"
-            v-for="(q, i) of renderData.questions"
+            v-for="(q, i) of questions"
             :key="i"
             @click="activateDot(i)"
             :ref="
@@ -29,7 +30,7 @@
               }
             "
             :class="{
-              'is-right': renderData.userAnswers[i].isRight,
+              'is-right': userAnswers[i].isRight,
               'is-active': i == activatedDotIs,
             }"
           ></div>
@@ -37,26 +38,25 @@
         <div class="question-card" ref="questionCard">
           <h2
             :class="{
-              'is-header-right': renderData.userAnswers[activatedDotIs].isRight,
-              'is-header-wrong':
-                !renderData.userAnswers[activatedDotIs].isRight,
+              'is-header-right': userAnswers[activatedDotIs].isRight,
+              'is-header-wrong': !userAnswers[activatedDotIs].isRight,
             }"
           >
-            {{ renderData.questions[activatedDotIs].question }}
+            {{ questions[activatedDotIs].question }}
           </h2>
           <p class="right-answer">
             <span>Правильный ответ:</span>
             {{
-              renderData.questions[activatedDotIs].answers[
-                renderData.questions[activatedDotIs].rightAnswer
+              questions[activatedDotIs].answers[
+                questions[activatedDotIs].rightAnswer
               ]
             }}
           </p>
           <p class="user-answer">
             <span>Ваш ответ:</span>
             {{
-              renderData.questions[activatedDotIs].answers[
-                renderData.userAnswers[activatedDotIs].answerIs
+              questions[activatedDotIs].answers[
+                userAnswers[activatedDotIs].answerIs
               ]
             }}
           </p>
@@ -106,12 +106,12 @@ const { distanceX, isSwiping } = usePointerSwipe(questionCard, {
     gsap.to(questionCard.value, { x: 0, opacity: 1 });
     if (direction == "RIGHT") {
       if (activatedDotIs.value == 0) {
-        activatedDotIs.value = renderData.value.questions.length - 1;
+        activatedDotIs.value = value.questions.length - 1;
       } else {
         activatedDotIs.value = activatedDotIs.value - 1;
       }
     } else if (direction == "LEFT") {
-      if (activatedDotIs.value == renderData.value.questions.length - 1) {
+      if (activatedDotIs.value == value.questions.length - 1) {
         activatedDotIs.value = 0;
       } else {
         activatedDotIs.value = activatedDotIs.value + 1;
@@ -121,13 +121,9 @@ const { distanceX, isSwiping } = usePointerSwipe(questionCard, {
 });
 
 //rendered helper computed
-let renderData = computed(() => {
-  return {
-    person: store.person,
-    questions: store.questions,
-    userAnswers: store.userAnswers,
-  };
-});
+const questions = computed(() => store.questions);
+const userAnswers = computed(() => store.userAnswers);
+const person = computed(() => store.person);
 let activateDot = (i) => {
   activatedDotIs.value = i;
   let tl = gsap.timeline({ defaults: { duration: 0.2, ease: "circle" } });
@@ -145,15 +141,12 @@ let enteringFrom = () => {
   gsap.set(questionCard.value, { y: 0, opacity: 1 });
   gsap.from(questionCard.value, { y: 400, opacity: 0 });
 };
-let xPathArray = [];
 onMounted(() => {
+  storeVuex.dispatch("getQusetions");
+
+  storeVuex.dispatch("getUserResults", "sjw");
+
   storeVuex.dispatch("getFinalPerson");
-  if (!store.questions.length) {
-    storeVuex.dispatch("getQusetions");
-  }
-  if (!store.userAnswers.length) {
-    storeVuex.dispatch("getUserResults");
-  }
   emit("is-button-shown", true);
 });
 </script>

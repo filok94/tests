@@ -11,7 +11,7 @@
       <p>
         Ваш результат:
         <a @click.prevent.stop="goToConclusion(i)" class="result-of-test">{{
-          finalPerson.title
+          finalPerson
         }}</a>
       </p>
       <img :src="game.img" alt />
@@ -31,7 +31,9 @@ const store = useStore();
 
 const games = computed(() => store.state.global.games);
 const finalPerson = computed((e) => {
-  return store.state.sjw.person ? store.state.sjw.person : "Не пройдено";
+  return store.state.sjw.person
+    ? store.state.sjw.person.title
+    : "Еще не пройдено";
 });
 const goToTest = (i) => {
   router.push({
