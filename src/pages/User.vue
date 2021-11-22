@@ -1,3 +1,4 @@
+/* eslint-disable vue/no-multiple-template-root */
 <template >
   <div class="activated-window">
     <h1 ref="header">{{ tabs[activeTabIndex].name }}</h1>
