@@ -72,6 +72,10 @@ import { useStore } from "vuex";
 import { computed, onMounted, ref } from "vue";
 import Loading from "../components/Loading.vue";
 import gsap from "gsap";
+import {
+  useAppearenceFromTop,
+  useAppearenceFromBottom,
+} from "../components/Animations";
 import { usePointerSwipe } from "@vueuse/core";
 
 //store vars
@@ -132,14 +136,8 @@ let activateDot = (i) => {
   tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
 };
 let enteringFrom = () => {
-  gsap.set(card.value, { opacity: 1, y: 0 });
-  gsap.from(card.value, {
-    opacity: 0,
-    y: -150,
-    ease: "ease",
-  });
-  gsap.set(questionCard.value, { y: 0, opacity: 1 });
-  gsap.from(questionCard.value, { y: 400, opacity: 0 });
+  useAppearenceFromTop(card.value, 150);
+  useAppearenceFromBottom(questionCard.value, 400);
 };
 onMounted(() => {
   storeVuex.dispatch("getQusetions");

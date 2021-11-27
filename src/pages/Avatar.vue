@@ -1,39 +1,41 @@
 <template>
-  <div class="avatar-window" v-if="styledAvatar">
-    <div class="avatar-choosing-container">
-      <img
-        src="../assets/back.svg"
-        width="50"
-        alt="back_button"
-        class="option-change-avatar"
-        @click="changeAvatar(false)"
-      />
-      <!-- <img :src="currentImage" alt="avatar" width="250" /> -->
-      <div v-html="svgAvatar"></div>
-      <img
-        src="../assets/back.svg"
-        width="50"
-        alt="forward-button"
-        class="option-forward-button option-change-avatar"
-        @click="changeAvatar(true)"
-      />
+  <transition @enter="appearance">
+    <div class="avatar-window" v-if="styledAvatar">
+      <div class="avatar-choosing-container">
+        <img
+          src="../assets/back.svg"
+          width="50"
+          alt="back_button"
+          class="option-change-avatar"
+          @click="changeAvatar(false)"
+        />
+        <!-- <img :src="currentImage" alt="avatar" width="250" /> -->
+        <div v-html="svgAvatar" ref="avatarImageRef"></div>
+        <img
+          src="../assets/back.svg"
+          width="50"
+          alt="forward-button"
+          class="option-forward-button option-change-avatar"
+          @click="changeAvatar(true)"
+        />
+      </div>
+      <ul>
+        <Option
+          v-for="(option, i) in arrayOfOptions"
+          :key="i"
+          :me="i"
+          :title="option[0]"
+          :variants="option[1]"
+          @option-changed="optionChanged"
+        />
+      </ul>
     </div>
-    <ul>
-      <Option
-        v-for="(avatar, i) in styledAvatar.optionCollection"
-        :key="i"
-        :thisNumber="i"
-        :uri="avatar.uri"
-        :collection="avatar.collection"
-        :alias="avatar.alias"
-      />
-    </ul>
-  </div>
-  <Loading v-else />
+    <Loading v-else />
+  </transition>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, reactive, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { createAvatar } from "@dicebear/avatars";
 import * as male from "@dicebear/avatars-male-sprites";
@@ -45,15 +47,56 @@ import * as croodles from "@dicebear/croodles";
 import * as miniavs from "@dicebear/miniavs";
 import Option from "../components/Option.vue";
 import Loading from "../components/Loading.vue";
+import { useAppearenceFromTop } from "../components/Animations";
 const store = useStore();
+let appearance = () => useAppearenceFromTop(avatarImageRef.value, 100);
 
-let svgAvatar = createAvatar(bots, {
-  seed: "boots",
-  size: 300,
-  colors: "amber",
-  colorful: true,
-  primaryColorLevel: 500,
+let avatarImageRef = ref(null);
+onMounted(() => {
+  store.dispatch("getAvatars");
 });
+
+let avatarHelper = (designStyle) => {
+  let obj = {};
+  Object.entries(designStyle.schema.properties).forEach(([key, value]) => {
+    let firstValue = null;
+    switch (value.type) {
+      case "array":
+        firstValue = value.items.enum
+          ? value.items.enum
+          : value.items.anyOf[0].enum;
+        break;
+      case "integer":
+        firstValue = value.enum ? value.enum : [value.minimum, value.maximum];
+        break;
+      case "boolean":
+        firstValue = [true, false];
+    }
+    obj[key] = firstValue;
+  });
+  obj.seed = [`myAvatar`];
+  obj.size = [300];
+  return obj;
+};
+let arrayOfOptions = reactive(Object.entries(avatarHelper(bots)));
+let avatarObject = reactive({});
+let optionChanged = (event) => {
+  console.log(event);
+  avatarObject[event[0]] = event[1];
+  console.log(avatarObject);
+};
+let svgAvatar = createAvatar(bots, {
+  seed: "123",
+  size: 300,
+  colors: "blue",
+});
+
+watch(avatarObject, (oldValue, newValue) => {
+  svgAvatar = createAvatar(bots, newValue);
+});
+
+//////////////////////////
+
 const currentAvatar = ref(0); //какой по счету аватар выбран
 //стрелочка влево-вправо принимает в себя параметр, означающий пролистывание влево или вправо
 let changeAvatar = (mathSymbol) => {
@@ -73,33 +116,11 @@ const styledAvatar = computed(() =>
     ? store.state.global.avatars[currentAvatar.value]
     : false
 );
-// отрисовка аватара на основании данных из опций
+//отрисовка аватара на основании данных из опций
 const currentImage = computed(
   () =>
     `https://avatars.dicebear.com/api/${styledAvatar.value.name}/:seed.svg?${store.state.global.choosenOptions[0].uri}=${store.state.global.choosenOptions[0].value}&${store.state.global.choosenOptions[1].uri}=${store.state.global.choosenOptions[1].value}&${store.state.global.choosenOptions[2].uri}=${store.state.global.choosenOptions[2].value}&${store.state.global.choosenOptions[3].uri}=${store.state.global.choosenOptions[3].value}&${store.state.global.choosenOptions[4].uri}=${store.state.global.choosenOptions[4].value}&${store.state.global.choosenOptions[5].uri}=${store.state.global.choosenOptions[5].value}&${store.state.global.choosenOptions[6].uri}=${store.state.global.choosenOptions[6].value}`
 );
-onMounted(() => {
-  store.dispatch("getAvatars");
-  let obj = {};
-  Object.entries(bots.schema.properties).forEach(([key, value]) => {
-    let firstValue = null;
-    switch (value.type) {
-      case "array":
-        firstValue = value.items.enum[0];
-        break;
-      case "integer":
-        firstValue = value;
-    }
-    obj[key] = firstValue;
-  });
-  console.log(obj);
-  console.log(Object.values(bots.schema.properties));
-});
-
-let avatarHelper = (designStyle) => {
-  let types = ["string", "array", "boolean", "integer"];
-  Object.entries(designStyle.schema.properties);
-};
 </script>
 
 

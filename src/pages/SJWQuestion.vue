@@ -42,7 +42,10 @@
 import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useStore } from "vuex";
-import gsap from "gsap/all";
+import {
+  useAppearenceFromTop,
+  useAppearenceFromLeft,
+} from "../components/Animations";
 import Loading from "../components/Loading.vue";
 
 const route = useRoute();
@@ -81,18 +84,8 @@ const isLoading = ref(true);
 const questionElement = ref(null);
 const answerElement = ref(null);
 let enteringFrom = () => {
-  gsap.set(answerElement.value, { opacity: 1, x: 0 });
-  gsap.set(questionElement.value, { opacity: 1, y: 0 });
-  gsap.from(answerElement.value, {
-    opacity: 0,
-    x: -100,
-    ease: "ease",
-  });
-  gsap.from(questionElement.value, {
-    opacity: 0,
-    y: -150,
-    ease: "ease",
-  });
+  useAppearenceFromLeft(answerElement.value, 100);
+  useAppearenceFromTop(questionElement.value, 150);
 };
 onMounted(async () => {
   await store.dispatch("getQusetions");
