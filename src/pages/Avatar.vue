@@ -7,16 +7,15 @@
           width="50"
           alt="back_button"
           class="option-change-avatar"
-          @click="changeAvatar(false)"
+          @click="chooseAvatar(false)"
         />
-        <!-- <img :src="currentImage" alt="avatar" width="250" /> -->
-        <div v-html="svgAvatar" ref="avatarImageRef"></div>
+        <div ref="avatarImageRef" v-html="svgAvatar"></div>
         <img
           src="../assets/back.svg"
           width="50"
           alt="forward-button"
           class="option-forward-button option-change-avatar"
-          @click="changeAvatar(true)"
+          @click="chooseAvatar(true)"
         />
       </div>
       <ul>
@@ -38,9 +37,6 @@
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { createAvatar } from "@dicebear/avatars";
-import * as male from "@dicebear/avatars-male-sprites";
-import * as avatars from "@dicebear/avatars-avataaars-sprites";
-import Options from "@dicebear/avatars-avataaars-sprites";
 import * as bots from "@dicebear/avatars-bottts-sprites";
 import * as smiles from "@dicebear/big-smile";
 import * as croodles from "@dicebear/croodles";
@@ -48,6 +44,7 @@ import * as miniavs from "@dicebear/miniavs";
 import Option from "../components/Option.vue";
 import Loading from "../components/Loading.vue";
 import { useAppearenceFromTop } from "../components/Animations";
+import all from "gsap/all";
 const store = useStore();
 let appearance = () => useAppearenceFromTop(avatarImageRef.value, 100);
 
@@ -59,42 +56,55 @@ onMounted(() => {
 let avatarHelper = (designStyle) => {
   let obj = {};
   Object.entries(designStyle.schema.properties).forEach(([key, value]) => {
-    let firstValue = null;
+    let arrayOfValues = null;
     switch (value.type) {
       case "array":
-        firstValue = value.items.enum
+        arrayOfValues = value.items.enum
           ? value.items.enum
           : value.items.anyOf[0].enum;
         break;
       case "integer":
-        firstValue = value.enum ? value.enum : [value.minimum, value.maximum];
+        arrayOfValues = value.enum
+          ? value.enum
+          : [value.minimum, value.maximum];
         break;
       case "boolean":
-        firstValue = [true, false];
+        arrayOfValues = [true, false];
     }
-    obj[key] = firstValue;
+    obj[key] = arrayOfValues;
   });
-  obj.seed = [`myAvatar`];
+  obj.seed = [`myAvatar`, "bu", "ba", "buba"];
   obj.size = [300];
   return obj;
 };
-let arrayOfOptions = reactive(Object.entries(avatarHelper(bots)));
+let allAvatars = [bots, smiles, croodles, miniavs];
 let avatarObject = reactive({});
-let optionChanged = (event) => {
-  console.log(event);
-  avatarObject[event[0]] = event[1];
-  console.log(avatarObject);
+let avatarPicker = ref(0);
+let arrayOfOptions = computed(() =>
+  Object.entries(avatarHelper(allAvatars[avatarPicker.value]))
+);
+
+let chooseAvatar = (e) => {
+  for (let i of Object.keys(avatarObject)) {
+    delete avatarObject[i];
+  }
+  e
+    ? avatarPicker.value + 1 != allAvatars.length
+      ? avatarPicker.value++
+      : (avatarPicker.value = 0)
+    : avatarPicker.value == 0
+    ? (avatarPicker.value = allAvatars.length - 1)
+    : avatarPicker.value--;
 };
-let svgAvatar = createAvatar(bots, {
-  seed: "123",
-  size: 300,
-  colors: "blue",
-});
+let optionChanged = (event) => {
+  avatarObject[event[0]] = event[1];
+};
+let svgAvatar = ref(createAvatar(allAvatars[avatarPicker.value], {}));
 
-watch(avatarObject, (oldValue, newValue) => {
-  svgAvatar = createAvatar(bots, newValue);
+watch(avatarObject, (newValue, oldValue) => {
+  console.log(newValue, allAvatars[avatarPicker.value]);
+  svgAvatar.value = createAvatar(allAvatars[avatarPicker.value], newValue);
 });
-
 //////////////////////////
 
 const currentAvatar = ref(0); //какой по счету аватар выбран

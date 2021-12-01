@@ -1,30 +1,14 @@
 <template>
   <li>
-    <!-- <img
-      src="../assets/back.svg"
-      width="30"
-      alt="back_button"
-      @click="changeCurrentNumberofOption((mathSymbol = false))"
-    />
-    {{ alias }}
-    <img
-      src="../assets/back.svg"
-      width="30"
-      alt="forward-button"
-      class="option-forward-button"
-      @click="changeCurrentNumberofOption((mathSymbol = true))"
-    />
-    <p>{{ currentNumberOfOption }}/{{ props.collection.length - 1 }}</p> -->
     <button @click="chooseVariant(false)">Minus</button>
-    <h3>{{ props.title }}</h3>
+    <h3>{{ title }}</h3>
     <p>{{ selectedVariant + 1 }}/{{ variants.length }}</p>
     <button @click="chooseVariant(true)">Plus</button>
   </li>
 </template>
 
 <script setup>
-import { computed, ref, onBeforeUpdate, watch, reactive, onMounted } from "vue";
-import { useStore } from "vuex";
+import { onMounted, ref, computed, watch } from "vue";
 const props = defineProps({
   me: Number,
   title: String,
@@ -32,32 +16,25 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["option-changed"]);
-let variants = reactive(props.variants);
+let variants = computed(() => props.variants);
 let selectedVariant = ref(0);
 let chooseVariant = (e) => {
   e
-    ? selectedVariant.value + 1 != variants.length
+    ? selectedVariant.value + 1 != variants.value.length
       ? selectedVariant.value++
       : (selectedVariant.value = 0)
     : selectedVariant.value == 0
-    ? (selectedVariant.value = variants.length - 1)
+    ? (selectedVariant.value = variants.value.length - 1)
     : selectedVariant.value--;
-  emit("option-changed", [props.title, variants[selectedVariant.value]]);
+  emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
 };
-onMounted(() => {
-  emit("option-changed", [props.title, variants[selectedVariant.value]]);
+watch(props, () => {
+  selectedVariant.value = 0;
+  emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
 });
-
-// const currentOption = computed(() => [
-//   props.uri,
-//   props.collection[currentNumberOfOption.value],
-//   props.thisNumber,
-// ]);
-// onBeforeUpdate(() => store.commit("changeChoosenOptions", currentOption.value));
-// watch(props, () => {
-//   currentNumberOfOption.value = 0;
-// });
-// let a = 1123;
+onMounted(() => {
+  emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
+});
 </script>
 
 <style lang="scss" scoped>

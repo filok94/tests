@@ -86,7 +86,7 @@ const actions = {
 const getters = {
     computedFinalPerson: (state) => {
         let rightCount = state.userAnswers.filter((e) => e.isRight).length
-        let computedFinalPerson = state.allPersons[rightCount]
+        let computedFinalPerson = state.allPersons ? state.allPersons[rightCount] : undefined
         return computedFinalPerson
     }
 }
