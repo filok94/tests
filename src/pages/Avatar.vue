@@ -1,30 +1,16 @@
 <template>
   <transition @enter="appearance">
-    <div class="avatar-window" v-if="styledAvatar">
-      <div class="avatar-choosing-container">
-        <img
-          src="../assets/back.svg"
-          width="50"
-          alt="back_button"
-          class="option-change-avatar"
-          @click="chooseAvatar(false)"
-        />
-        <div ref="avatarImageRef" v-html="svgAvatar"></div>
-        <img
-          src="../assets/back.svg"
-          width="50"
-          alt="forward-button"
-          class="option-forward-button option-change-avatar"
-          @click="chooseAvatar(true)"
-        />
+    <div class="avatar-window" v-if="avatar">
+      <div class="avatar-choosing-container" ref="avatarImageRef">
+        <img :src="image" alt="avatar_picker" />
+        <p>{{ avatar.options.length }}</p>
       </div>
       <ul>
         <Option
-          v-for="(option, i) in arrayOfOptions"
+          v-for="(option, i) in avatar.options"
           :key="i"
-          :me="i"
-          :title="option[0]"
-          :variants="option[1]"
+          :title="i"
+          :variants="option"
           @option-changed="optionChanged"
         />
       </ul>
@@ -34,76 +20,39 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
-import { createAvatar } from "@dicebear/avatars";
-import * as bots from "@dicebear/avatars-bottts-sprites";
-import * as smiles from "@dicebear/big-smile";
-import * as croodles from "@dicebear/croodles";
-import * as miniavs from "@dicebear/miniavs";
 import Option from "../components/Option.vue";
 import Loading from "../components/Loading.vue";
 import { useAppearenceFromTop } from "../components/Animations";
-import all from "gsap/all";
 const store = useStore();
 let appearance = () => useAppearenceFromTop(avatarImageRef.value, 100);
 
+let avatar = computed(() =>
+  store.state.global.avatar ? store.state.global.avatar : null
+);
 let avatarImageRef = ref(null);
 onMounted(() => {
   store.dispatch("getAvatars");
 });
+let rendered = reactive([]);
 
-let avatarHelper = (designStyle) => {
-  let obj = {};
-  Object.entries(designStyle.schema.properties).forEach(([key, value]) => {
-    let arrayOfValues = null;
-    switch (value.type) {
-      case "array":
-        arrayOfValues = value.items.enum
-          ? value.items.enum
-          : value.items.anyOf[0].enum;
-        break;
-      case "integer":
-        arrayOfValues = value.enum
-          ? value.enum
-          : [value.minimum, value.maximum];
-        break;
-      case "boolean":
-        arrayOfValues = [true, false];
-    }
-    obj[key] = arrayOfValues;
-  });
-  obj.seed = [`myAvatar`, "bu", "ba", "buba"];
-  obj.size = [300];
-  return obj;
-};
-let allAvatars = [bots, smiles, croodles, miniavs];
-let avatarObject = reactive({});
-let avatarPicker = ref(0);
-let arrayOfOptions = computed(() =>
-  Object.entries(avatarHelper(allAvatars[avatarPicker.value]))
-);
-
-let chooseAvatar = (e) => {
-  for (let i of Object.keys(avatarObject)) {
-    delete avatarObject[i];
-  }
-  e
-    ? avatarPicker.value + 1 != allAvatars.length
-      ? avatarPicker.value++
-      : (avatarPicker.value = 0)
-    : avatarPicker.value == 0
-    ? (avatarPicker.value = allAvatars.length - 1)
-    : avatarPicker.value--;
-};
 let optionChanged = (event) => {
-  avatarObject[event[0]] = event[1];
+  rendered.forEach((e, index) => {
+    if (event[0] == e[0]) {
+      rendered.splice(index, 1);
+    }
+  });
+  rendered.push(event);
 };
-let svgAvatar = ref(createAvatar(allAvatars[avatarPicker.value], {}));
-
-watch(avatarObject, (newValue, oldValue) => {
-  console.log(newValue, allAvatars[avatarPicker.value]);
-  svgAvatar.value = createAvatar(allAvatars[avatarPicker.value], newValue);
+let image = computed(() => {
+  let arrayOfQueries = [];
+  rendered.forEach((e, index) => {
+    let stringOfQuery = `${e[0]}=${e[1]}&`;
+    arrayOfQueries.push(stringOfQuery);
+  });
+  let stringifiedArrayOfQueries = arrayOfQueries.join("");
+  return `https://avatars.dicebear.com/api/${avatar.value.name}/:avatarOfMine.svg?${stringifiedArrayOfQueries}`;
 });
 //////////////////////////
 
@@ -142,6 +91,10 @@ const currentImage = computed(
     display: flex;
     justify-content: space-between;
     border-bottom: solid 1px;
+
+    img {
+      width: 300px;
+    }
   }
   ul {
     display: grid;

@@ -7,13 +7,6 @@
         "serve": "vite preview"
     },
     "dependencies": {
-        "@dicebear/avatars": "^4.10.1",
-        "@dicebear/avatars-avataaars-sprites": "^4.10.1",
-        "@dicebear/avatars-bottts-sprites": "^4.10.1",
-        "@dicebear/avatars-male-sprites": "^4.10.1",
-        "@dicebear/big-smile": "^4.10.1",
-        "@dicebear/croodles": "^4.10.1",
-        "@dicebear/miniavs": "^4.10.1",
         "@vueuse/core": "^6.7.4",
         "dicebear": "^4.10.1",
         "firebase": "^9.2.0",

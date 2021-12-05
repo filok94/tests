@@ -10,7 +10,6 @@
 <script setup>
 import { onMounted, ref, computed, watch } from "vue";
 const props = defineProps({
-  me: Number,
   title: String,
   variants: Array,
 });
@@ -28,13 +27,6 @@ let chooseVariant = (e) => {
     : selectedVariant.value--;
   emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
 };
-watch(props, () => {
-  selectedVariant.value = 0;
-  emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
-});
-onMounted(() => {
-  emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
-});
 </script>
 
 <style lang="scss" scoped>

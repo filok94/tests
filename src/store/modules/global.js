@@ -3,37 +3,7 @@ import { getDatabase, onValue, ref as fireRef } from "firebase/database";
 const state = {
   games: null,
   gamesResults: null,
-  avatars: null,
-
-  choosenOptions: [{
-    uri: '',
-    value: ''
-  },
-  {
-    uri: '',
-    value: ''
-  },
-  {
-    uri: '',
-    value: ''
-  },
-  {
-    uri: '',
-    value: ''
-  },
-  {
-    uri: '',
-    value: ''
-  },
-  {
-    uri: '',
-    value: ''
-  },
-  {
-    uri: '',
-    value: ''
-  }
-  ]
+  avatar: null,
 }
 
 const mutations = {
@@ -45,7 +15,7 @@ const mutations = {
     state.games = payload
   },
   GET_AVATARS(state, payload) {
-    state.avatars = payload
+    state.avatar = payload
   }
 }
 const actions = {
@@ -63,11 +33,11 @@ const actions = {
   },
   async getAvatars({ commit }) {
     const db = getDatabase()
-    const avatars = fireRef(db, "global/avatars")
+    const avatar = fireRef(db, "global/avatar")
     try {
-      onValue(avatars, async (snapshot) => {
-        const avatarsData = await snapshot.val()
-        await commit("GET_AVATARS", avatarsData)
+      onValue(avatar, async (snapshot) => {
+        const avatarData = await snapshot.val()
+        await commit("GET_AVATARS", avatarData)
       })
     } catch (err) {
       console.error(err);
