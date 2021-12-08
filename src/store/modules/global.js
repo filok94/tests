@@ -4,6 +4,8 @@ const state = {
   games: null,
   gamesResults: null,
   avatar: null,
+  avatarImage: null,
+  avatarImageDefault: "https://avatars.dicebear.com/api/pixel-art/:seed.svg"
 }
 
 const mutations = {
@@ -16,6 +18,9 @@ const mutations = {
   },
   GET_AVATARS(state, payload) {
     state.avatar = payload
+  },
+  GET_AVATAR_IMAGE(state, payload) {
+    state.avatarImage = payload
   }
 }
 const actions = {
@@ -38,6 +43,19 @@ const actions = {
       onValue(avatar, async (snapshot) => {
         const avatarData = await snapshot.val()
         await commit("GET_AVATARS", avatarData)
+      })
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  async getAvatarImageForCircle({ commit }) {
+    const db = getDatabase()
+    let userId = window.localStorage.getItem("isAuthedById");
+    const avatar = fireRef(db, `users/${userId}/avatar`)
+    try {
+      onValue(avatar, async (snapshot) => {
+        const avatarData = await snapshot.val()
+        await commit("GET_AVATAR_IMAGE", avatarData)
       })
     } catch (err) {
       console.error(err);

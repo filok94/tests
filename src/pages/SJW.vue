@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
 import { getDatabase, set, ref as fireRef } from "firebase/database";

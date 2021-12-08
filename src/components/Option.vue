@@ -1,21 +1,49 @@
 <template>
   <li>
-    <button @click="chooseVariant(false)">Minus</button>
-    <h3>{{ title }}</h3>
-    <p>{{ selectedVariant + 1 }}/{{ variants.length }}</p>
-    <button @click="chooseVariant(true)">Plus</button>
+    <button
+      @click="chooseVariant(false)"
+      class="option-button option-button_minus"
+    >
+      -
+    </button>
+    <div class="option-text-container">
+      <h3 class="option-title" :class="{ warning: warning }">
+        {{ optionTitle }}
+      </h3>
+      <p class="option-numbers">
+        {{ displayedSelectedVariant }}/{{ variantsLength }}
+      </p>
+    </div>
+    <button
+      @click="chooseVariant(true)"
+      class="option-button option-button_plus"
+    >
+      +
+    </button>
   </li>
 </template>
 
 <script setup>
-import { onMounted, ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 const props = defineProps({
   title: String,
   variants: Array,
+  probabiltyWarning: [String, Boolean],
+});
+const emit = defineEmits(["option-changed"]);
+
+//compute warning class for the probabilities API issue
+let warning = computed(() => {
+  if (
+    props.title != props.probabiltyWarning &&
+    selectedVariant.value != 1 &&
+    !String(props.title).includes("Color")
+  ) {
+    return String(props.title).includes(props.probabiltyWarning);
+  }
 });
 
-const emit = defineEmits(["option-changed"]);
-let variants = computed(() => props.variants);
+//chooser of option
 let selectedVariant = ref(0);
 let chooseVariant = (e) => {
   e
@@ -27,18 +55,69 @@ let chooseVariant = (e) => {
     : selectedVariant.value--;
   emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
 };
+
+//computed properties for rendering
+let optionTitle = computed(() => props.title.replace(/([A-Z])/g, " $1"));
+let displayedSelectedVariant = computed(() => selectedVariant.value + 1);
+let variants = computed(() => props.variants);
+let variantsLength = computed(() => props.variants.length);
 </script>
 
 <style lang="scss" scoped>
+//dynamic classes
+.warning {
+  background: $bad-gradient;
+  @include bcg-for-text();
+}
 li {
+  max-width: 45%;
+  width: 10rem;
+  height: 4rem;
   margin: 0.5rem 0;
+
+  @include card-bcg();
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  border: 1px solid black;
   color: white;
-  button {
-    font-size: 1rem;
+  font-size: 0.7rem;
+  .option-text-container {
+    .option-title {
+      margin: 0.2rem 0.1rem;
+    }
+    .option-numbers {
+      margin: 0;
+      background: $prim-color;
+      @include bcg-for-text();
+    }
+  }
+  .option-button {
+    border: none;
+    outline: none;
+    height: 100%;
+    width: 20%;
+    cursor: pointer;
+    font: $font;
+
+    &_minus {
+      background: $prim-color;
+      border-radius: 25px 0px 0px 25px;
+    }
+    &_plus {
+      background: $second-color;
+      border-radius: 0px 25px 25px 0px;
+    }
+    &:active {
+      opacity: 0.7;
+    }
+  }
+}
+@media (min-width: $medium-screen) {
+  li {
+    height: 6rem;
+    max-width: 100%;
+    width: 13rem;
+    font-size: 1.3rem;
   }
 }
 </style>

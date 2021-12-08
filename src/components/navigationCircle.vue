@@ -11,10 +11,7 @@
       :class="{ 'nav-circle-is-active': isCirclesActive }"
       ref="navCircle"
     >
-      <img
-        src="https://avatars.dicebear.com/api/open-peeps/filya.svg"
-        alt="navigation_circle"
-      />
+      <img :src="avatarImage" alt="navigation_circle" />
       <p>Navigate</p>
       <div
         v-show="isCirclesActive"
@@ -37,14 +34,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, reactive } from "vue";
+import { ref, onMounted, watch, reactive, computed } from "vue";
+import { useStore } from "vuex";
 import gsap from "gsap";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
 
+let store = useStore();
 let props = defineProps({
   tabs: Array,
 });
+//avatar in the circle
+let avatarImage = computed(() => {
+  return store.state.global.avatarImage
+    ? store.state.global.avatarImage
+    : store.state.global.avatarImageDefault;
+});
+
 //default borders
 let stringifiedBordersOfMainCircle = ref("76px 53px 45px 92px");
 let stringifiedBordersOfActiveTarget = ref("63px 78% 92% 45%");
@@ -136,6 +142,7 @@ watch(
   }
 );
 onMounted(() => {
+  store.dispatch("getAvatarImageForCircle");
   setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
 });
 </script>
