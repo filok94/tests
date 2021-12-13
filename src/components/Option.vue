@@ -79,7 +79,7 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
+  color: $grey-color;
   font-size: 0.7rem;
   .option-text-container {
     .option-title {

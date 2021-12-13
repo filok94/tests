@@ -58,7 +58,7 @@ let stringifiedBordersOfActiveTarget = ref("63px 78% 92% 45%");
 let changingBorders = (stringToChange) => {
   let arrayHelper = [];
   for (let i = 0; i < 4; i++) {
-    arrayHelper.push((Math.random() * (99 - 45) + 45).toFixed());
+    arrayHelper.push((Math.random() * (199 - 145) + 145).toFixed());
   }
   stringToChange.value = arrayHelper.join("% ") + "%";
 };

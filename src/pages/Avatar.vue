@@ -49,17 +49,12 @@
     </div>
     <Loading v-else />
   </transition>
-  <!-- <confirmation
-    v-if="confirmationWindowShown"
-    @confirms="saveTheRenderedAvatarAndGoBack"
-    >Вы точно хотите перезаписать аватар?</confirmation
-  > -->
 </template>
 
 <script setup>
 import { computed, onMounted, reactive, ref } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { onBeforeRouteUpdate, useRouter } from "vue-router";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
 
 import Option from "../components/Option.vue";
@@ -97,7 +92,6 @@ let confirmationAnimationLeave = (i) => {
 let confirmationAnimationAfterLeave = (i) => {
   useSetPosition(i, 300);
 };
-
 //every change from children call this function and rerender the avatar
 let optionChanged = (event) => {
   renderedString.forEach((e, index) => {
@@ -215,7 +209,7 @@ let saveTheRenderedAvatarAndGoBack = async () => {
         }
         &-yes {
           grid-area: yes;
-          background: $prim-color;
+          background: $gradient;
           color: $prim-text;
           &:hover {
             transform: scale(102%);
