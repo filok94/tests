@@ -13,7 +13,10 @@
           :class="{ 'is-dark': darkMode }"
           class="setting-icon"
         />
-        <p class="setting-text">Переключить на {{ mode }}</p>
+        <p class="setting-text">
+          Переключить на {{ mode }}
+          <span>(В разработке)</span>
+        </p>
       </div>
     </div>
     <img
@@ -114,6 +117,9 @@ onUnmounted(() => {
       .setting-text {
         text-align: left;
         margin: 0;
+        span {
+          font-size: 0.8rem;
+        }
       }
     }
   }

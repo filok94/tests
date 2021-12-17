@@ -1,13 +1,13 @@
 import { createStore } from 'vuex'
 import sjw from './modules/sjwTest'
-import politic from './modules/politic'
+import trigger from './modules/trigger'
 import global from './modules/global'
 
 
 export default createStore({
     modules: {
         sjw,
-        politic,
+        trigger,
         global
     },
 })

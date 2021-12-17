@@ -6,6 +6,8 @@ import SJWQuestion from "../pages/SJWQuestion.vue"
 import Conclusion from '../pages/TestConclusion.vue'
 import Avatar from "../pages/Avatar.vue"
 import CLientError from "../pages/CLientError.vue"
+import Trigger from '../pages/Trigger.vue'
+import TriggerGame from '../pages/TriggerGame.vue'
 const routes = [{
     path: "/",
     name: "redirect",
@@ -49,6 +51,20 @@ const routes = [{
         component: Conclusion,
         meta: { requireAuth: true }
     }]
+},
+{
+    path: '/:userName/trigger',
+    name: 'trigger',
+    component: Trigger,
+    meta: { requireAuth: true },
+    children: [
+        {
+            path: 'game',
+            name: 'triggerGame',
+            component: TriggerGame,
+        }
+    ]
+
 },
 {
     path: '/:userName/avatar',
