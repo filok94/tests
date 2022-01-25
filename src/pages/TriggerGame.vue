@@ -1,5 +1,318 @@
 <template>
-<div>123asdasd</div>
+    <div
+        class="trigger-modal"
+        @wheel.prevent
+        @touchmove.prevent
+        @scroll.prevent
+        ref="triggerModal"
+        :class="{ 'trigger-modal-opacity': sureToLeaveIsShown }"
+    >
+        <div id="trigger-modal-swiper"></div>
+        <button class="closing-modal-button" @click.prevent="closingModal(true, false)">X</button>
+        <div class="warrior-card">
+            <div>
+                <p class="trigger-label">Текущий триггер</p>
+                <p
+                    class="trigger-count"
+                >{{ currentQuestion + 1 > triggerQusetionsLength ? triggerQusetionsLength : currentQuestion + 1 }}</p>
+            </div>
+
+            <img :src="warrior.imageUrl" alt />
+            <div>
+                <p class="trigger-label">Из</p>
+                <p class="trigger-count">{{ triggerQusetionsLength }}</p>
+            </div>
+        </div>
+        <transition mode="out-in" @enter="buttonEntering">
+            <div
+                class="trigger-game-block"
+                ref="card"
+                v-if="currentQuestion < triggerQusetionsLength"
+            >
+                <div class="trigger-question">
+                    <h3>{{ triggerQusetions[currentQuestion].question }}</h3>
+                </div>
+                <div class="trigger-reacts-container">
+                    <div
+                        class="react react-left"
+                        @click.prevent="chooseEmoji(0)"
+                        ref="leftEmoji"
+                    >&#128525;</div>
+
+                    <div
+                        class="react react-right"
+                        @click.prevent="chooseEmoji(1)"
+                        ref="rightEmoji"
+                    >&#128548;</div>
+                </div>
+            </div>
+            <button
+                v-else
+                class="trigger-end-button"
+                ref="endingButton"
+                @click.prevent="closingModal(false, true)"
+            >Завершить</button>
+        </transition>
+    </div>
+    <div class="sure-to-leave-background">
+        <div class="sure-to-leave" v-if="sureToLeaveIsShown" ref="sureToLeave">
+            <h4>Вы уверены, что хотите выйти?</h4>
+            <p>Результат не сохранится</p>
+            <div id="stl-buttons">
+                <button id="stl-buttons-yes" @click.prevent="closingModal(false, false)">Да</button>
+                <button id="stl-buttons-no" @click.prevent="destroySureToLeave">Нет</button>
+            </div>
+        </div>
+    </div>
 </template>
-<script setup></script>
-<style lang="scss" scoped></style>
+
+
+<script setup>
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useStore } from 'vuex';
+import { onClickOutside } from '@vueuse/core'
+import { useCardGoingAside } from "../components/Animations";
+import gsap from "gsap";
+
+let emit = defineEmits(['closeTriggerModal'])
+let store = useStore()
+
+onMounted(() => {
+    gsap.from(triggerModal.value, { bottom: '-100vh' })
+})
+
+let warrior = computed(() => store.state.trigger.activeTriggerCardIs)
+
+let currentQuestion = ref(0)
+let triggerQusetions = computed(() => store.state.trigger.triggerQuestions)
+let triggerQusetionsLength = computed(() => triggerQusetions.value.length ? triggerQusetions.value.length : 0)
+
+//выбор emoji
+let card = ref(null)
+let chooseEmoji = (emojiAnswer) => {
+    if (!sureToLeaveIsShown.value) {
+        store.commit("PUSH_PERMANENT_ANSWER", triggerQusetions.value[currentQuestion.value].answer == emojiAnswer)
+        let duration = 300
+        emojiAnswer ? useCardGoingAside("right", duration, card.value) : useCardGoingAside("left", duration, card.value)
+        setTimeout(() => { currentQuestion.value++ }, duration)
+    }
+}
+let arrowEvent = (e) => {
+    if (e.code == "ArrowLeft") {
+        chooseEmoji(0)
+    } else if (e.code == "ArrowRight") {
+        chooseEmoji(1)
+    }
+}
+let enterEvent = (e) => {
+    if (e.code == "Enter") {
+        closingModal(false, true)
+    }
+}
+onMounted(() => {
+    document.addEventListener('keydown', arrowEvent)
+})
+
+//управление кнопками и дестрой ивентлиснеров
+watch(
+    currentQuestion, () => {
+        if (currentQuestion.value == triggerQusetionsLength.value) {
+            document.removeEventListener('keydown', arrowEvent)
+            document.addEventListener('keydown', enterEvent)
+        }
+    }
+)
+onUnmounted(() => {
+    document.removeEventListener('keydown', arrowEvent)
+    document.removeEventListener('keydown', enterEvent)
+})
+
+//анимация завершения
+let endingButton = ref(null)
+let buttonEntering = () => {
+    let shakingTimeLine = gsap.timeline({ defaults: { duration: 0.1 } })
+    shakingTimeLine
+        .to(endingButton.value, { x: 5 })
+        .to(endingButton.value, { x: -5 })
+        .to(endingButton.value, { x: 5 })
+        .to(endingButton.value, { x: -5 })
+        .to(endingButton.value, { x: 5 })
+        .to(endingButton.value, { x: -5 })
+        .set(endingButton.value, { x: 0 })
+}
+
+//управление показом модального окна
+let triggerModal = ref(null)
+onClickOutside(triggerModal, (event) => {
+    setTimeout(() => { closingModal(true, false) }, 100)
+})
+
+//управление модалкой "уверены, что хотите выйти"
+let sureToLeaveIsShown = ref(false)
+let sureToLeave = ref(null)
+
+let destroySureToLeave = () => {
+    setTimeout(() => { sureToLeaveIsShown.value = false }, 100)
+}
+onClickOutside(sureToLeave, destroySureToLeave())
+
+//закрытие модалки
+let closingModal = (withPopup, isTestEnded) => {
+    if (withPopup) {
+        sureToLeaveIsShown.value = true
+    } else {
+        store.commit('COMPUTE_ANSWERS', isTestEnded ? warrior.value.id : null)
+        emit('closeTriggerModal')
+    }
+}
+
+</script>
+<style lang="scss" scoped>
+//dynamic-classes
+//static-classes
+.trigger-modal {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: -0.5rem;
+
+    height: 70vh;
+    width: 100%;
+    padding: 0.5rem 0.5rem 3rem 0.5rem;
+    border-radius: 25px 25px 0px 0px;
+
+    background: hsl(240, 7%, 18%);
+    z-index: 3;
+
+    #trigger-modal-swiper {
+        height: 0.3rem;
+        width: 1rem;
+        background: $grey-color;
+        border-radius: 25px;
+        margin: 0 auto;
+    }
+    .closing-modal-button {
+        background: transparent;
+        border: none;
+
+        width: 3rem;
+
+        font-size: 2rem;
+        font-family: $font;
+        color: $grey-color;
+
+        position: relative;
+        right: -40%;
+        &:active {
+            opacity: 0.8;
+        }
+    }
+    &-opacity {
+        filter: blur(3px);
+    }
+}
+.sure-to-leave {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+    max-width: 70%;
+    margin: 0 auto;
+    z-index: 4;
+
+    background: rgb(77, 77, 82);
+    box-shadow: $card-shadow;
+    border-radius: 25px;
+    padding: 1rem;
+
+    h4 {
+        margin: 0.8rem 0;
+    }
+    p {
+        color: $grey-color;
+        font-size: 0.8rem;
+        margin: 0.8rem;
+    }
+    #stl-buttons {
+        display: flex;
+        justify-content: space-evenly;
+        button {
+            border: none;
+            box-shadow: $card-shadow;
+            border-radius: 25px;
+            color: $grey-color;
+            font-family: $font;
+            padding: 0.3rem;
+            width: 3rem;
+        }
+        &-no {
+            background: $gradient;
+        }
+        &-yes {
+            background: $grey-color;
+        }
+    }
+}
+
+.warrior-card {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19) !important;
+
+    margin: 1rem 0;
+    @include card-bcg();
+    background: hsla(240, 1%, 16%, 0.521);
+
+    padding: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+
+    img {
+        width: 5rem;
+    }
+    div {
+        flex-basis: min-content;
+        .trigger-count {
+            background: $gradient;
+            @include bcg-for-text();
+            font-size: 3rem;
+            margin: 0;
+        }
+        .trigger-label {
+            color: $grey-color;
+            font-size: 1rem;
+            margin: 0;
+        }
+    }
+}
+.trigger-game-block {
+    padding: 1rem;
+
+    .trigger-reacts-container {
+        display: flex;
+        justify-content: center;
+        .react {
+            font-size: 4rem;
+            padding: 1rem;
+            background: hsla(240, 1%, 16%, 0.521);
+            width: 45%;
+            cursor: pointer;
+            &:active {
+                box-shadow: 0 0px 0px rgba(0, 0, 0, 0) !important;
+            }
+            &-left {
+                box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19);
+                border-radius: 25px 0px 0px 25px;
+                // background: $prim-color;
+            }
+            &-right {
+                box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19);
+                border-radius: 0px 25px 25px 0px;
+                // background: $second-color;
+            }
+        }
+    }
+}
+.trigger-end-button {
+    @include primary-button();
+}
+</style>

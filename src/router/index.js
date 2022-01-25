@@ -8,6 +8,7 @@ import Avatar from "../pages/Avatar.vue"
 import CLientError from "../pages/CLientError.vue"
 import Trigger from '../pages/Trigger.vue'
 import TriggerGame from '../pages/TriggerGame.vue'
+import TriggerConclusion from '../pages/TriggerConclusion.vue'
 const routes = [{
     path: "/",
     name: "redirect",
@@ -60,8 +61,17 @@ const routes = [{
     children: [
         {
             path: 'game',
-            name: 'triggerGame',
+            name: 'TriggerGame',
             component: TriggerGame,
+            meta: { requireAuth: true },
+
+        },
+        {
+            path: 'conclusion',
+            name: 'TriggerConclusion',
+            component: TriggerConclusion,
+            meta: { requireAuth: true },
+
         }
     ]
 

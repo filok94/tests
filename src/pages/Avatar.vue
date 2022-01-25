@@ -14,9 +14,7 @@
             v-if="!confirmationWindowShown"
             class="primary-button"
             @click.prevent="confirmationWindowShown = !confirmationWindowShown"
-          >
-            Сохранить аватар
-          </button>
+          >Сохранить аватар</button>
           <div class="confirmation-buttons-container" v-else>
             <h3 class="confirmation-title">Вы уверены?</h3>
             <button
@@ -24,15 +22,11 @@
               @click.prevent="
                 confirmationWindowShown = !confirmationWindowShown
               "
-            >
-              Нет
-            </button>
+            >Нет</button>
             <button
               class="confirmation-button confirmation-button-yes"
               @click.prevent="saveTheRenderedAvatarAndGoBack"
-            >
-              Да
-            </button>
+            >Да</button>
           </div>
         </transition>
       </div>
@@ -163,20 +157,10 @@ let saveTheRenderedAvatarAndGoBack = async () => {
     .primary-button {
       justify-self: center;
       width: 15rem;
-      padding: 0.8rem;
 
-      font-size: 1.5rem;
-      background: $gradient;
-      border: none;
       outline: none;
-      box-shadow: $card-shadow;
-      color: $prim-text;
-      border-radius: 25px;
-      cursor: pointer;
-      font-family: $font;
-      &:hover {
-        opacity: 0.9;
-      }
+
+      @include primary-button();
       &:active {
         transition: 0.1s;
         transform: scale(100%);
