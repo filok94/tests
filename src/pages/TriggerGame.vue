@@ -14,23 +14,23 @@
                 <p class="trigger-label">Текущий триггер</p>
                 <p
                     class="trigger-count"
-                >{{ currentQuestion + 1 > triggerQusetionsLength ? triggerQusetionsLength : currentQuestion + 1 }}</p>
+                >{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength : currentQuestion + 1 }}</p>
             </div>
 
             <img :src="warrior.imageUrl" alt />
             <div>
                 <p class="trigger-label">Из</p>
-                <p class="trigger-count">{{ triggerQusetionsLength }}</p>
+                <p class="trigger-count">{{ triggerQuestionsLength }}</p>
             </div>
         </div>
         <transition mode="out-in" @enter="buttonEntering">
             <div
                 class="trigger-game-block"
                 ref="card"
-                v-if="currentQuestion < triggerQusetionsLength"
+                v-if="currentQuestion < triggerQuestionsLength"
             >
                 <div class="trigger-question">
-                    <h3>{{ triggerQusetions[currentQuestion].question }}</h3>
+                    <h3>{{ triggerQuestions[currentQuestion] }}</h3>
                 </div>
                 <div class="trigger-reacts-container">
                     <div
@@ -71,7 +71,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { onClickOutside } from '@vueuse/core'
-import { useCardGoingAside } from "../components/Animations";
+import { useCardGoingAside, useShakingElement } from "../components/Animations";
 import gsap from "gsap";
 
 let emit = defineEmits(['closeTriggerModal'])
@@ -84,15 +84,15 @@ onMounted(() => {
 let warrior = computed(() => store.state.trigger.activeTriggerCardIs)
 
 let currentQuestion = ref(0)
-let triggerQusetions = computed(() => store.state.trigger.triggerQuestions)
-let triggerQusetionsLength = computed(() => triggerQusetions.value.length ? triggerQusetions.value.length : 0)
+let triggerQuestions = computed(() => store.state.trigger.triggerQuestions)
+let triggerQuestionsLength = computed(() => triggerQuestions.value.length ? triggerQuestions.value.length : 0)
 
 //выбор emoji
 let card = ref(null)
 let chooseEmoji = (emojiAnswer) => {
     if (!sureToLeaveIsShown.value) {
-        store.commit("PUSH_PERMANENT_ANSWER", triggerQusetions.value[currentQuestion.value].answer == emojiAnswer)
-        let duration = 300
+        store.commit("PUSH_PERMANENT_ANSWER", warrior.value.answers[currentQuestion.value] == emojiAnswer)
+        let duration = 100
         emojiAnswer ? useCardGoingAside("right", duration, card.value) : useCardGoingAside("left", duration, card.value)
         setTimeout(() => { currentQuestion.value++ }, duration)
     }
@@ -116,7 +116,7 @@ onMounted(() => {
 //управление кнопками и дестрой ивентлиснеров
 watch(
     currentQuestion, () => {
-        if (currentQuestion.value == triggerQusetionsLength.value) {
+        if (currentQuestion.value == triggerQuestionsLength.value) {
             document.removeEventListener('keydown', arrowEvent)
             document.addEventListener('keydown', enterEvent)
         }
@@ -129,17 +129,7 @@ onUnmounted(() => {
 
 //анимация завершения
 let endingButton = ref(null)
-let buttonEntering = () => {
-    let shakingTimeLine = gsap.timeline({ defaults: { duration: 0.1 } })
-    shakingTimeLine
-        .to(endingButton.value, { x: 5 })
-        .to(endingButton.value, { x: -5 })
-        .to(endingButton.value, { x: 5 })
-        .to(endingButton.value, { x: -5 })
-        .to(endingButton.value, { x: 5 })
-        .to(endingButton.value, { x: -5 })
-        .set(endingButton.value, { x: 0 })
-}
+let buttonEntering = () => useShakingElement(endingButton.value)
 
 //управление показом модального окна
 let triggerModal = ref(null)

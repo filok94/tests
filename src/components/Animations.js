@@ -53,3 +53,15 @@ export let useCardGoingAside = async (side, duration, element) => {
             break
     }
 }
+
+export let useShakingElement = (element) => {
+    let shakingTimeLine = gsap.timeline({ defaults: { duration: 0.1 } })
+    shakingTimeLine
+        .to(element, { x: 5 })
+        .to(element, { x: -5 })
+        .to(element, { x: 5 })
+        .to(element, { x: -5 })
+        .to(element, { x: 5 })
+        .to(element, { x: -5 })
+        .set(element, { x: 0 })
+}
