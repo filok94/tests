@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import {
@@ -91,6 +91,7 @@ onMounted(async () => {
   await store.dispatch("getQusetions");
   await store.dispatch("getAllPersons");
   isLoading.value = false;
+  enteringFrom()
 });
 onMounted(() => {
   document.addEventListener("keydown", keyContolls);

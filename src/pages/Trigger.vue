@@ -1,39 +1,46 @@
 <template>
-  <div
-    class="trigger-game-container"
-    :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
-  >
-    <div class="trigger-head">
-      <h1 id="trigger-name">Trigger Game</h1>
-      <div class="trigger-rules-container">
-        <div class="trigger-rules-header" @click="isRulesShown = !isRulesShown">
-          <img class="rule-header-icon" src="https://img.icons8.com/glyph-neue/64/ffffff/info.png" />
-          <h2 class="trigger-rule-name">
-            <span>П</span>равила
-          </h2>
+  <transition @enter="entering">
+    <div
+      class="trigger-game-container"
+      :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
+      v-if="femWarriors"
+    >
+      <div class="trigger-head">
+        <h1 id="trigger-name" ref="triggerTitle">Trigger Game</h1>
+        <div class="trigger-rules-container" ref="triggerRulesRef">
+          <div class="trigger-rules-header" @click="isRulesShown = !isRulesShown">
+            <img
+              class="rule-header-icon"
+              src="https://img.icons8.com/glyph-neue/64/ffffff/info.png"
+            />
+            <h2 class="trigger-rule-name">
+              <span>П</span>равила
+            </h2>
+          </div>
+          <ul class="rules-list" v-if="isRulesShown">
+            <li v-for="rule in triggerRules" class="trigger-rule">{{ rule }}</li>
+          </ul>
         </div>
-        <ul class="rules-list" v-if="isRulesShown">
-          <li v-for="rule in triggerRules" class="trigger-rule">{{ rule }}</li>
-        </ul>
+      </div>
+      <div class="warriors-container" ref="triggerCardsContainer">
+        <div
+          class="warrior-card"
+          v-for="(warrior, index) in femWarriors"
+          @click.prevent="activateCard(warrior)"
+        >
+          <img :src="warrior.imageUrl" alt />
+          <h2 class="card-name">{{ warrior.name }}</h2>
+          <!-- <p class="is-warrior-end">{{ warrior.isThisTestEnded ? 'Уже пройдено' : "Еще не пройдено" }}</p> -->
+          <button
+            class="start-card-button"
+            :disabled="isCardHaveResultAlready.includes(index)"
+            @click.prevent="startTheTestForChosenWarrior(warrior)"
+          >{{ isCardHaveResultAlready.includes(index) ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
+        </div>
       </div>
     </div>
-    <div class="warriors-container">
-      <div
-        class="warrior-card"
-        v-for="(warrior, index) in femWarriors"
-        @click.prevent="activateCard(warrior)"
-      >
-        <img :src="warrior.imageUrl" alt />
-        <h2 class="card-name">{{ warrior.name }}</h2>
-        <!-- <p class="is-warrior-end">{{ warrior.isThisTestEnded ? 'Уже пройдено' : "Еще не пройдено" }}</p> -->
-        <button
-          class="start-card-button"
-          :disabled="isCardHaveResultAlready.includes(index)"
-          @click.prevent="startTheTestForChosenWarrior(warrior)"
-        >{{ isCardHaveResultAlready.includes(index) ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
-      </div>
-    </div>
-  </div>
+    <Loading v-else />
+  </transition>
   <transition @enter="buttonEnteringFromBottom">
     <button
       class="end-test-button"
@@ -47,10 +54,11 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { useAppearenceFromBottom } from '../components/Animations.js'
+import { useAppearenceFromBottom, useAppearenceFromLeft, useAppearenceFromTop } from '../components/Animations.js'
+import Loading from '../components/Loading.vue'
 
 let router = useRouter()
 let store = useStore()
@@ -61,7 +69,7 @@ let triggerRules = ['Вам нужно выбрать бойца из предс
 
 let isRulesShown = ref(false)
 
-let femWarriors = computed(() => store.state.trigger.warriorCards)
+let femWarriors = computed(() => store.state.trigger.warriorCards.length > 0 ? store.state.trigger.warriorCards : false)
 let activeCardIs = ref(null)
 let activateCard = (el) => {
   if (!el.isThisTestEnded) {
@@ -98,6 +106,23 @@ let goToEndingSection = () => {
   conclusionIsShown.value = true
   router.push({ name: 'TriggerConclusion' })
 }
+
+//Анимация появления
+let triggerTitle = ref(null)
+let triggerRulesRef = ref(null)
+let triggerCardsContainer = ref(null)
+let entering = () => {
+  useAppearenceFromTop(triggerTitle.value, 300)
+  useAppearenceFromLeft(triggerRulesRef.value, 300)
+  useAppearenceFromLeft(triggerCardsContainer.value, 300)
+}
+//Запрос всех данных для игры
+onMounted(() => {
+  if (!femWarriors.value) {
+    store.dispatch("getTriggerGame")
+  }
+  entering()
+})
 </script>
 
 <style lang='scss' scoped>

@@ -1,19 +1,16 @@
 <template>
-  <div class="game-collection-container">
+  <div class="game-collection-container" ref="gameCollectionContainer">
     <div class="games-collection" v-if="games">
-      <div
-        v-for="(game, i) in games"
-        :key="i"
-        class="game-banner"
-        @click.stop="goToTest(i)"
-      >
+      <div v-for="(game, i) in games" :key="i" class="game-banner" @click.stop="goToTest(i)">
         <h2>{{ game.title }}</h2>
         <h3>{{ game.subtitle }}</h3>
         <p>
           Ваш результат:
-          <a @click.prevent.stop="goToConclusion(i)" class="result-of-test">{{
-            finalPerson
-          }}</a>
+          <a @click.prevent.stop="goToConclusion(i)" class="result-of-test">
+            {{
+              finalPerson
+            }}
+          </a>
         </p>
         <img :src="game.img" alt />
       </div>
@@ -28,11 +25,11 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import Loading from "../components/Loading.vue";
-import gsap from "gsap";
+import { useFlickeringOnText, useAppearenceFromRight } from "./Animations";
 
 const router = useRouter();
 const store = useStore();
@@ -55,54 +52,12 @@ const goToConclusion = (i) => {
   });
 };
 let textBcg = ref(null);
-let isRenderedForAnimation = computed(() => store.state.global.games);
 
+let gameCollectionContainer = ref(null)
 onMounted(() => {
-  let flickerTimeLime = gsap.timeline({
-    repeat: 0,
-    defaults: { duration: 3, ease: "elastic" },
-  });
-  flickerTimeLime
-    .set("#broken-letter", { color: "#005ef1" })
-    .set(textBcg.value, { textShadow: "0 0 280px #005ef1" })
-    .to(textBcg.value, { textShadow: "0 0 260px #005ef1" })
-    .to(textBcg.value, { textShadow: "0 0 300px #6025c3" })
-    .to(textBcg.value, { textShadow: "0 0 280px #6025c3" })
-    .to(textBcg.value, { textShadow: "0 0 260px #005ef1" })
-    .to("#broken-letter", {
-      textShadow: "0 0 180px #005ef1",
-      color: "#005ef1",
-      duration: 0.2,
-    })
-    .to("#broken-letter", {
-      textShadow: "0 0 0px #005ef1",
-      color: "rgba(255, 255, 255, 0.5)",
-      duration: 0.2,
-    })
-    .to("#broken-letter", {
-      textShadow: "0 0 180px #005ef1",
-      color: "#005ef1",
-      duration: 0.8,
-    })
-    .to("#broken-letter", {
-      textShadow: "0 0 180px #005ef1",
-      color: "#005ef1",
-      duration: 0.2,
-    })
-    .to("#broken-letter", {
-      textShadow: "0 0 0px #005ef1",
-      color: "rgba(255, 255, 255, 0.5)",
-      duration: 0.8,
-    });
-});
-gsap.delayedCall(5, () => {
-  gsap.to("#broken-letter", {
-    rotation: 35,
-    y: 10,
-    ease: "bounce",
-    duration: 1,
-  });
-});
+  useAppearenceFromRight(gameCollectionContainer.value, 300)
+  useFlickeringOnText('#broken-letter', textBcg.value)
+})
 </script>
 
 <style lang="scss" scoped>

@@ -4,9 +4,7 @@
     @click.prevent="nextQuestion(route.params.step)"
     v-show="isButtonShown"
     ref="button"
-  >
-    {{ buttonName }}
-  </button>
+  >{{ buttonName }}</button>
 </template>
 
 <script setup>
@@ -14,6 +12,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useStore } from "vuex";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
+import { useAppearenceFromBottom } from "../components/Animations";
 import gsap from "gsap";
 const store = useStore();
 const router = useRouter();
@@ -56,8 +55,7 @@ onBeforeRouteUpdate((to, from) => {
     : (buttonName.value = "Next");
 });
 watch(isButtonShown, () => {
-  gsap.set(button.value, { opacity: 1, y: 0 });
-  gsap.from(button.value, { y: 100, opacity: 0 });
+  useAppearenceFromBottom(button.value, 100)
 });
 //key contolls
 let keyContolls = (e) => {
