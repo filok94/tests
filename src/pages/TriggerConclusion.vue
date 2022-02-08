@@ -1,15 +1,18 @@
 <template>
-    <div class="trigger-conclusion-container" ref="conclusionCardRef">
-        <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
-        <h1 class="trigger-conclusion-title">
-            <a href="https://www.wonderzine.com">{{ finalPerson.title }}</a>
-        </h1>
-        <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
-        <button
-            @click.prevent="goBackToMainMenu"
-            class="trigger-conclusion-button"
-        >Вернуться на главную</button>
-    </div>
+    <transition>
+        <div class="trigger-conclusion-container" ref="conclusionCardRef" v-if="finalPerson">
+            <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
+            <h1 class="trigger-conclusion-title">
+                <a href="https://www.wonderzine.com">{{ finalPerson.title }}</a>
+            </h1>
+            <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
+            <button
+                @click.prevent="goBackToMainMenu"
+                class="trigger-conclusion-button"
+            >Вернуться на главную</button>
+        </div>
+        <Loading v-else />
+    </transition>
 </template>
 
 <script setup>
@@ -18,6 +21,7 @@ import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { onClickOutside } from '@vueuse/core'
 import { useAppearenceFromBottom } from '../components/Animations.js'
+import Loading from '../components/Loading.vue'
 
 let router = useRouter()
 let store = useStore()
@@ -38,16 +42,26 @@ let finalPerson = computed(() => {
     store.state.trigger.triggerConclusionPersons.forEach((e) => {
         e.level === level ? computedResult = e : null
     })
+    store.commit("SET_PERSON", computedResult)
     return computedResult
 })
 
-let goBackToMainMenu = () => router.push({ name: 'User', params: { userName: window.localStorage.getItem("isAuthedBy") } })
+let wasTestEnded = computed(() => store.state.trigger.wasTestEnded)
+let goBackToMainMenu = () => {
+    if (!wasTestEnded.value) {
+        store.dispatch("postResults")
+    }
+    router.push({ name: 'User', params: { userName: window.localStorage.getItem("isAuthedBy") } })
+}
 let enterEventListener = (e) => {
     if (e.code == "Enter") {
         goBackToMainMenu()
     }
 }
 onMounted(() => {
+    store.dispatch("getTriggerConclusion")
+
+
     document.addEventListener('keydown', enterEventListener)
     useAppearenceFromBottom(conclusionCardRef.value, 300)
 })

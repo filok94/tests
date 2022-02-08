@@ -30,12 +30,11 @@
         >
           <img :src="warrior.imageUrl" alt />
           <h2 class="card-name">{{ warrior.name }}</h2>
-          <!-- <p class="is-warrior-end">{{ warrior.isThisTestEnded ? 'Уже пройдено' : "Еще не пройдено" }}</p> -->
           <button
             class="start-card-button"
-            :disabled="isCardHaveResultAlready.includes(index)"
+            :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded"
             @click.prevent="startTheTestForChosenWarrior(warrior)"
-          >{{ isCardHaveResultAlready.includes(index) ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
+          >{{ isCardHaveResultAlready.includes(index) || wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
         </div>
       </div>
     </div>
@@ -44,7 +43,7 @@
   <transition @enter="buttonEnteringFromBottom">
     <button
       class="end-test-button"
-      v-if="computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown"
+      v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || wasTestEnded"
       ref="allGameEndedButton"
       @click.prevent="goToEndingSection"
     >Узнать, кто же я</button>
@@ -117,9 +116,14 @@ let entering = () => {
   useAppearenceFromLeft(triggerCardsContainer.value, 300)
 }
 //Запрос всех данных для игры
-onMounted(() => {
+let wasTestEnded = computed(() => store.state.trigger.wasTestEnded)
+onMounted(async () => {
   if (!femWarriors.value) {
     store.dispatch("getTriggerGame")
+  }
+  await store.dispatch("getIfTheTestWasEnded")
+  if (wasTestEnded.value) {
+    store.dispatch("getCurrentUserResults")
   }
   entering()
 })
