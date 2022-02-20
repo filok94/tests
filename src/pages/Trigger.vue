@@ -43,7 +43,7 @@
   <transition @enter="buttonEnteringFromBottom">
     <button
       class="end-test-button"
-      v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || wasTestEnded"
+      v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || (wasTestEnded && !conclusionIsShown)"
       ref="allGameEndedButton"
       @click.prevent="goToEndingSection"
     >Узнать, кто же я</button>
@@ -130,6 +130,9 @@ onMounted(async () => {
 </script>
 
 <style lang='scss' scoped>
+$cardWidth: 9rem;
+$cardHeight: calc($cardWidth * 2);
+
 //dynamic-css
 .card-boarded {
   outline: solid $prim-color 0.1rem;
@@ -139,7 +142,7 @@ onMounted(async () => {
   }
 }
 .opacity-while-modal {
-  opacity: 0.1;
+  // opacity: 0.1;
 }
 //static-css
 .trigger-game-container {
@@ -192,12 +195,15 @@ onMounted(async () => {
           }
         }
       }
+      &:hover {
+        outline: solid $prim-color 0.1rem;
+      }
     }
   }
   .warriors-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-content: flex-start;
     padding: 0;
     gap: 0.5rem;
@@ -206,8 +212,8 @@ onMounted(async () => {
       padding: 0;
       margin: 0;
       @include card-bcg();
-      width: 9rem;
-      height: calc(50%-1rem);
+      width: $cardWidth;
+      height: $cardHeight;
       img {
         width: 5rem;
         margin: 0.3rem;
@@ -258,5 +264,24 @@ onMounted(async () => {
   left: 0;
   right: 0;
   @include primary-button();
+}
+
+@media (min-width: $medium-screen) {
+  .warriors-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(3rem, 14rem));
+
+    .warrior-card {
+      width: 100% !important;
+      height: 20rem;
+      img {
+        width: 8rem !important;
+      }
+      .start-card-button {
+        // margin-top: 2rem;
+        height: 29% !important;
+      }
+    }
+  }
 }
 </style>

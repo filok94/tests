@@ -1,18 +1,20 @@
 <template>
-    <transition>
-        <div class="trigger-conclusion-container" ref="conclusionCardRef" v-if="finalPerson">
-            <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
-            <h1 class="trigger-conclusion-title">
-                <a href="https://www.wonderzine.com">{{ finalPerson.title }}</a>
-            </h1>
-            <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
-            <button
-                @click.prevent="goBackToMainMenu"
-                class="trigger-conclusion-button"
-            >Вернуться на главную</button>
-        </div>
-        <Loading v-else />
-    </transition>
+    <div class="conclusion-container-visible">
+        <transition>
+            <div class="trigger-conclusion-container" ref="conclusionCardRef" v-if="finalPerson">
+                <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
+                <h1 class="trigger-conclusion-title">
+                    <a href="https://www.wonderzine.com">{{ finalPerson.title }}</a>
+                </h1>
+                <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
+                <button
+                    @click.prevent="goBackToMainMenu"
+                    class="trigger-conclusion-button"
+                >Вернуться на главную</button>
+            </div>
+            <Loading v-else />
+        </transition>
+    </div>
 </template>
 
 <script setup>
@@ -107,6 +109,12 @@ onUnmounted(() => {
         @include primary-button();
         font-size: 1.3rem;
         margin: 1rem;
+    }
+}
+@media (min-width: $large-screen) {
+    .trigger-conclusion-container {
+        width: 60%;
+        margin: 0 auto;
     }
 }
 </style>

@@ -73,11 +73,11 @@ export let useFlickeringOnText = (brokenLetter, textBcg) => {
     });
     flickerTimeLime
         .set(brokenLetter, { color: "#005ef1" })
-        .set(textBcg, { textShadow: "0 0 280px #005ef1" })
-        .to(textBcg, { textShadow: "0 0 260px #005ef1" })
-        .to(textBcg, { textShadow: "0 0 300px #6025c3" })
-        .to(textBcg, { textShadow: "0 0 280px #6025c3" })
-        .to(textBcg, { textShadow: "0 0 260px #005ef1" })
+        // .set(textBcg, { textShadow: "0 0 280px #005ef1" })
+        // .to(textBcg, { textShadow: "0 0 260px #005ef1" })
+        // .to(textBcg, { textShadow: "0 0 300px #6025c3" })
+        // .to(textBcg, { textShadow: "0 0 280px #6025c3" })
+        // .to(textBcg, { textShadow: "0 0 260px #005ef1" })
         .to(brokenLetter, {
             textShadow: "0 0 180px #005ef1",
             color: "#005ef1",

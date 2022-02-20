@@ -55,7 +55,7 @@ let textBcg = ref(null);
 
 let gameCollectionContainer = ref(null)
 onMounted(() => {
-  useAppearenceFromRight(gameCollectionContainer.value, 300)
+  // useAppearenceFromRight(gameCollectionContainer.value, 300)
   useFlickeringOnText('#broken-letter', textBcg.value)
 })
 </script>
