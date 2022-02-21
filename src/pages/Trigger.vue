@@ -159,6 +159,8 @@ $cardHeight: calc($cardWidth * 2);
       padding: 1rem;
       @include card-bcg;
       margin-bottom: 1rem;
+      width: fit-content;
+      padding-right: 3rem;
       .trigger-rules-header {
         display: flex;
         align-items: center;
