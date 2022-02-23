@@ -25,9 +25,7 @@
         v-for="(tab, i) of props.tabs"
         :key="i"
         class="target-circle"
-      >
-        {{ tab.name }}
-      </div>
+      >{{ tab.name }}</div>
       <div class="main-user-actions"></div>
     </div>
   </div>
@@ -39,11 +37,14 @@ import { useStore } from "vuex";
 import gsap from "gsap";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
+import { getAuth, signOut } from "firebase/auth";
+import { useRouter } from "vue-router";
 
 let store = useStore();
 let props = defineProps({
   tabs: Array,
 });
+let router = useRouter()
 //avatar in the circle
 let avatarImage = computed(() => {
   return store.state.global.avatarImage
@@ -145,6 +146,16 @@ onMounted(() => {
   store.dispatch("getAvatarImageForCircle");
   setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
 });
+
+//signOut method
+const auth = getAuth();
+let signOutFromNavCircle = () => {
+  signOut(auth).then(() => {
+    router.push({ name: "Home" })
+  }).catch((error) => {
+    console.log(error);
+  });
+}
 </script>
 <style lang="scss" scoped>
 .nav-circle {

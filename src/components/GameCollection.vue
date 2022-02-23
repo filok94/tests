@@ -80,12 +80,13 @@ onMounted(() => {
       cursor: pointer;
       transition: 0.3s ease-in-out;
       text-align: start;
-      max-height: 12rem;
+      // max-height: 12rem;
+      height: fit-content;
       h3,
       p {
         color: $grey-color;
         .result-of-test {
-          font-size: 1.6rem;
+          font-size: 1.3rem;
           color: $prim-color;
           &:hover {
             text-decoration: underline;

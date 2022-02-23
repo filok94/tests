@@ -32,7 +32,7 @@
           <h2 class="card-name">{{ warrior.name }}</h2>
           <button
             class="start-card-button"
-            :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded"
+            :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded || isWarriorTestStarted"
             @click.prevent="startTheTestForChosenWarrior(warrior)"
           >{{ isCardHaveResultAlready.includes(index) || wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
         </div>
@@ -48,6 +48,7 @@
       @click.prevent="goToEndingSection"
     >Узнать, кто же я</button>
   </transition>
+  <div class="dark-bcg" v-if="conclusionIsShown || isWarriorTestStarted"></div>
   <router-view v-if="isWarriorTestStarted" @close-trigger-modal="endTheTestAndCloseModal"></router-view>
   <router-view v-if="conclusionIsShown"></router-view>
 </template>
@@ -127,13 +128,13 @@ onMounted(async () => {
   }
   entering()
 })
+
 </script>
 
 <style lang='scss' scoped>
+//dynamic-css
 $cardWidth: 9rem;
 $cardHeight: calc($cardWidth * 2);
-
-//dynamic-css
 .card-boarded {
   outline: solid $prim-color 0.1rem;
   h2 {
@@ -141,8 +142,16 @@ $cardHeight: calc($cardWidth * 2);
     @include bcg-for-text;
   }
 }
-.opacity-while-modal {
-  // opacity: 0.1;
+
+.dark-bcg {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: rgba($color: #00000049, $alpha: 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 2;
 }
 //static-css
 .trigger-game-container {

@@ -4,7 +4,7 @@
             <div class="trigger-conclusion-container" ref="conclusionCardRef" v-if="finalPerson">
                 <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
                 <h1 class="trigger-conclusion-title">
-                    <a href="https://www.wonderzine.com">{{ finalPerson.title }}</a>
+                    <a :href="finalPerson.link">{{ finalPerson.title }}</a>
                 </h1>
                 <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
                 <button
@@ -82,6 +82,7 @@ onUnmounted(() => {
 
     @include card-bcg;
     padding: 2rem;
+    z-index: 3;
     img {
         width: 15rem;
         border-radius: 15px;

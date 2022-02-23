@@ -11,7 +11,10 @@
         <button class="closing-modal-button" @click.prevent="closingModal(true, false)">X</button>
         <div class="warrior-card">
             <div>
-                <p class="trigger-label">Текущий триггер</p>
+                <p class="trigger-label">
+                    Текущий
+                    <br />триггер
+                </p>
                 <p
                     class="trigger-count"
                 >{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength : currentQuestion + 1 }}</p>
@@ -71,7 +74,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { onClickOutside } from '@vueuse/core'
-import { useCardGoingAside, useShakingElement } from "../components/Animations";
+import { useAppearenceFromBottom, useCardGoingAside, useShakingElement } from "../components/Animations";
 import gsap from "gsap";
 
 let emit = defineEmits(['closeTriggerModal'])
@@ -111,6 +114,7 @@ let enterEvent = (e) => {
 }
 onMounted(() => {
     document.addEventListener('keydown', arrowEvent)
+    useAppearenceFromBottom(triggerModal.value, 300)
 })
 
 //управление кнопками и дестрой ивентлиснеров
@@ -162,7 +166,7 @@ let closingModal = (withPopup, isTestEnded) => {
 //static-classes
 .trigger-modal {
     position: fixed;
-    bottom: 0;
+    bottom: 0 !important;
     right: 0;
     left: -0.5rem;
 
@@ -196,6 +200,7 @@ let closingModal = (withPopup, isTestEnded) => {
         &:active {
             opacity: 0.8;
         }
+        cursor: pointer;
     }
     &-opacity {
         filter: blur(3px);
@@ -232,8 +237,13 @@ let closingModal = (withPopup, isTestEnded) => {
             border-radius: 25px;
             color: $grey-color;
             font-family: $font;
-            padding: 0.3rem;
+            padding: 0.6rem;
             width: 3rem;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            &:hover {
+                transform: scale(104%);
+            }
         }
         &-no {
             background: $gradient;
@@ -304,5 +314,44 @@ let closingModal = (withPopup, isTestEnded) => {
 }
 .trigger-end-button {
     @include primary-button();
+}
+@media (min-width: $medium-screen) {
+    .trigger-modal {
+        width: 80%;
+        bottom: 4rem !important;
+        border-radius: 25px;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    .warrior-card {
+        width: 60%;
+        margin: 1rem auto;
+    }
+    .sure-to-leave {
+        width: fit-content;
+        padding: 1.5rem;
+        h4 {
+            font-size: 1.6rem !important;
+        }
+        p {
+            font-size: 1.3rem;
+        }
+        #stl-buttons-yes,
+        #stl-buttons-no {
+            font-size: 1.8rem;
+            padding: 1rem;
+            width: 6rem !important;
+        }
+    }
+}
+@media (min-width: $large-screen) {
+    .trigger-modal {
+        width: 50%;
+    }
+    h3 {
+        font-size: 1.7rem;
+    }
 }
 </style>
