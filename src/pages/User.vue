@@ -46,9 +46,8 @@ const header = ref(null);
 watch(activeTabIndex, () => {
   gsap.from(header.value, { x: -50, opacity: 0, duration: 0.3 });
 });
-onMounted(() => {
-  store.dispatch("getGames");
-  store.dispatch("getFinalPerson");
+onMounted(async () => {
+  await store.dispatch("getGames")
 });
 </script>
 

@@ -26,7 +26,12 @@
         :key="i"
         class="target-circle"
       >{{ tab.name }}</div>
-      <div class="main-user-actions"></div>
+      <div
+        class="main-target-circle"
+        @click.self.stop.prevent="logoutTab.action"
+        v-show="isCirclesActive"
+        ref="logoutTabRef"
+      >{{ logoutTab.name }}</div>
     </div>
   </div>
 </template>
@@ -68,6 +73,7 @@ let changingBorders = (stringToChange) => {
 const isCirclesActive = ref(false);
 const circles = ref([]);
 let navCircle = ref(null);
+let logoutTabRef = ref(null)
 let wrapperForCircle = ref(null);
 const { x, y, style } = useDraggable(wrapperForCircle, {
   initialValue: { x: window.innerWidth / 1.5, y: window.innerHeight / 1.5 },
@@ -80,7 +86,8 @@ let activateNavCircle = () => {
     let tl = gsap
       .timeline({ defaults: { duration: 0.1, ease: "ease" } })
       .from(circles.value[0], { x: "5rem", opacity: 0 })
-      .from(circles.value[1], { y: "10rem", opacity: 0 });
+      .from(circles.value[1], { y: "10rem", opacity: 0 })
+      .from(logoutTabRef.value, { y: '-5rem', opacity: 0 })
     if (circles.value.length > 2) {
       tl.fromTo(
         circles.value[2],
@@ -123,11 +130,18 @@ let keyControls = (e) => {
   emit("activation", activeTabIs.value);
 };
 
+//signOut method
+const auth = getAuth();
+let signOutFromNavCircle = () => {
+  signOut(auth).then(() => {
+    router.push({ name: "Home" })
+  }).catch((error) => {
+    console.log(error);
+  });
+}
+
 //main-user-actions tabs
-const mainActionsTabs = reactive([
-  { name: "Logout", action: null },
-  { name: "Back", action: null },
-]);
+const logoutTab = { name: "Logout", action: () => signOutFromNavCircle() }
 
 //deactivate circle navigation and watch the status
 onClickOutside(navCircle, () => (isCirclesActive.value = false));
@@ -146,18 +160,19 @@ onMounted(() => {
   store.dispatch("getAvatarImageForCircle");
   setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
 });
-
-//signOut method
-const auth = getAuth();
-let signOutFromNavCircle = () => {
-  signOut(auth).then(() => {
-    router.push({ name: "Home" })
-  }).catch((error) => {
-    console.log(error);
-  });
-}
 </script>
 <style lang="scss" scoped>
+@mixin targetCircle($background) {
+  font-size: 0.8rem;
+  line-height: 4rem;
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 100%;
+  background: $background;
+  color: $grey-color;
+  cursor: pointer;
+}
 .nav-circle {
   position: relative;
 
@@ -185,15 +200,7 @@ let signOutFromNavCircle = () => {
   }
 
   .target-circle {
-    font-size: 0.8rem;
-    line-height: 4rem;
-    position: relative;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 100%;
-    background: $second-color;
-    color: $grey-color;
-    cursor: pointer;
+    @include targetCircle($second-color);
   }
   div:nth-of-type(1) {
     right: 6rem;
@@ -205,11 +212,12 @@ let signOutFromNavCircle = () => {
     top: -12rem;
     z-index: -2;
   }
-  div:nth-of-type(3) {
-    right: -1rem;
-    top: -9rem;
-    z-index: -3;
-  }
+}
+.main-target-circle {
+  @include targetCircle($bad-gradient);
+  right: 0;
+  top: -6rem;
+  z-index: -1;
 }
 .active-target {
   background: $prim-color !important;

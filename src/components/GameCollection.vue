@@ -4,13 +4,12 @@
       <div v-for="(game, i) in games" :key="i" class="game-banner" @click.stop="goToTest(i)">
         <h2>{{ game.title }}</h2>
         <h3>{{ game.subtitle }}</h3>
-        <p>
+        <p v-if="finalPersonsList[i] != undefined">
           Ваш результат:
-          <a @click.prevent.stop="goToConclusion(i)" class="result-of-test">
-            {{
-              finalPerson
-            }}
-          </a>
+          <button
+            @click.prevent.stop="goToConclusion(i)"
+            class="result-of-test"
+          >{{ finalPersonsList[i].title }}</button>
         </p>
         <img :src="game.img" alt />
       </div>
@@ -28,18 +27,17 @@
 import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import Loading from "../components/Loading.vue";
-import { useFlickeringOnText, useAppearenceFromRight } from "./Animations";
+import Loading from "./Loading.vue";
+import { useFlickeringOnText } from "./Animations";
 
 const router = useRouter();
 const store = useStore();
 
+let finalPersonsList = computed(() => store.state.global.finalPersonsList ? store.state.global.finalPersonsList : null)
 const games = computed(() => store.state.global.games);
-const finalPerson = computed((e) => {
-  return store.state.sjw.person
-    ? store.state.sjw.person.title
-    : "Еще не пройдено";
-});
+
+
+
 const goToTest = (i) => {
   router.push({
     name: games.value[i].route,
@@ -55,9 +53,14 @@ let textBcg = ref(null);
 
 let gameCollectionContainer = ref(null)
 onMounted(() => {
-  // useAppearenceFromRight(gameCollectionContainer.value, 300)
   useFlickeringOnText('#broken-letter', textBcg.value)
 })
+
+// watch(
+//   finalPersonsList, () => {
+//     finalPersonsList.value
+//   }
+// )
 </script>
 
 <style lang="scss" scoped>
@@ -87,7 +90,9 @@ onMounted(() => {
         color: $grey-color;
         .result-of-test {
           font-size: 1.3rem;
-          color: $prim-color;
+          background: transparent;
+          border: none;
+          color: $bcg-light;
           &:hover {
             text-decoration: underline;
           }

@@ -1,11 +1,12 @@
 import { getDatabase, onValue, ref as fireRef } from "firebase/database";
 
 const state = {
+  finalPersonsList: null,
   games: null,
   gamesResults: null,
   avatar: null,
   avatarImage: null,
-  avatarImageDefault: "https://avatars.dicebear.com/api/pixel-art/:seed.svg"
+  avatarImageDefault: "https://avatars.dicebear.com/api/pixel-art/:seed.svg",
 }
 
 const mutations = {
@@ -21,16 +22,20 @@ const mutations = {
   },
   GET_AVATAR_IMAGE(state, payload) {
     state.avatarImage = payload
+  },
+  GET_PERSONS_LIST(state, payload) {
+    state.finalPersonsList = payload
   }
 }
 const actions = {
-  async getGames({ commit, state }) {
+  async getGames({ commit, dispatch }) {
     const db = getDatabase();
     const games = fireRef(db, "global/test-list");
     onValue(games, async (snapshot) => {
       try {
         const gamesData = await snapshot.val();
         await commit('GET_GAMES', gamesData)
+        await dispatch("getPersonNamesToTestDescription", gamesData)
       } catch (error) {
         console.error(error.message)
       }
@@ -60,6 +65,27 @@ const actions = {
     } catch (err) {
       console.error(err);
     }
+  },
+  async getPersonNamesToTestDescription({ commit, state }, games) {
+    let arrayOfLinks = []
+    for (let i of state.games) {
+      arrayOfLinks.push(i.linkToPerson)
+    }
+    let arrayOfPersons = []
+    const db = getDatabase()
+    let userId = window.localStorage.getItem("isAuthedById")
+    for (let link of arrayOfLinks) {
+      let person = fireRef(db, `users/${userId}/${link}`)
+      try {
+        onValue(person, async (snapshot) => {
+          const personData = await snapshot.val()
+          arrayOfPersons.push(personData)
+        })
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    commit("GET_PERSONS_LIST", arrayOfPersons)
   }
 }
 
