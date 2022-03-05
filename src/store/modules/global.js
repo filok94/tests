@@ -24,18 +24,38 @@ const mutations = {
     state.avatarImage = payload
   },
   GET_PERSONS_LIST(state, payload) {
-    state.finalPersonsList = payload
+    if (state.finalPersonsList == null) {
+      state.finalPersonsList = [payload]
+    } else {
+      state.finalPersonsList.push(payload)
+    }
   }
 }
 const actions = {
+  async getPersonNamesToTestDescription({ commit }, link) {
+    const db = getDatabase()
+    let userId = window.localStorage.getItem("isAuthedById")
+    let person = fireRef(db, `users/${userId}/${link}`)
+    try {
+      onValue(person, async (snapshot) => {
+        const personData = await snapshot.val()
+        await commit("GET_PERSONS_LIST", personData)
+      })
+    } catch (err) {
+      console.error(err);
+    }
+
+  },
   async getGames({ commit, dispatch }) {
     const db = getDatabase();
     const games = fireRef(db, "global/test-list");
     onValue(games, async (snapshot) => {
       try {
         const gamesData = await snapshot.val();
+        for (let game of gamesData) {
+          await dispatch("getPersonNamesToTestDescription", game.linkToPerson)
+        }
         await commit('GET_GAMES', gamesData)
-        await dispatch("getPersonNamesToTestDescription", gamesData)
       } catch (error) {
         console.error(error.message)
       }
@@ -65,27 +85,6 @@ const actions = {
     } catch (err) {
       console.error(err);
     }
-  },
-  async getPersonNamesToTestDescription({ commit, state }, games) {
-    let arrayOfLinks = []
-    for (let i of state.games) {
-      arrayOfLinks.push(i.linkToPerson)
-    }
-    let arrayOfPersons = []
-    const db = getDatabase()
-    let userId = window.localStorage.getItem("isAuthedById")
-    for (let link of arrayOfLinks) {
-      let person = fireRef(db, `users/${userId}/${link}`)
-      try {
-        onValue(person, async (snapshot) => {
-          const personData = await snapshot.val()
-          arrayOfPersons.push(personData)
-        })
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    commit("GET_PERSONS_LIST", arrayOfPersons)
   }
 }
 

@@ -62,8 +62,6 @@ let enterEventListener = (e) => {
 }
 onMounted(() => {
     store.dispatch("getTriggerConclusion")
-
-
     document.addEventListener('keydown', enterEventListener)
     useAppearenceFromBottom(conclusionCardRef.value, 300)
 })

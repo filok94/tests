@@ -47,7 +47,9 @@ watch(activeTabIndex, () => {
   gsap.from(header.value, { x: -50, opacity: 0, duration: 0.3 });
 });
 onMounted(async () => {
-  await store.dispatch("getGames")
+  if (!store.state.global.games) {
+    await store.dispatch("getGames")
+  }
 });
 </script>
 

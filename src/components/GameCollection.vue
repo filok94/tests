@@ -1,15 +1,15 @@
 <template>
   <div class="game-collection-container" ref="gameCollectionContainer">
-    <div class="games-collection" v-if="games">
+    <div class="games-collection" v-if="finalPersonsList">
       <div v-for="(game, i) in games" :key="i" class="game-banner" @click.stop="goToTest(i)">
         <h2>{{ game.title }}</h2>
         <h3>{{ game.subtitle }}</h3>
-        <p v-if="finalPersonsList[i] != undefined">
+        <p v-if="finalPersonsList">
           Ваш результат:
           <button
-            @click.prevent.stop="goToConclusion(i)"
+            @click.prevent.stop="goToConclusion(game)"
             class="result-of-test"
-          >{{ finalPersonsList[i].title }}</button>
+          >{{ finalPersonsList[i]?.title ? finalPersonsList[i].title : "Еще не пройдено" }}</button>
         </p>
         <img :src="game.img" alt />
       </div>
@@ -36,18 +36,14 @@ const store = useStore();
 let finalPersonsList = computed(() => store.state.global.finalPersonsList ? store.state.global.finalPersonsList : null)
 const games = computed(() => store.state.global.games);
 
-
-
 const goToTest = (i) => {
   router.push({
     name: games.value[i].route,
     params: { step: games.value[i].firstStep },
   });
 };
-const goToConclusion = (i) => {
-  router.push({
-    name: "Conclusion",
-  });
+const goToConclusion = (game) => {
+  router.push({ name: game.routeToConclusion });
 };
 let textBcg = ref(null);
 
@@ -55,12 +51,6 @@ let gameCollectionContainer = ref(null)
 onMounted(() => {
   useFlickeringOnText('#broken-letter', textBcg.value)
 })
-
-// watch(
-//   finalPersonsList, () => {
-//     finalPersonsList.value
-//   }
-// )
 </script>
 
 <style lang="scss" scoped>
@@ -104,6 +94,20 @@ onMounted(() => {
           background: $gradient;
           @include bcg-for-text();
         }
+      }
+      .is-test-ended-container {
+        position: relative;
+        width: 0;
+        height: 0;
+        left: 90%;
+        top: 1rem;
+      }
+      .is-test-ended {
+        position: absolute;
+        color: $prim-color;
+        background: $right-gradient;
+        padding: 0.6rem;
+        border-radius: 100%;
       }
     }
   }

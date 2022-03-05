@@ -123,8 +123,9 @@ onMounted(async () => {
     store.dispatch("getTriggerGame")
   }
   await store.dispatch("getIfTheTestWasEnded")
+  store.dispatch("getCurrentUserResults")
   if (wasTestEnded.value) {
-    store.dispatch("getCurrentUserResults")
+    goToEndingSection()
   }
   entering()
 })

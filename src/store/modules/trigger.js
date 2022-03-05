@@ -1,4 +1,3 @@
-import { async } from '@firebase/util';
 import { getDatabase, onValue, set, ref as fireRef } from 'firebase/database'
 let userId = window.localStorage.getItem("isAuthedById");
 let pathes = {
