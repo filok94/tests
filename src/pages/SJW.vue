@@ -71,14 +71,7 @@ onUnmounted(() => document.removeEventListener("keydown", keyContolls));
 </script>
 <style lang="scss" scoped>
 button {
-  cursor: pointer;
-  background: $prim-color;
-  border: none;
-  border-radius: 15px;
-  padding: 1rem;
-  font-size: 1rem;
-  font-family: $font;
-  transition: 0.3s ease-out;
+  @include primary-button();
   color: $grey-color;
   max-width: 25rem;
   width: 50%;
@@ -89,9 +82,6 @@ button {
   right: 0;
   left: 0;
   z-index: 2;
-  &:hover {
-    transform: scale(130%);
-  }
 }
 @media (min-width: $medium-screen) {
   button {

@@ -6,12 +6,12 @@
         <h3>{{ game.subtitle }}</h3>
         <p v-if="finalPersonsList">
           Ваш результат:
+          <br />
           <button
             @click.prevent.stop="goToConclusion(game)"
             class="result-of-test"
           >{{ finalPersonsList[i]?.title ? finalPersonsList[i].title : "Еще не пройдено" }}</button>
         </p>
-        <img :src="game.img" alt />
       </div>
     </div>
     <Loading v-else />
@@ -73,16 +73,17 @@ onMounted(() => {
       cursor: pointer;
       transition: 0.3s ease-in-out;
       text-align: start;
-      // max-height: 12rem;
-      height: fit-content;
+      flex-basis: auto;
       h3,
       p {
         color: $grey-color;
         .result-of-test {
+          padding: 0.3rem 0;
           font-size: 1.3rem;
           background: transparent;
           border: none;
           color: $bcg-light;
+          text-align: start;
           &:hover {
             text-decoration: underline;
           }
