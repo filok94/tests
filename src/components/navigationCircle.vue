@@ -20,7 +20,7 @@
             if (el) circles[i] = el;
           }
         "
-        @click.self.stop.prevent="button($event.target)"
+        @click.self.stop.prevent="button($event)"
         :class="{ 'active-target': activeTabIs == i }"
         v-for="(tab, i) of props.tabs"
         :key="i"
@@ -36,32 +36,34 @@
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted, watch, reactive, computed } from "vue";
-import { useStore } from "vuex";
+<script lang="ts" setup>
+import { ref, onMounted, watch, Ref, computed } from "vue";
 import gsap from "gsap";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
 import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
+import { TabsUser } from '../types/testsTypes.interface'
+import { useGlobal } from "../stores/global";
 
-let store = useStore();
-let props = defineProps({
-  tabs: Array,
-});
+let globalStore = useGlobal()
+let props = defineProps<{
+  tabs: Array<TabsUser>
+}
+>();
 let router = useRouter()
 //avatar in the circle
 let avatarImage = computed(() => {
-  return store.state.global.avatarImage
-    ? store.state.global.avatarImage
-    : store.state.global.avatarImageDefault;
+  return globalStore.avatarImage
+    ? globalStore.avatarImage
+    : globalStore.avatarImageDefault;
 });
 
 //default borders
 let stringifiedBordersOfMainCircle = ref("76px 53px 45px 92px");
 let stringifiedBordersOfActiveTarget = ref("63px 78% 92% 45%");
 //change borders
-let changingBorders = (stringToChange) => {
+let changingBorders = (stringToChange: Ref<string>) => {
   let arrayHelper = [];
   for (let i = 0; i < 4; i++) {
     arrayHelper.push((Math.random() * (199 - 145) + 145).toFixed());
@@ -71,7 +73,7 @@ let changingBorders = (stringToChange) => {
 
 //activate circle navigation and eventlisteners
 const isCirclesActive = ref(false);
-const circles = ref([]);
+const circles: Ref<any[]> = ref([]);
 let navCircle = ref(null);
 let logoutTabRef = ref(null)
 let wrapperForCircle = ref(null);
@@ -102,17 +104,17 @@ let activateNavCircle = () => {
 };
 
 //controll opened tabs
-let emit = defineEmits(["activation"]);
+let emit = defineEmits<{ (e: "activation", target: number): void }>()
 const activeTabIs = ref(0);
-let button = (elem) => {
+let button = (event: Event) => {
   let indexOfElem = Array.from(
     document.querySelectorAll(".target-circle")
-  ).indexOf(elem);
+  ).indexOf(event.target as HTMLElement);
   emit("activation", indexOfElem);
   activeTabIs.value = indexOfElem;
   changingBorders(stringifiedBordersOfActiveTarget);
 };
-let keyControls = (e) => {
+let keyControls = (e: KeyboardEvent) => {
   if (e.code == "ArrowLeft") {
     if (activeTabIs.value == 0) {
       activeTabIs.value = props.tabs.length - 1;
@@ -148,7 +150,7 @@ onClickOutside(navCircle, () => (isCirclesActive.value = false));
 
 watch(
   () => isCirclesActive.value,
-  (newValue, oldValue) => {
+  (newValue) => {
     if (newValue) {
       document.addEventListener("keydown", keyControls);
     } else {
@@ -157,7 +159,7 @@ watch(
   }
 );
 onMounted(() => {
-  store.dispatch("getAvatarImageForCircle");
+  globalStore.getAvatarImageForCircle();
   setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
 });
 </script>

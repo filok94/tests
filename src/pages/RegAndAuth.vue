@@ -4,15 +4,11 @@
       <div
         @click="nameOfActiveWindow = 'auth'"
         :class="{ active: nameOfActiveWindow == 'auth' }"
-      >
-        Авторизация
-      </div>
+      >Авторизация</div>
       <div
         @click="nameOfActiveWindow = 'register'"
         :class="{ active: nameOfActiveWindow == 'register' }"
-      >
-        Регистрация
-      </div>
+      >Регистрация</div>
     </div>
     <Reg :activeWindow="nameOfActiveWindow"></Reg>
   </div>
@@ -22,7 +18,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import Reg from "../components/RegWindow.vue";
 import { ref, onUnmounted, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
@@ -31,7 +27,7 @@ import { useRouter } from "vue-router";
 let nameOfActiveWindow = ref("auth");
 
 // key_arrows directions
-let arrowDirections = (e) => {
+let arrowDirections = (e: KeyboardEvent) => {
   if (e.code == "ArrowLeft") {
     nameOfActiveWindow.value = "auth";
   } else if (e.code == "ArrowRight") {
@@ -39,7 +35,7 @@ let arrowDirections = (e) => {
   }
 };
 const doesUserHasRightToLogin = computed(() => {
-  return !JSON.parse(window.localStorage.getItem("isAuthed"));
+  return !JSON.parse(window.localStorage.getItem("isAuthed")!);
 });
 onMounted(() => {
   document.addEventListener("keydown", arrowDirections, false);

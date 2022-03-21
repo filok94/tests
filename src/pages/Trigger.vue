@@ -28,7 +28,7 @@
           v-for="(warrior, index) in femWarriors"
           @click.prevent="activateCard(warrior)"
         >
-          <img :src="warrior.imageUrl" alt />
+          <img :src="warrior.imageUrl" />
           <h2 class="card-name">{{ warrior.name }}</h2>
           <button
             class="start-card-button"
@@ -53,15 +53,16 @@
   <router-view v-if="conclusionIsShown"></router-view>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { computed, ref, onMounted } from 'vue';
-import { useStore } from 'vuex'
+import { useTriggerStore } from "../stores/trigger";
 import { useRouter } from 'vue-router'
-import { useAppearenceFromBottom, useAppearenceFromLeft, useAppearenceFromTop } from '../components/Animations.js'
+import { useAppearenceFromBottom, useAppearenceFromLeft, useAppearenceFromTop } from '../components/Animations'
 import Loading from '../components/Loading.vue'
+import { WarriorCardType } from '../types/testsTypes.interface';
 
+let triggerStore = useTriggerStore()
 let router = useRouter()
-let store = useStore()
 let triggerRules = ['Вам нужно выбрать бойца из представленных ниже феминисток',
   "Начать игру за выбранного бойца", "На экране будут показываться триггеры, на которые ваш боец должен отреагировать",
   "Если вы отвечаете согласно системы моральных координат вашего бойца, вам засчитываются баллы",
@@ -69,27 +70,25 @@ let triggerRules = ['Вам нужно выбрать бойца из предс
 
 let isRulesShown = ref(false)
 
-let femWarriors = computed(() => store.state.trigger.warriorCards.length > 0 ? store.state.trigger.warriorCards : false)
-let activeCardIs = ref(null)
-let activateCard = (el) => {
-  if (!el.isThisTestEnded) {
-    activeCardIs.value = el
-  }
+let femWarriors = computed(() => triggerStore.warriorCards.length > 0 ? triggerStore.warriorCards : false)
+let activeCardIs = ref<WarriorCardType | null>(null)
+let activateCard = (el: WarriorCardType) => {
+  activeCardIs.value = el
 }
 
 //дизейблить кнопку начала игры за бойца, если уже пройдено
 let isCardHaveResultAlready = computed(() => {
-  let indexesWithAnswer = []
-  store.state.trigger.triggerAnswersResults.forEach((e, index) => {
-    e !== null ? indexesWithAnswer.push(index) : undefined
+  let indexesWithAnswer: number[] = []
+  triggerStore.triggerAnswersResults?.forEach((e, index) => {
+    e !== 0 ? indexesWithAnswer.push(index) : false
   })
   return indexesWithAnswer
 })
 
 let isWarriorTestStarted = ref(false)
-let startTheTestForChosenWarrior = (warrior) => {
+let startTheTestForChosenWarrior = (warrior: WarriorCardType) => {
   isWarriorTestStarted.value = !isWarriorTestStarted.value
-  store.state.trigger.activeTriggerCardIs = warrior
+  triggerStore.activeTriggerCardIs = warrior
   router.push({ name: 'TriggerGame' })
 }
 let endTheTestAndCloseModal = () => {
@@ -100,7 +99,8 @@ let endTheTestAndCloseModal = () => {
 //Если все карточки пройдены, то появляется возможность завершить игру
 let conclusionIsShown = ref(false)
 let allGameEndedButton = ref(null)
-let computeAllGamesAreEnded = computed(() => !store.state.trigger.triggerAnswersResults.includes(null))
+let computeAllGamesAreEnded = computed(() => !triggerStore.triggerAnswersResults?.includes(0))
+
 let buttonEnteringFromBottom = (() => useAppearenceFromBottom(allGameEndedButton.value, 100))
 let goToEndingSection = () => {
   conclusionIsShown.value = true
@@ -117,13 +117,15 @@ let entering = () => {
   useAppearenceFromLeft(triggerCardsContainer.value, 300)
 }
 //Запрос всех данных для игры
-let wasTestEnded = computed(() => store.state.trigger.wasTestEnded)
+
+let wasTestEnded = computed(() => triggerStore.wasTestEnded)
 onMounted(async () => {
   if (!femWarriors.value) {
-    store.dispatch("getTriggerGame")
+    await triggerStore.getTriggerGame()
   }
-  await store.dispatch("getIfTheTestWasEnded")
-  store.dispatch("getCurrentUserResults")
+  await triggerStore.getCurrentUserResults()
+  await triggerStore.getIfTheTestWasEnded();
+
   if (wasTestEnded.value) {
     goToEndingSection()
   }
@@ -134,8 +136,8 @@ onMounted(async () => {
 
 <style lang='scss' scoped>
 //dynamic-css
-$cardWidth: 9rem;
-$cardHeight: calc($cardWidth * 2);
+$cardWidth: 10rem;
+// $cardHeight: calc($cardWidth + 5.7rem);
 .card-boarded {
   outline: solid $prim-color 0.1rem;
   h2 {
@@ -220,19 +222,22 @@ $cardHeight: calc($cardWidth * 2);
     padding: 0;
     gap: 0.5rem;
     .warrior-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
       padding: 0;
       margin: 0;
       @include card-bcg();
       width: $cardWidth;
-      height: $cardHeight;
+      height: 15rem;
       img {
         width: 5rem;
         margin: 0.3rem;
-        margin: 1rem;
       }
       .card-name {
-        margin: 1rem;
+        margin: 0.3rem;
       }
       .start-card-button {
         border: none;
@@ -242,7 +247,8 @@ $cardHeight: calc($cardWidth * 2);
 
         padding: 0.4rem;
         width: 100%;
-        height: auto;
+
+        min-height: 20%;
 
         background: $gradient;
         color: $prim-text;
@@ -285,12 +291,11 @@ $cardHeight: calc($cardWidth * 2);
 
     .warrior-card {
       width: 100% !important;
-      height: 20rem;
+      height: 25rem;
       img {
-        width: 8rem !important;
+        width: 6rem !important;
       }
       .start-card-button {
-        // margin-top: 2rem;
         height: 29% !important;
       }
     }

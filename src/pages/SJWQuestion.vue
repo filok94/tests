@@ -9,13 +9,14 @@
         <ul>
           <li
             v-for="(answer, i) of shownNowQuestion.answers"
-            :key="i"
-            @click.prevent="chooseAnswer(i)"
             :ref="
-              (el) => {
+              (el: Element) => {
                 if (el) allAnswersRefs[i] = el;
               }
             "
+            ref="test"
+            :key="i"
+            @click.prevent="chooseAnswer(i)"
             :class="{
               'active-answer': isActive,
               right:
@@ -38,34 +39,35 @@
   </transition>
 </template>
 
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+<script lang="ts" setup>
+import { computed, onMounted, onUnmounted, Ref, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { useStore } from "vuex";
 import {
   useAppearenceFromTop,
   useAppearenceFromLeft,
 } from "../components/Animations";
 import Loading from "../components/Loading.vue";
+import { useSjwStore } from '../stores/sjw'
 
+const sjwStore = useSjwStore()
 const route = useRoute();
-const store = useStore();
+
 const emit = defineEmits(["is-button-shown"]);
 
 //отрендеренный вопрос
 const shownNowQuestion = computed(() => {
-  return store.state.sjw.questions[Number(route.params.step) - 1];
+  return sjwStore.questions[Number(route.params.step) - 1];
 });
 //answers are inActive and active
 const isActive = ref(true);
-const allAnswersRefs = ref([]);
-const usersChoice = ref(null);
-const chooseAnswer = (i) => {
+let allAnswersRefs = ref<never | Element[]>([])
+const usersChoice = ref<null | number>(null);
+const chooseAnswer = (i: number) => {
   if (isActive.value) {
-    store.commit("СHOOSE_QUESTION", {
+    sjwStore.chooseQuestion({
       answer: i,
-      number: route.params.step - 1,
-    });
+      number: Number(route.params.step) - 1
+    })
     isActive.value = false;
     usersChoice.value = i;
     emit("is-button-shown", !isActive.value);
@@ -73,23 +75,24 @@ const chooseAnswer = (i) => {
 };
 
 //key controlls
-let keyContolls = (event) => {
+let keyContolls = (event: KeyboardEvent) => {
   allAnswersRefs.value.forEach((e, index) => {
-    if (event.key == index + 1) {
+    if (Number(event.key) == index + 1) {
       chooseAnswer(index);
     }
   });
 };
 const isLoading = ref(true);
 const questionElement = ref(null);
-const answerElement = ref(null);
+const answerElement = ref<Element | null>(null);
 let enteringFrom = () => {
   useAppearenceFromLeft(answerElement.value, 100);
   useAppearenceFromTop(questionElement.value, 150);
 };
 onMounted(async () => {
-  await store.dispatch("getQusetions");
-  await store.dispatch("getAllPersons");
+  console.log(allAnswersRefs.value.length)
+  await sjwStore.getQusetions()
+  await sjwStore.getAllPersons()
   isLoading.value = false;
   enteringFrom()
 });

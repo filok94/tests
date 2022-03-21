@@ -20,7 +20,7 @@
                 >{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength : currentQuestion + 1 }}</p>
             </div>
 
-            <img :src="warrior.imageUrl" alt />
+            <img :src="warrior.imageUrl" />
             <div>
                 <p class="trigger-label">Из</p>
                 <p class="trigger-count">{{ triggerQuestionsLength }}</p>
@@ -70,44 +70,44 @@
 </template>
 
 
-<script setup>
+<script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useStore } from 'vuex';
+import { useTriggerStore } from "../stores/trigger";
 import { onClickOutside } from '@vueuse/core'
-import { useAppearenceFromBottom, useCardGoingAside, useShakingElement } from "../components/Animations";
+import { useAppearenceFromBottom, useCardGoingAside, useShakingElement, GoingAsideType } from "../components/Animations";
 import gsap from "gsap";
 
 let emit = defineEmits(['closeTriggerModal'])
-let store = useStore()
+let triggerStore = useTriggerStore()
 
 onMounted(() => {
     gsap.from(triggerModal.value, { bottom: '-100vh' })
 })
 
-let warrior = computed(() => store.state.trigger.activeTriggerCardIs)
+let warrior = computed(() => triggerStore.activeTriggerCardIs)
 
 let currentQuestion = ref(0)
-let triggerQuestions = computed(() => store.state.trigger.triggerQuestions)
+let triggerQuestions = computed(() => triggerStore.triggerQuestions)
 let triggerQuestionsLength = computed(() => triggerQuestions.value.length ? triggerQuestions.value.length : 0)
 
 //выбор emoji
 let card = ref(null)
-let chooseEmoji = (emojiAnswer) => {
+let chooseEmoji = (emojiAnswer: number) => {
     if (!sureToLeaveIsShown.value) {
-        store.commit("PUSH_PERMANENT_ANSWER", warrior.value.answers[currentQuestion.value] == emojiAnswer)
+        triggerStore.permanentAnswers.push(warrior.value.answers[currentQuestion.value] == emojiAnswer)
         let duration = 100
-        emojiAnswer ? useCardGoingAside("right", duration, card.value) : useCardGoingAside("left", duration, card.value)
+        emojiAnswer ? useCardGoingAside(GoingAsideType.right, duration, card.value) : useCardGoingAside(GoingAsideType.left, duration, card.value)
         setTimeout(() => { currentQuestion.value++ }, duration)
     }
 }
-let arrowEvent = (e) => {
+let arrowEvent = (e: KeyboardEvent) => {
     if (e.code == "ArrowLeft") {
         chooseEmoji(0)
     } else if (e.code == "ArrowRight") {
         chooseEmoji(1)
     }
 }
-let enterEvent = (e) => {
+let enterEvent = (e: KeyboardEvent) => {
     if (e.code == "Enter") {
         closingModal(false, true)
     }
@@ -148,14 +148,14 @@ let sureToLeave = ref(null)
 let destroySureToLeave = () => {
     setTimeout(() => { sureToLeaveIsShown.value = false }, 100)
 }
-onClickOutside(sureToLeave, destroySureToLeave())
+onClickOutside(sureToLeave, () => destroySureToLeave())
 
 //закрытие модалки
-let closingModal = (withPopup, isTestEnded) => {
+let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     if (withPopup) {
         sureToLeaveIsShown.value = true
     } else {
-        store.commit('COMPUTE_ANSWERS', isTestEnded ? warrior.value.id : null)
+        triggerStore.computeAnswers(isTestEnded ? warrior.value.id : null)
         emit('closeTriggerModal')
     }
 }

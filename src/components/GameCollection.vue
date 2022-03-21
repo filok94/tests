@@ -16,40 +16,37 @@
     </div>
     <Loading v-else />
 
-    <div class="background-text-container" ref="textBcg" v-show="games">
+    <div class="background-text-container" v-show="games">
       <h1 id="background-text">GAME</h1>
-      <h1 id="broken-letter">S</h1>
+      <h1 ref="brokenLetter" id="broken-letter">S</h1>
     </div>
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted, ref } from "vue";
-import { useStore } from "vuex";
+<script lang="ts" setup>
+import { onMounted, Ref, ref } from "vue";
+import { useGlobal } from "../stores/global";
+import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import Loading from "./Loading.vue";
 import { useFlickeringOnText } from "./Animations";
+import { ListedGame } from '../types/testsTypes.interface'
 
 const router = useRouter();
-const store = useStore();
+const { finalPersonsList, games } = storeToRefs(useGlobal())
 
-let finalPersonsList = computed(() => store.state.global.finalPersonsList ? store.state.global.finalPersonsList : null)
-const games = computed(() => store.state.global.games);
-
-const goToTest = (i) => {
+const goToTest = (i: number) => {
   router.push({
-    name: games.value[i].route,
-    params: { step: games.value[i].firstStep },
+    name: games.value![i].route,
+    params: { step: games.value![i].firstStep },
   });
 };
-const goToConclusion = (game) => {
-  router.push({ name: game.routeToConclusion });
-};
-let textBcg = ref(null);
+const goToConclusion = (game: ListedGame) => router.push({ name: game.routeToConclusion })
 
 let gameCollectionContainer = ref(null)
+let brokenLetter: Ref<null | Element> = ref(null)
 onMounted(() => {
-  useFlickeringOnText('#broken-letter', textBcg.value)
+  useFlickeringOnText(brokenLetter.value)
 })
 </script>
 

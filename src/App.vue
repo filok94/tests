@@ -28,11 +28,9 @@
   </main>
 </template>
 
-<script setup>
-import { onMounted } from "vue";
+<script lang="ts" setup>
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-const store = useStore();
+
 const router = useRouter();
 
 const goHomeByLogo = () => {

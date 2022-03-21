@@ -5,9 +5,9 @@
       v-if="userAnswers.length > 0 && person && questions.length > 0"
     >
       <div class="person-card" ref="card">
-        <img :src="person.img" alt width="150" />
+        <img :src="person.img" width="150" />
         <h2>
-          <a :href="{ 'person.src': person.title }">Вы {{ person.title }}</a>
+          <a :href="person.src">Вы {{ person.title }}</a>
         </h2>
         <p>{{ person.description }}</p>
         <p>
@@ -25,10 +25,11 @@
             :key="i"
             @click="activateDot(i)"
             :ref="
-              (el) => {
+              (el: Element) => {
                 if (el) allDotsRef[i] = el;
               }
             "
+            ref="test"
             :class="{
               'is-right': userAnswers[i].isRight,
               'is-active': i == activatedDotIs,
@@ -41,9 +42,7 @@
               'is-header-right': userAnswers[activatedDotIs].isRight,
               'is-header-wrong': !userAnswers[activatedDotIs].isRight,
             }"
-          >
-            {{ questions[activatedDotIs].question }}
-          </h2>
+          >{{ questions[activatedDotIs].question }}</h2>
           <p class="right-answer">
             <span>Правильный ответ:</span>
             {{
@@ -67,8 +66,8 @@
   </transition>
 </template>
 
-<script setup>
-import { useStore } from "vuex";
+<script lang="ts" setup>
+import { useSjwStore } from "../stores/sjw";
 import { computed, onMounted, ref } from "vue";
 import Loading from "../components/Loading.vue";
 import gsap from "gsap";
@@ -80,21 +79,19 @@ import { usePointerSwipe } from "@vueuse/core";
 
 //store vars
 const emit = defineEmits(["is-button-shown"]);
-const storeVuex = useStore();
-const store = storeVuex.state.sjw;
-
+const sjwStore = useSjwStore()
 //refs
-let allDotsRef = ref([]);
-let card = ref(null);
+let allDotsRef = ref<Element[] | never>([]);
+let card = ref<HTMLElement | null>(null);
 let questionCard = ref(null);
 let activatedDotIs = ref(0);
 
 //swipers on block with questions and answers
-const { distanceX, isSwiping } = usePointerSwipe(questionCard, {
+const { distanceX } = usePointerSwipe(questionCard, {
   onSwipeStart(e) {
     e.preventDefault();
   },
-  onSwipe(e) {
+  onSwipe() {
     gsap.to(questionCard.value, { x: -distanceX.value });
     if (distanceX.value < -20 || distanceX.value > 20) {
       gsap.to(questionCard.value, { opacity: 0.5 });
@@ -110,12 +107,12 @@ const { distanceX, isSwiping } = usePointerSwipe(questionCard, {
     gsap.to(questionCard.value, { x: 0, opacity: 1 });
     if (direction == "RIGHT") {
       if (activatedDotIs.value == 0) {
-        activatedDotIs.value = value.questions.length - 1;
+        activatedDotIs.value = questions.value.length - 1;
       } else {
         activatedDotIs.value = activatedDotIs.value - 1;
       }
     } else if (direction == "LEFT") {
-      if (activatedDotIs.value == value.questions.length - 1) {
+      if (activatedDotIs.value == questions.value.length - 1) {
         activatedDotIs.value = 0;
       } else {
         activatedDotIs.value = activatedDotIs.value + 1;
@@ -125,10 +122,10 @@ const { distanceX, isSwiping } = usePointerSwipe(questionCard, {
 });
 
 //rendered helper computed
-const questions = computed(() => store.questions);
-const userAnswers = computed(() => store.userAnswers);
-const person = computed(() => store.person);
-let activateDot = (i) => {
+const questions = computed(() => sjwStore.questions);
+const userAnswers = computed(() => sjwStore.userAnswers);
+const person = computed(() => sjwStore.person);
+let activateDot = (i: number) => {
   activatedDotIs.value = i;
   let tl = gsap.timeline({ defaults: { duration: 0.2, ease: "circle" } });
   tl.to(questionCard.value, { opacity: 0 });
@@ -140,11 +137,15 @@ let enteringFrom = () => {
   useAppearenceFromBottom(questionCard.value, 400);
 };
 onMounted(() => {
-  storeVuex.dispatch("getQusetions");
 
-  storeVuex.dispatch("getUserResults", "sjw");
+  sjwStore.getQusetions()
 
-  storeVuex.dispatch("getFinalPerson");
+
+  sjwStore.getUserResults()
+
+
+
+  sjwStore.getFinalPerson()
   emit("is-button-shown", true);
 });
 </script>
@@ -171,6 +172,7 @@ onMounted(() => {
   flex-wrap: wrap;
   justify-content: center;
   gap: 1.5rem;
+  overflow: hidden;
 
   .person-card {
     @include card-bcg();
@@ -211,7 +213,7 @@ onMounted(() => {
   }
   .result-qusetions-block {
     max-width: 100%;
-    margin: 0;
+    margin: 0.5rem 0;
     .dots-list-constainer {
       display: flex;
       justify-content: space-evenly;

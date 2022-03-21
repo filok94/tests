@@ -5,18 +5,19 @@
       v-for="(square, i) of [1, 2, 3, 4]"
       :key="i"
       :ref="
-        (el) => {
+        (el: Element) => {
           if (el) loaderCirclesArray[i] = el;
         }
       "
+      ref="test"
     ></div>
   </div>
 </template>
-<script setup>
+<script lang="ts" setup>
 import gsap from "gsap";
-import { onMounted, ref } from "vue";
-let loaderCirclesArray = ref([]);
-let circlesMovement = (circle) => {
+import { onMounted, Ref, ref } from "vue";
+let loaderCirclesArray = ref<never | Element[]>([]);
+let circlesMovement = (circle: number) => {
   let timeline = gsap.timeline({
     repeat: -1,
     delay: circle / 5,
@@ -28,7 +29,7 @@ let circlesMovement = (circle) => {
     .to(loaderCirclesArray.value[circle], { x: 0, background: "#005ef1" })
     .to(loaderCirclesArray.value[circle], { y: 0, background: "#6025c3" });
 };
-let changingBorders = (stringToChange) => {
+let changingBorders = (stringToChange: Ref<string>) => {
   let arrayHelper = [];
   for (let i = 0; i < 4; i++) {
     arrayHelper.push((Math.random() * (99 - 75) + 75).toFixed());

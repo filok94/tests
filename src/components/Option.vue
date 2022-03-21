@@ -1,36 +1,23 @@
 <template>
   <li>
-    <button
-      @click="chooseVariant(false)"
-      class="option-button option-button_minus"
-    >
-      -
-    </button>
+    <button @click="chooseVariant(false)" class="option-button option-button_minus">-</button>
     <div class="option-text-container">
-      <h3 class="option-title" :class="{ warning: warning }">
-        {{ optionTitle }}
-      </h3>
-      <p class="option-numbers">
-        {{ displayedSelectedVariant }}/{{ variantsLength }}
-      </p>
+      <h3 class="option-title" :class="{ warning: warning }">{{ optionTitle }}</h3>
+      <p class="option-numbers">{{ displayedSelectedVariant }}/{{ variantsLength }}</p>
     </div>
-    <button
-      @click="chooseVariant(true)"
-      class="option-button option-button_plus"
-    >
-      +
-    </button>
+    <button @click="chooseVariant(true)" class="option-button option-button_plus">+</button>
   </li>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, computed } from "vue";
-const props = defineProps({
+// import {Avatar} from '../types/testsTypes.interface'
+const props = defineProps<{
   title: String,
-  variants: Array,
-  probabiltyWarning: [String, Boolean],
-});
-const emit = defineEmits(["option-changed"]);
+  variants: Array<string | number>,
+  probabiltyWarning: boolean | string
+}>()
+const emit = defineEmits<{ (e: "option-changed", target: Array<string | any>): void }>()
 
 //compute warning class for the probabilities API issue
 let warning = computed(() => {
@@ -39,21 +26,21 @@ let warning = computed(() => {
     selectedVariant.value != 1 &&
     !String(props.title).includes("Color")
   ) {
-    return String(props.title).includes(props.probabiltyWarning);
+    return String(props.title).includes(props.probabiltyWarning as string);
   }
 });
 
 //chooser of option
 let selectedVariant = ref(0);
-let chooseVariant = (e) => {
+let chooseVariant = (e: boolean) => {
   e
     ? selectedVariant.value + 1 != variants.value.length
       ? selectedVariant.value++
       : (selectedVariant.value = 0)
     : selectedVariant.value == 0
-    ? (selectedVariant.value = variants.value.length - 1)
-    : selectedVariant.value--;
-  emit("option-changed", [props.title, variants.value[selectedVariant.value]]);
+      ? (selectedVariant.value = variants.value.length - 1)
+      : selectedVariant.value--;
+  emit("option-changed", [props.title as string, variants.value[selectedVariant.value]]);
 };
 
 //computed properties for rendering

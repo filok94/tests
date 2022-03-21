@@ -2,9 +2,9 @@ import { createApp } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { onAuthStateChanged, getAuth } from 'firebase/auth'
 import { getDatabase } from 'firebase/database'
-import store from './store'
 import router from './router'
 import App from './App.vue'
+import { createPinia } from 'pinia'
 
 const firebaseConfig = {
     apiKey: "AIzaSyDo305GTXwGcEcRLuPb3-GG_aZS6jbE6Nc",
@@ -17,7 +17,7 @@ const firebaseConfig = {
 };
 
 const fireApp = initializeApp(firebaseConfig);
-const localStorageSet = (key, value) => JSON.stringify(window.localStorage.setItem(key, value))
+const localStorageSet = (key: string, value: any) => JSON.stringify(window.localStorage.setItem(key, value))
 let auth = getAuth()
 onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -33,6 +33,6 @@ onAuthStateChanged(auth, async (user) => {
 })
 const database = getDatabase(fireApp)
 createApp(App)
-    .use(store)
+    .use(createPinia())
     .use(router)
     .mount('#app')

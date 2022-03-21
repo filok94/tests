@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory, RouteLocationNormalized } from "vue-router"
 import RegAndAuth from "../pages/RegAndAuth.vue"
 import SJW from "../pages/SJW.vue"
 import User from "../pages/User.vue"
@@ -39,7 +39,7 @@ const routes = [{
         name: 'sjw-question',
         component: SJWQuestion,
         meta: { requireAuth: true, questionsCount: 8 },
-        beforeEnter: (to, from, next) => {
+        beforeEnter: (to: RouteLocationNormalized, from: RouteLocationNormalized, next: Function) => {
             if (Number(to.params.step) != 1) {
                 next({ name: 'sjw-question', params: { userName: window.localStorage.getItem('isAuthedBy'), step: 1 } })
             } else {
@@ -95,7 +95,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
     const requireAuth = to.matched.some(record => record.meta.requireAuth);
-    const isAuthed = JSON.parse(window.localStorage.getItem('isAuthed'))
+    const isAuthed = JSON.parse(window.localStorage.getItem('isAuthed')!)
     if (requireAuth && !isAuthed) {
         next('/login');
     } else {

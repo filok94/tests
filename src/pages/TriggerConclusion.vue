@@ -17,51 +17,59 @@
     </div>
 </template>
 
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+<script lang="ts" setup>
+import { computed, onMounted, onUnmounted, ref, ComputedRef } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+// import { useStore } from 'vuex';
+import { useTriggerStore } from "../stores/trigger";
+import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from '@vueuse/core'
-import { useAppearenceFromBottom } from '../components/Animations.js'
+import { useAppearenceFromBottom } from '../components/Animations'
 import Loading from '../components/Loading.vue'
 
 let router = useRouter()
-let store = useStore()
+let triggerStore = useTriggerStore()
 
 const conclusionCardRef = ref(null)
 onClickOutside(conclusionCardRef, (e) => false)
-
-let finalPerson = computed(() => {
+let results = computed(() => triggerStore.triggerAnswersResults)
+let finalPerson = computed<TriggerPerson>(() => {
     let result = 0
-    store.state.trigger.triggerAnswersResults.forEach(e => result += e)
+    results.value.forEach(e => result += e)
     let level = 0
     if (result > 8 && result < 13) {
         level = 1
     } else if (result >= 13) {
         level = 2
     }
-    let computedResult = null
-    store.state.trigger.triggerConclusionPersons.forEach((e) => {
+    let computedResult: TriggerPerson = {
+        description: '',
+        level: 0,
+        link: '',
+        image: '',
+        title: ''
+    }
+    triggerStore.triggerConclusionPersons.forEach((e) => {
         e.level === level ? computedResult = e : null
     })
-    store.commit("SET_PERSON", computedResult)
+    triggerStore.person = computedResult
     return computedResult
 })
 
-let wasTestEnded = computed(() => store.state.trigger.wasTestEnded)
+let wasTestEnded = computed(() => triggerStore.wasTestEnded)
 let goBackToMainMenu = () => {
     if (!wasTestEnded.value) {
-        store.dispatch("postResults")
+        triggerStore.postResults()
     }
     router.push({ name: 'User', params: { userName: window.localStorage.getItem("isAuthedBy") } })
 }
-let enterEventListener = (e) => {
+let enterEventListener = (e: KeyboardEvent) => {
     if (e.code == "Enter") {
         goBackToMainMenu()
     }
 }
 onMounted(() => {
-    store.dispatch("getTriggerConclusion")
+    triggerStore.getTriggerConclusion()
     document.addEventListener('keydown', enterEventListener)
     useAppearenceFromBottom(conclusionCardRef.value, 300)
 })

@@ -2,13 +2,12 @@
   <div class="settings-page">
     <div class="settings-container">
       <div class="setting-type" id="avatar" @click="chooseAvatar">
-        <img :src="defaultAvatarImage" alt width="40" class="setting-icon" />
+        <img :src="avatarImageDefault" width="40" class="setting-icon" />
         <p class="setting-text">Выбрать аватар</p>
       </div>
       <div class="setting-type" id="night-mode" @click="changeMode">
         <img
           src="../assets/dark-mode.svg"
-          alt
           width="40"
           :class="{ 'is-dark': darkMode }"
           class="setting-icon"
@@ -19,40 +18,38 @@
         </p>
       </div>
     </div>
-    <img
-      ref="imageSetting"
-      class="image-holder"
-      src="../assets/setting.svg"
-      alt=""
-    />
+    <img ref="imageSetting" class="image-holder" src="../assets/setting.svg" />
   </div>
 </template>
 
-<script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+<script lang="ts" setup>
+import { onMounted, onUnmounted, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
+import { useGlobal } from "../stores/global";
+import { storeToRefs } from "pinia";
 import gsap from "gsap";
 
-const store = useStore();
+let { avatarImageDefault } = storeToRefs(useGlobal())
+enum ModeTypes {
+  night = "Ночной",
+  day = "Дневной"
+}
 const router = useRouter();
-const mode = ref("ночной");
+const mode: Ref<ModeTypes> = ref(ModeTypes.night);
 const darkMode = ref(true);
 const chooseAvatar = () => {
   router.push({ name: "Avatar" });
 };
 const changeMode = () => {
   darkMode.value = !darkMode.value;
-  if (mode.value == "дневной") {
-    mode.value = "ночной";
-  } else mode.value = "дневной";
+  if (mode.value == ModeTypes.day) {
+    mode.value = ModeTypes.night;
+  } else mode.value = ModeTypes.day;
 };
-const defaultAvatarImage = computed(
-  () => store.state.global.avatarImageDefault
-);
-let imageSetting = ref(null);
+
+let imageSetting = ref<null | HTMLImageElement>(null);
 let tl = gsap.timeline({ defaults: { duration: 3, ease: "none" } });
-let settingsRotation;
+let settingsRotation: ReturnType<typeof setInterval>;
 onMounted(() => {
   tl.from(imageSetting.value, { x: 500, rotate: 180, ease: "ease" }).to(
     imageSetting.value,

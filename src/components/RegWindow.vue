@@ -15,9 +15,7 @@
         v-model="userInputs.password"
         @focus.prevent="inputIsActive($event.target)"
       />
-      <label v-if="addConfirmPassword" for="confirm-password"
-        >Confirm Password</label
-      >
+      <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
       <input
         v-if="addConfirmPassword"
         id="confirm-password"
@@ -25,28 +23,23 @@
         v-model="userInputs.confirmationPassowrd"
         @focus.prevent="inputIsActive($event.target)"
       />
-      <button @click.prevent="registerAndSigniIn()" :disabled="disableButton">
-        Подтвердить
-      </button>
+      <button @click.prevent="registerAndSigniIn()" :disabled="disableButton">Подтвердить</button>
     </form>
     <p v-show="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { reactive, watch, ref, computed } from "vue";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { AnimationPropertiesRegWindow } from '../types/testsTypes.interface'
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-const localStorageGet = (key) => JSON.parse(window.localStorage.getItem(key));
-const localStorageSet = (key, value) =>
-  JSON.stringify(window.localStorage.setItem(key, value));
+const localStorageSet = (key: string, value: any) => JSON.stringify(window.localStorage.setItem(key, value));
 const router = useRouter();
-const store = useStore();
 const props = defineProps({
   activeWindow: String,
 });
@@ -73,7 +66,7 @@ const disableButton = computed(() => {
   }
 });
 const registerAndSigniIn = () => {
-  const signIn = (userInputLogin, userPassword) => {
+  const signIn = (userInputLogin: string, userPassword: string) => {
     signInWithEmailAndPassword(auth, userInputLogin, userPassword)
       .then((data) => {
         let user = data.user;
@@ -117,14 +110,14 @@ const registerAndSigniIn = () => {
   }
 };
 const errorMessage = ref("");
-const isErrorShown = (error) => {
+const isErrorShown = (error: string) => {
   errorMessage.value = error;
   setTimeout(() => {
     errorMessage.value = "";
   }, 5000);
 };
 
-let animationProperties = reactive({
+let animationProperties = reactive<AnimationPropertiesRegWindow>({
   to: null,
   from: null,
   timeout: null,
@@ -138,13 +131,13 @@ watch(props, () => {
     .forEach((e) => e.classList.remove("label_up"));
   userInputs.login = userInputs.password = userInputs.confirmationPassowrd = "";
   let reg = document.querySelector("#regAndAuth-window");
-  let changeActiveWindow = (classToAnimate, to, from, timeout) => {
-    reg.classList.add(classToAnimate);
+  let changeActiveWindow = (classToAnimate: string, to: string, from: string, timeout: number) => {
+    reg?.classList.add(classToAnimate);
     animationProperties.to = to;
     animationProperties.from = from;
     animationProperties.timeout = timeout;
     setTimeout(() => {
-      reg.classList.remove(classToAnimate);
+      reg?.classList.remove(classToAnimate);
     }, timeout);
     setTimeout(() => {
       addConfirmPassword.value = !addConfirmPassword.value;
@@ -156,16 +149,17 @@ watch(props, () => {
     changeActiveWindow("animationing", "30rem", "-30rem", 300);
   }
 });
-let inputIsActive = (el) => {
+let inputIsActive = (el: EventTarget | null) => {
+  let inputElement = el as HTMLInputElement
   let labels = Array.prototype.slice.call(document.querySelectorAll("label"));
-  let activeLabel = labels.filter((e) => e.htmlFor == el.id)[0];
+  let activeLabel = labels.filter((e) => e.htmlFor == inputElement.id)[0];
   activeLabel.classList.add("label_up");
   let changeClass = () => {
-    if (el.value.length == 0) {
+    if (inputElement.value.length == 0) {
       activeLabel.classList.remove("label_up");
     }
   };
-  el.addEventListener("blur", changeClass);
+  inputElement.addEventListener("blur", changeClass);
 };
 </script>
 <style lang="scss">

@@ -34,7 +34,7 @@
         <Option
           v-for="(option, i) in avatar.options"
           :key="i"
-          :title="i"
+          :title="String(i)"
           :variants="option"
           :probabilty-warning="probabilityWarningTitleClass"
           @option-changed="optionChanged"
@@ -45,10 +45,10 @@
   </transition>
 </template>
 
-<script setup>
-import { computed, onMounted, reactive, ref } from "vue";
-import { useStore } from "vuex";
-import { onBeforeRouteUpdate, useRouter } from "vue-router";
+<script lang="ts" setup>
+import { computed, onMounted, reactive, ref, Ref } from "vue";
+// import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
 
 import Option from "../components/Option.vue";
@@ -59,35 +59,37 @@ import {
   useGoAwayToRight,
   useSetPosition,
 } from "../components/Animations";
-const store = useStore();
+import { useGlobal } from "../stores/global";
+
+const globalStore = useGlobal()
 const router = useRouter();
 
 // Pull avatar options from backend and render it
 onMounted(() => {
-  store.dispatch("getAvatars");
+  globalStore.getAvatars()
 });
 let avatar = computed(() =>
-  store.state.global.avatar ? store.state.global.avatar : null
+  globalStore.avatar ? globalStore.avatar : null
 );
 
 //animate apearence and exits
-let avatarImageRef = ref(null);
-let listOfOptions = ref(null);
+let avatarImageRef = ref<Element | null>(null);
+let listOfOptions = ref<Element | null>(null);
 let appearance = () => {
-  useAppearenceFromLeft(listOfOptions.value, 300);
+  useAppearenceFromLeft((listOfOptions as Ref<Element>).value, 300);
   useAppearenceFromTop(avatarImageRef.value, 300);
 };
-let confirmationAnimation = (i) => {
+let confirmationAnimation = (i: Element) => {
   useAppearenceFromLeft(i, 300);
 };
-let confirmationAnimationLeave = (i) => {
+let confirmationAnimationLeave = (i: Element) => {
   useGoAwayToRight(i, 300);
 };
-let confirmationAnimationAfterLeave = (i) => {
+let confirmationAnimationAfterLeave = (i: Element) => {
   useSetPosition(i, 300);
 };
 //every change from children call this function and rerender the avatar
-let optionChanged = (event) => {
+let optionChanged = (event: Array<string | any>) => {
   renderedString.forEach((e, index) => {
     if (event[0] == e[0]) {
       renderedString.splice(index, 1);
@@ -97,20 +99,20 @@ let optionChanged = (event) => {
   probabilityWarningTitleClass.value = event[0];
   setTimeout(() => (probabilityWarningTitleClass.value = false), 300);
 };
-let renderedString = reactive([]);
+let renderedString = reactive<any[]>([]);
 
 //helps with probabilities queries
 let probabilityWarningTitleClass = ref(false);
 
 //rendered image of avatar
 let imageAvatar = computed(() => {
-  let arrayOfQueries = [];
-  renderedString.forEach((e, index) => {
+  let arrayOfQueries: string[] = [];
+  renderedString.forEach((e) => {
     let stringOfQuery = `${e[0]}=${e[1]}&`;
     arrayOfQueries.push(stringOfQuery);
   });
   let stringifiedArrayOfQueries = arrayOfQueries.join("");
-  return `https://avatars.dicebear.com/api/${avatar.value.name}/:avatarOfMine.svg?${stringifiedArrayOfQueries}`;
+  return `https://avatars.dicebear.com/api/${avatar.value?.name}/:avatarOfMine.svg?${stringifiedArrayOfQueries}`;
 });
 
 //save and exit with confirm
@@ -125,7 +127,7 @@ let saveTheRenderedAvatarAndGoBack = async () => {
       name: "User",
       params: { userName: window.localStorage.getItem("isAuthedBy") },
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err.message);
   }
 };

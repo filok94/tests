@@ -1,31 +1,30 @@
-/* eslint-disable vue/no-multiple-template-root */
 <template >
   <div class="activated-window">
     <h1 ref="header">{{ tabs[activeTabIndex].name }}</h1>
-    <transition :css="false" @enter="enter" @leave="leave" mode="out-in">
+    <transition @enter="enter" @leave="leave" mode="out-in">
       <component :is="activeTabIndex == 0 ? GameCollection : Settings"></component>
     </transition>
   </div>
   <navigation-circle :tabs="tabs" @activation="activeTarget"></navigation-circle>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { ref, onMounted, reactive, watch } from "vue";
-import { useStore } from "vuex";
+import { useGlobal } from "../stores/global";
 import gsap from "gsap";
 import navigationCircle from "../components/navigationCircle.vue";
 import Settings from "../components/Settings.vue";
 import GameCollection from "../components/GameCollection.vue";
-const store = useStore();
-
+import { TabsUser } from '../types/testsTypes.interface'
+const globalStore = useGlobal()
 const activeTabIndex = ref(0);
-const activeTarget = (target) => {
+const activeTarget = (target: number) => {
   activeTabIndex.value = target;
 };
-const tabs = reactive([
+const tabs = reactive<Array<TabsUser>>([
   {
     name: "Games",
-    target: "",
+    target: ""
   },
   {
     name: "Settings",
@@ -33,22 +32,23 @@ const tabs = reactive([
   },
 ]);
 
-const enter = (el, done) => {
+const enter = (el: HTMLElement) => {
   gsap.set(el, { y: 0, opacity: 1 })
-  gsap.from(el, { y: -100, duration: 0.3, opacity: 0, onComplete: done });
+  gsap.from(el, { y: -100, duration: 0.3, opacity: 0 });
 };
-const leave = (el, done) => {
+const leave = (el: HTMLElement) => {
   gsap.set(el, { y: 0, opacity: 1 })
-  gsap.to(el, { y: 100, duration: 0.3, opacity: 0, onComplete: done });
+  gsap.to(el, { y: 100, duration: 0.3, opacity: 0 });
 };
 
-const header = ref(null);
+const header = ref<null | HTMLHeadingElement>(null);
 watch(activeTabIndex, () => {
+  gsap.set(header.value, { x: 0, opacity: 1 })
   gsap.from(header.value, { x: -50, opacity: 0, duration: 0.3 });
 });
 onMounted(async () => {
-  if (!store.state.global.games) {
-    await store.dispatch("getGames")
+  if (!globalStore.games) {
+    await globalStore.getGames()
   }
 });
 </script>
