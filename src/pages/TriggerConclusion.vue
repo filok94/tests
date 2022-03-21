@@ -24,7 +24,7 @@ import { useRouter } from 'vue-router';
 import { useTriggerStore } from "../stores/trigger";
 import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from '@vueuse/core'
-import { useAppearenceFromBottom } from '../components/Animations'
+import { Appearances } from '../components/Animations'
 import Loading from '../components/Loading.vue'
 
 let router = useRouter()
@@ -71,7 +71,7 @@ let enterEventListener = (e: KeyboardEvent) => {
 onMounted(() => {
     triggerStore.getTriggerConclusion()
     document.addEventListener('keydown', enterEventListener)
-    useAppearenceFromBottom(conclusionCardRef.value, 300)
+    new Appearances(conclusionCardRef.value).fromBottom(300)
 })
 onUnmounted(() => {
     document.removeEventListener('keydown', enterEventListener)

@@ -11,7 +11,6 @@
 
 <script lang="ts" setup>
 import { ref, computed } from "vue";
-// import {Avatar} from '../types/testsTypes.interface'
 const props = defineProps<{
   title: String,
   variants: Array<string | number>,

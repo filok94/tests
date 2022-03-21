@@ -71,10 +71,7 @@ import { useSjwStore } from "../stores/sjw";
 import { computed, onMounted, ref } from "vue";
 import Loading from "../components/Loading.vue";
 import gsap from "gsap";
-import {
-  useAppearenceFromTop,
-  useAppearenceFromBottom,
-} from "../components/Animations";
+import { Appearances } from "../components/Animations";
 import { usePointerSwipe } from "@vueuse/core";
 
 //store vars
@@ -133,18 +130,12 @@ let activateDot = (i: number) => {
   tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
 };
 let enteringFrom = () => {
-  useAppearenceFromTop(card.value, 150);
-  useAppearenceFromBottom(questionCard.value, 400);
+  new Appearances(card.value).fromTop(150)
+  new Appearances(questionCard.value).fromBottom(400)
 };
 onMounted(() => {
-
   sjwStore.getQusetions()
-
-
   sjwStore.getUserResults()
-
-
-
   sjwStore.getFinalPerson()
   emit("is-button-shown", true);
 });

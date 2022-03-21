@@ -74,7 +74,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { onClickOutside } from '@vueuse/core'
-import { useAppearenceFromBottom, useCardGoingAside, useShakingElement, GoingAsideType } from "../components/Animations";
+import { Appearances, useCardGoingAside, useShakingElement, GoingAsideType } from "../components/Animations";
 import gsap from "gsap";
 
 let emit = defineEmits(['closeTriggerModal'])
@@ -114,7 +114,7 @@ let enterEvent = (e: KeyboardEvent) => {
 }
 onMounted(() => {
     document.addEventListener('keydown', arrowEvent)
-    useAppearenceFromBottom(triggerModal.value, 300)
+    new Appearances(triggerModal.value).fromBottom(300)
 })
 
 //управление кнопками и дестрой ивентлиснеров

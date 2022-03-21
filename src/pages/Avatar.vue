@@ -47,18 +47,12 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, Ref } from "vue";
-// import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
 
 import Option from "../components/Option.vue";
 import Loading from "../components/Loading.vue";
-import {
-  useAppearenceFromTop,
-  useAppearenceFromLeft,
-  useGoAwayToRight,
-  useSetPosition,
-} from "../components/Animations";
+import { Appearances } from "../components/Animations";
 import { useGlobal } from "../stores/global";
 
 const globalStore = useGlobal()
@@ -76,17 +70,17 @@ let avatar = computed(() =>
 let avatarImageRef = ref<Element | null>(null);
 let listOfOptions = ref<Element | null>(null);
 let appearance = () => {
-  useAppearenceFromLeft((listOfOptions as Ref<Element>).value, 300);
-  useAppearenceFromTop(avatarImageRef.value, 300);
+  new Appearances(listOfOptions.value).fromLeft(300)
+  new Appearances(avatarImageRef.value).fromTop(300)
 };
 let confirmationAnimation = (i: Element) => {
-  useAppearenceFromLeft(i, 300);
+  new Appearances(i).fromLeft(300)
 };
 let confirmationAnimationLeave = (i: Element) => {
-  useGoAwayToRight(i, 300);
+  new Appearances(i).toRight(300)
 };
 let confirmationAnimationAfterLeave = (i: Element) => {
-  useSetPosition(i, 300);
+  new Appearances(i).setPosition(300)
 };
 //every change from children call this function and rerender the avatar
 let optionChanged = (event: Array<string | any>) => {

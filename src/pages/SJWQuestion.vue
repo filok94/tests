@@ -40,12 +40,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, Ref, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import {
-  useAppearenceFromTop,
-  useAppearenceFromLeft,
-} from "../components/Animations";
+import { Appearances } from "../components/Animations";
 import Loading from "../components/Loading.vue";
 import { useSjwStore } from '../stores/sjw'
 
@@ -86,8 +83,8 @@ const isLoading = ref(true);
 const questionElement = ref(null);
 const answerElement = ref<Element | null>(null);
 let enteringFrom = () => {
-  useAppearenceFromLeft(answerElement.value, 100);
-  useAppearenceFromTop(questionElement.value, 150);
+  new Appearances(answerElement.value).fromLeft(100)
+  new Appearances(questionElement.value).fromTop(150)
 };
 onMounted(async () => {
   console.log(allAnswersRefs.value.length)

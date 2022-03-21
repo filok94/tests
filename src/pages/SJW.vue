@@ -11,7 +11,7 @@
 import { onMounted, onUnmounted, ref, watch, Ref } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
-import { useAppearenceFromBottom } from "../components/Animations";
+import { Appearances } from "../components/Animations";
 import { useSjwStore } from "../stores/sjw";
 import { storeToRefs } from "pinia";
 
@@ -65,7 +65,7 @@ onBeforeRouteUpdate((to) => {
     : (buttonName.value = "Next");
 });
 watch(isButtonShown, () => {
-  useAppearenceFromBottom(button.value, 100)
+  new Appearances(button.value).fromBottom(300)
 });
 //key contolls
 let keyContolls = (e: KeyboardEvent) => {

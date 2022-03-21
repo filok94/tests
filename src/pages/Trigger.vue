@@ -57,7 +57,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { useRouter } from 'vue-router'
-import { useAppearenceFromBottom, useAppearenceFromLeft, useAppearenceFromTop } from '../components/Animations'
+import { Appearances } from '../components/Animations'
 import Loading from '../components/Loading.vue'
 import { WarriorCardType } from '../types/testsTypes.interface';
 
@@ -101,7 +101,7 @@ let conclusionIsShown = ref(false)
 let allGameEndedButton = ref(null)
 let computeAllGamesAreEnded = computed(() => !triggerStore.triggerAnswersResults?.includes(0))
 
-let buttonEnteringFromBottom = (() => useAppearenceFromBottom(allGameEndedButton.value, 100))
+let buttonEnteringFromBottom = (() => new Appearances(allGameEndedButton.value).fromBottom(100))
 let goToEndingSection = () => {
   conclusionIsShown.value = true
   router.push({ name: 'TriggerConclusion' })
@@ -112,9 +112,9 @@ let triggerTitle = ref(null)
 let triggerRulesRef = ref(null)
 let triggerCardsContainer = ref(null)
 let entering = () => {
-  useAppearenceFromTop(triggerTitle.value, 300)
-  useAppearenceFromLeft(triggerRulesRef.value, 300)
-  useAppearenceFromLeft(triggerCardsContainer.value, 300)
+  new Appearances(triggerTitle.value).fromTop(300)
+  new Appearances(triggerRulesRef.value).fromLeft(300)
+  new Appearances(triggerCardsContainer.value).fromLeft(300)
 }
 //Запрос всех данных для игры
 
