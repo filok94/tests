@@ -65,7 +65,7 @@ onBeforeRouteUpdate((to) => {
     : (buttonName.value = "Next");
 });
 watch(isButtonShown, () => {
-  new Appearances(button.value).fromBottom(300)
+  Appearances.fromBottom(300, button.value)
 });
 //key contolls
 let keyContolls = (e: KeyboardEvent) => {

@@ -101,20 +101,20 @@ let conclusionIsShown = ref(false)
 let allGameEndedButton = ref(null)
 let computeAllGamesAreEnded = computed(() => !triggerStore.triggerAnswersResults?.includes(0))
 
-let buttonEnteringFromBottom = (() => new Appearances(allGameEndedButton.value).fromBottom(100))
+let buttonEnteringFromBottom = (() => Appearances.fromBottom(100, allGameEndedButton.value))
 let goToEndingSection = () => {
   conclusionIsShown.value = true
   router.push({ name: 'TriggerConclusion' })
 }
 
 //Анимация появления
-let triggerTitle = ref(null)
-let triggerRulesRef = ref(null)
-let triggerCardsContainer = ref(null)
+let triggerTitle = ref<null | Element>(null)
+let triggerRulesRef = ref<null | Element>(null)
+let triggerCardsContainer = ref<null | Element>(null)
 let entering = () => {
-  new Appearances(triggerTitle.value).fromTop(300)
-  new Appearances(triggerRulesRef.value).fromLeft(300)
-  new Appearances(triggerCardsContainer.value).fromLeft(300)
+  Appearances.fromTop(300, triggerTitle.value)
+  Appearances.fromLeft(300, triggerRulesRef.value)
+  Appearances.fromLeft(300, triggerCardsContainer.value)
 }
 //Запрос всех данных для игры
 

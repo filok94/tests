@@ -1,41 +1,37 @@
 import gsap from "gsap"
 
 export class Appearances {
-    element: Element | null
-    constructor(element: Element | null) {
-        this.element = element
+
+    static fromTop = (fromY: number, element: Element | null) => {
+        gsap.set(element, { y: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, y: -fromY, ease: 'ease' })
     }
 
-    fromTop = (fromY: number) => {
-        gsap.set(this.element, { y: 0, opacity: 1 })
-        gsap.from(this.element, { opacity: 0, y: -fromY, ease: 'ease' })
+    static fromBottom = (fromY: number, element: Element | null) => {
+        gsap.set(element, { y: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, y: fromY, ease: 'ease' })
     }
 
-    fromBottom = (fromY: number) => {
-        gsap.set(this.element, { y: 0, opacity: 1 })
-        gsap.from(this.element, { opacity: 0, y: fromY, ease: 'ease' })
+    static fromLeft = (fromX: number, element: Element | null) => {
+        gsap.set(element, { x: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, x: -fromX, ease: 'ease' })
     }
 
-    fromLeft = (fromX: number) => {
-        gsap.set(this.element, { x: 0, opacity: 1 })
-        gsap.from(this.element, { opacity: 0, x: -fromX, ease: 'ease' })
+    static fromRight = (fromX: number, element: Element | null) => {
+        gsap.set(element, { x: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, x: fromX, ease: 'ease' })
     }
 
-    fromRight = (fromX: number) => {
-        gsap.set(this.element, { x: 0, opacity: 1 })
-        gsap.from(this.element, { opacity: 0, x: fromX, ease: 'ease' })
+    static toRight = (toX: number, element: Element | null) => {
+        gsap.to(element, { opacity: 0, x: toX, ease: 'ease' })
     }
 
-    toRight = (toX: number) => {
-        gsap.to(this.element, { opacity: 0, x: toX, ease: 'ease' })
+    static toLeft = (toX: number, element: Element | null) => {
+        gsap.to(element, { opacity: 0, x: -toX, ease: 'ease' })
     }
 
-    toLeft = (toX: number) => {
-        gsap.to(this.element, { opacity: 0, x: -toX, ease: 'ease' })
-    }
-
-    setPosition = (pos: number) => {
-        gsap.set(this.element, { x: pos, opacity: 0, delay: 0, duration: 0 })
+    static setPosition = (pos: number, element: Element | null) => {
+        gsap.set(element, { x: pos, opacity: 0, delay: 0, duration: 0 })
     }
 }
 
@@ -118,3 +114,16 @@ export let useFlickeringOnText = (brokenLetter: Element | null) => {
         });
     })
 }
+
+export let circlesMovement = (circle: number, arrayOfCircles: never[] | Element[]) => {
+    let timeline = gsap.timeline({
+        repeat: -1,
+        delay: circle / 5,
+        defaults: { duration: 0.3, ease: "circ" },
+    });
+    timeline
+        .to(arrayOfCircles[circle], { x: -50, background: "#005ef1" })
+        .to(arrayOfCircles[circle], { y: 50, background: "#6025c3" })
+        .to(arrayOfCircles[circle], { x: 0, background: "#005ef1" })
+        .to(arrayOfCircles[circle], { y: 0, background: "#6025c3" });
+};

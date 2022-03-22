@@ -10,11 +10,10 @@
           <li
             v-for="(answer, i) of shownNowQuestion.answers"
             :ref="
-              (el: Element) => {
+              (el: Element | any) => {
                 if (el) allAnswersRefs[i] = el;
               }
             "
-            ref="test"
             :key="i"
             @click.prevent="chooseAnswer(i)"
             :class="{
@@ -83,8 +82,8 @@ const isLoading = ref(true);
 const questionElement = ref(null);
 const answerElement = ref<Element | null>(null);
 let enteringFrom = () => {
-  new Appearances(answerElement.value).fromLeft(100)
-  new Appearances(questionElement.value).fromTop(150)
+  Appearances.fromLeft(100, answerElement.value)
+  Appearances.fromTop(150, questionElement.value)
 };
 onMounted(async () => {
   console.log(allAnswersRefs.value.length)

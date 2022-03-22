@@ -11,41 +11,35 @@
 <script lang="ts" setup>
 import { ref, onMounted, reactive, watch } from "vue";
 import { useGlobal } from "../stores/global";
-import gsap from "gsap";
 import navigationCircle from "../components/navigationCircle.vue";
 import Settings from "../components/Settings.vue";
 import GameCollection from "../components/GameCollection.vue";
 import { TabsUser } from '../types/testsTypes.interface'
+import { Appearances } from "../components/Animations";
+import vButton from "../components/vButton.vue";
+
 const globalStore = useGlobal()
 const activeTabIndex = ref(0);
-const activeTarget = (target: number) => {
-  activeTabIndex.value = target;
-};
+const activeTarget = (target: number) => activeTabIndex.value = target
+
+class Tab {
+  name: string
+  target: string
+
+  constructor(name: string, target: string) {
+    this.name = name
+    this.target = target
+  }
+}
 const tabs = reactive<Array<TabsUser>>([
-  {
-    name: "Games",
-    target: ""
-  },
-  {
-    name: "Settings",
-    target: "",
-  },
+  new Tab("Games", ""), new Tab("Settings", "")
 ]);
 
-const enter = (el: HTMLElement) => {
-  gsap.set(el, { y: 0, opacity: 1 })
-  gsap.from(el, { y: -100, duration: 0.3, opacity: 0 });
-};
-const leave = (el: HTMLElement) => {
-  gsap.set(el, { y: 0, opacity: 1 })
-  gsap.to(el, { y: 100, duration: 0.3, opacity: 0 });
-};
+const enter = (el: HTMLElement) => Appearances.fromTop(100, el)
+const leave = (el: HTMLElement) => Appearances.fromBottom(100, el)
 
 const header = ref<null | HTMLHeadingElement>(null);
-watch(activeTabIndex, () => {
-  gsap.set(header.value, { x: 0, opacity: 1 })
-  gsap.from(header.value, { x: -50, opacity: 0, duration: 0.3 });
-});
+watch(activeTabIndex, () => Appearances.fromTop(50, header.value));
 onMounted(async () => {
   if (!globalStore.games) {
     await globalStore.getGames()

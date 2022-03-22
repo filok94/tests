@@ -14,21 +14,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import gsap from "gsap";
+import { circlesMovement } from "../components/Animations";
 import { onMounted, Ref, ref } from "vue";
 let loaderCirclesArray = ref<never | Element[]>([]);
-let circlesMovement = (circle: number) => {
-  let timeline = gsap.timeline({
-    repeat: -1,
-    delay: circle / 5,
-    defaults: { duration: 0.3, ease: "circ" },
-  });
-  timeline
-    .to(loaderCirclesArray.value[circle], { x: -50, background: "#005ef1" })
-    .to(loaderCirclesArray.value[circle], { y: 50, background: "#6025c3" })
-    .to(loaderCirclesArray.value[circle], { x: 0, background: "#005ef1" })
-    .to(loaderCirclesArray.value[circle], { y: 0, background: "#6025c3" });
-};
+
 let changingBorders = (stringToChange: Ref<string>) => {
   let arrayHelper = [];
   for (let i = 0; i < 4; i++) {
@@ -38,10 +27,10 @@ let changingBorders = (stringToChange: Ref<string>) => {
 };
 let borders = ref("76px 93px 85px 92px");
 onMounted(() => {
-  circlesMovement(0);
-  circlesMovement(1);
-  circlesMovement(2);
-  circlesMovement(3);
+  circlesMovement(0, loaderCirclesArray.value);
+  circlesMovement(1, loaderCirclesArray.value);
+  circlesMovement(2, loaderCirclesArray.value);
+  circlesMovement(3, loaderCirclesArray.value);
 
   setInterval(() => changingBorders(borders), 1000);
 });
@@ -50,10 +39,10 @@ onMounted(() => {
 <style lang="scss">
 .loader-square-container {
   position: fixed;
-  top: 40vh;
-  right: -50vw;
-  width: 100vw;
-  height: 100vh;
+  top: 40%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
   .loader-square {
     position: fixed;
     width: 2rem;

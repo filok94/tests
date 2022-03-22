@@ -33,7 +33,7 @@ let triggerStore = useTriggerStore()
 const conclusionCardRef = ref(null)
 onClickOutside(conclusionCardRef, (e) => false)
 let results = computed(() => triggerStore.triggerAnswersResults)
-let finalPerson = computed<TriggerPerson>(() => {
+let finalPerson = computed<TriggerPerson | null>(() => {
     let result = 0
     results.value.forEach(e => result += e)
     let level = 0
@@ -53,7 +53,7 @@ let finalPerson = computed<TriggerPerson>(() => {
         e.level === level ? computedResult = e : null
     })
     triggerStore.person = computedResult
-    return computedResult
+    return computedResult.title ? computedResult : null
 })
 
 let wasTestEnded = computed(() => triggerStore.wasTestEnded)
@@ -71,7 +71,7 @@ let enterEventListener = (e: KeyboardEvent) => {
 onMounted(() => {
     triggerStore.getTriggerConclusion()
     document.addEventListener('keydown', enterEventListener)
-    new Appearances(conclusionCardRef.value).fromBottom(300)
+    Appearances.fromBottom(300, conclusionCardRef.value)
 })
 onUnmounted(() => {
     document.removeEventListener('keydown', enterEventListener)
@@ -100,10 +100,13 @@ onUnmounted(() => {
         cursor: pointer;
         line-height: 2.9rem;
         margin: 0.8rem;
+        a {
+            text-decoration: none;
+        }
         &:hover {
             text-decoration: underline;
             text-decoration-color: $second-color;
-            text-decoration-thickness: 0.1rem;
+            text-decoration-thickness: 0.125rem;
         }
     }
 

@@ -16,7 +16,7 @@
       <div
         v-show="isCirclesActive"
         :ref="
-          (el) => {
+          (el: Element | any) => {
             if (el) circles[i] = el;
           }
         "

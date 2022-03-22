@@ -70,17 +70,17 @@ let avatar = computed(() =>
 let avatarImageRef = ref<Element | null>(null);
 let listOfOptions = ref<Element | null>(null);
 let appearance = () => {
-  new Appearances(listOfOptions.value).fromLeft(300)
-  new Appearances(avatarImageRef.value).fromTop(300)
+  Appearances.fromLeft(300, listOfOptions.value)
+  Appearances.fromTop(300, avatarImageRef.value)
 };
 let confirmationAnimation = (i: Element) => {
-  new Appearances(i).fromLeft(300)
+  Appearances.fromLeft(300, i)
 };
 let confirmationAnimationLeave = (i: Element) => {
-  new Appearances(i).toRight(300)
+  Appearances.toRight(300, i)
 };
 let confirmationAnimationAfterLeave = (i: Element) => {
-  new Appearances(i).setPosition(300)
+  Appearances.setPosition(300, i)
 };
 //every change from children call this function and rerender the avatar
 let optionChanged = (event: Array<string | any>) => {

@@ -75,14 +75,11 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { onClickOutside } from '@vueuse/core'
 import { Appearances, useCardGoingAside, useShakingElement, GoingAsideType } from "../components/Animations";
-import gsap from "gsap";
 
 let emit = defineEmits(['closeTriggerModal'])
 let triggerStore = useTriggerStore()
 
-onMounted(() => {
-    gsap.from(triggerModal.value, { bottom: '-100vh' })
-})
+onMounted(() => Appearances.fromBottom(400, triggerModal.value))
 
 let warrior = computed(() => triggerStore.activeTriggerCardIs)
 
@@ -114,7 +111,7 @@ let enterEvent = (e: KeyboardEvent) => {
 }
 onMounted(() => {
     document.addEventListener('keydown', arrowEvent)
-    new Appearances(triggerModal.value).fromBottom(300)
+    Appearances.fromBottom(300, triggerModal.value)
 })
 
 //управление кнопками и дестрой ивентлиснеров

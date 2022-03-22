@@ -130,8 +130,8 @@ let activateDot = (i: number) => {
   tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
 };
 let enteringFrom = () => {
-  new Appearances(card.value).fromTop(150)
-  new Appearances(questionCard.value).fromBottom(400)
+  Appearances.fromTop(150, card.value)
+  Appearances.fromBottom(400, questionCard.value)
 };
 onMounted(() => {
   sjwStore.getQusetions()

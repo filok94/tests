@@ -32,12 +32,12 @@
         }
     }
 }
-@mixin right-wrong($color, $scale:103%) {
-      transform: scale($scale);
-      p {
+@mixin right-wrong($color, $scale: 103%) {
+    transform: scale($scale);
+    p {
         background: $color;
         @include bcg-for-text();
-      }
+    }
 }
 
 @mixin primary-button() {
@@ -53,10 +53,8 @@
     background: $gradient;
     box-shadow: $card-shadow;
 
-
     cursor: pointer;
     &:hover {
-
         transform: scale(100.5%);
     }
 }
