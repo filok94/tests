@@ -94,17 +94,17 @@ onUnmounted(() => {
       padding: 1rem;
       height: 4rem;
       font-size: 1.2rem;
-      color: $grey-color;
+      color: $color-grey;
 
       @include card-bcg();
-      border-radius: 25px;
+      border-radius: $border-prime;
 
       cursor: pointer;
       transition: 0.3s ease-in-out;
       &:hover {
         transform: scale(101%);
         .setting-text {
-          color: $prim-color;
+          color: $color-violet;
         }
       }
 

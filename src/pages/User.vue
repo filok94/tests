@@ -16,7 +16,6 @@ import Settings from "../components/Settings.vue";
 import GameCollection from "../components/GameCollection.vue";
 import { TabsUser } from '../types/testsTypes.interface'
 import { Appearances } from "../components/Animations";
-import vButton from "../components/vButton.vue";
 
 const globalStore = useGlobal()
 const activeTabIndex = ref(0);

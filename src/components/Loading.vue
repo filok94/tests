@@ -48,7 +48,7 @@ onMounted(() => {
     width: 2rem;
     height: 2rem;
     border-radius: 100%;
-    background: $prim-color;
+    background: $color-violet;
     border-radius: v-bind("borders");
   }
 }

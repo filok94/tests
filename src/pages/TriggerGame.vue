@@ -170,7 +170,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     height: 70vh;
     width: 100%;
     padding: 0.5rem 0.5rem 3rem 0.5rem;
-    border-radius: 25px 25px 0px 0px;
+    border-radius: $border-prime 25px 0px 0px;
 
     background: hsl(240, 7%, 18%);
     z-index: 3;
@@ -178,8 +178,8 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     #trigger-modal-swiper {
         height: 0.3rem;
         width: 1rem;
-        background: $grey-color;
-        border-radius: 25px;
+        background: $color-grey;
+        border-radius: $border-prime;
         margin: 0 auto;
     }
     .closing-modal-button {
@@ -190,7 +190,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
 
         font-size: 2rem;
         font-family: $font;
-        color: $grey-color;
+        color: $color-grey;
 
         position: relative;
         right: -40%;
@@ -213,15 +213,15 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     z-index: 4;
 
     background: rgb(77, 77, 82);
-    box-shadow: $card-shadow;
-    border-radius: 25px;
+    box-shadow: $shadow-black;
+    border-radius: $border-prime;
     padding: 1rem;
 
     h4 {
         margin: 0.8rem 0;
     }
     p {
-        color: $grey-color;
+        color: $color-grey;
         font-size: 0.8rem;
         margin: 0.8rem;
     }
@@ -230,9 +230,9 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
         justify-content: space-evenly;
         button {
             border: none;
-            box-shadow: $card-shadow;
-            border-radius: 25px;
-            color: $grey-color;
+            box-shadow: $shadow-black;
+            border-radius: $border-prime;
+            color: $color-grey;
             font-family: $font;
             padding: 0.6rem;
             width: 3rem;
@@ -246,7 +246,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
             background: $gradient;
         }
         &-yes {
-            background: $grey-color;
+            background: $color-grey;
         }
     }
 }
@@ -275,7 +275,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
             margin: 0;
         }
         .trigger-label {
-            color: $grey-color;
+            color: $color-grey;
             font-size: 1rem;
             margin: 0;
         }
@@ -298,13 +298,13 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
             }
             &-left {
                 box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19);
-                border-radius: 25px 0px 0px 25px;
-                // background: $prim-color;
+                border-radius: $border-prime 0px 0px 25px;
+                // background: $color-violet;
             }
             &-right {
                 box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19);
                 border-radius: 0px 25px 25px 0px;
-                // background: $second-color;
+                // background: $color-pink;
             }
         }
     }
@@ -316,7 +316,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     .trigger-modal {
         width: 80%;
         bottom: 4rem !important;
-        border-radius: 25px;
+        border-radius: $border-prime;
         left: 0;
         right: 0;
         margin: 0 auto;

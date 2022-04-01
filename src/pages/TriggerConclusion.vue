@@ -7,10 +7,10 @@
                     <a :href="finalPerson.link">{{ finalPerson.title }}</a>
                 </h1>
                 <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
-                <button
+                <v-button
                     @click.prevent="goBackToMainMenu"
-                    class="trigger-conclusion-button"
-                >Вернуться на главную</button>
+                    :purpose="'primary'"
+                >Вернуться на главную</v-button>
             </div>
             <Loading v-else />
         </transition>
@@ -18,14 +18,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, ComputedRef } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-// import { useStore } from 'vuex';
 import { useTriggerStore } from "../stores/trigger";
 import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from '@vueuse/core'
 import { Appearances } from '../components/Animations'
 import Loading from '../components/Loading.vue'
+import VButton from '../components/vButton.vue';
 
 let router = useRouter()
 let triggerStore = useTriggerStore()
@@ -91,7 +91,7 @@ onUnmounted(() => {
     z-index: 3;
     img {
         width: 15rem;
-        border-radius: 15px;
+        border-radius: $border-minimal;
     }
     h1 {
         font-size: 3rem;
@@ -105,7 +105,7 @@ onUnmounted(() => {
         }
         &:hover {
             text-decoration: underline;
-            text-decoration-color: $second-color;
+            text-decoration-color: $color-pink;
             text-decoration-thickness: 0.125rem;
         }
     }
@@ -113,12 +113,7 @@ onUnmounted(() => {
     h2 {
         font-size: 0.9rem;
         margin: 0;
-        color: $grey-color;
-    }
-    button {
-        @include primary-button();
-        font-size: 1.3rem;
-        margin: 1rem;
+        color: $color-grey;
     }
 }
 @media (min-width: $large-screen) {

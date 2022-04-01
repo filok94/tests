@@ -172,7 +172,7 @@ onMounted(() => {
   height: 4rem;
   border-radius: 100%;
   background: $background;
-  color: $grey-color;
+  color: $color-grey;
   cursor: pointer;
 }
 .nav-circle {
@@ -182,7 +182,7 @@ onMounted(() => {
   width: 3rem;
   height: 3rem;
   padding: 1rem;
-  background: $prim-color;
+  background: $color-violet-1;
   box-shadow: 0 10px 30px rgba(85, 39, 160, 0.486),
     0 26px 26px rgba(0, 0, 0, 0.23);
   cursor: pointer;
@@ -194,15 +194,15 @@ onMounted(() => {
   p {
     font-size: 0.5rem;
     margin: 0;
-    color: $grey-color;
+    color: $color-grey;
   }
   &-is-active {
     transform: scale(110%);
-    background: $second-color;
+    background: $color-violet-3;
   }
 
   .target-circle {
-    @include targetCircle($second-color);
+    @include targetCircle($color-violet);
   }
   div:nth-of-type(1) {
     right: 6rem;
@@ -216,13 +216,13 @@ onMounted(() => {
   }
 }
 .main-target-circle {
-  @include targetCircle($bad-gradient);
+  @include targetCircle($gradient-red);
   right: 0;
   top: -6rem;
   z-index: -1;
 }
 .active-target {
-  background: $prim-color !important;
+  background: $color-violet-3 !important;
   transform: scale(130%);
   transition: 0.3s ease-in-out;
   border-radius: v-bind("stringifiedBordersOfActiveTarget") !important;

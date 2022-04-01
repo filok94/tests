@@ -52,7 +52,7 @@ let variantsLength = computed(() => props.variants.length);
 <style lang="scss" scoped>
 //dynamic classes
 .warning {
-  background: $bad-gradient;
+  background: $gradient-red;
   @include bcg-for-text();
 }
 li {
@@ -65,7 +65,7 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: $grey-color;
+  color: $color-grey;
   font-size: 0.7rem;
   .option-text-container {
     .option-title {
@@ -73,7 +73,7 @@ li {
     }
     .option-numbers {
       margin: 0;
-      background: $prim-color;
+      background: $color-violet;
       @include bcg-for-text();
     }
   }
@@ -86,11 +86,11 @@ li {
     font: $font;
 
     &_minus {
-      background: $prim-color;
-      border-radius: 25px 0px 0px 25px;
+      background: $color-violet;
+      border-radius: $border-prime 0px 0px 25px;
     }
     &_plus {
-      background: $second-color;
+      background: $color-pink;
       border-radius: 0px 25px 25px 0px;
     }
     &:active {

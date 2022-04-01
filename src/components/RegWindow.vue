@@ -1,5 +1,5 @@
 <template>
-  <div id="regAndAuth-window">
+  <div id="regAndAuth-window" ref="regAndAuthWindowRef">
     <form action="register">
       <label for="new-user">Login</label>
       <input
@@ -125,19 +125,19 @@ let animationProperties = reactive<AnimationPropertiesRegWindow>({
     return (this.timeout / 1000).toString() + "s";
   },
 });
+let regAndAuthWindowRef = ref<Element | null>(null)
 watch(props, () => {
   document
     .querySelectorAll("label")
     .forEach((e) => e.classList.remove("label_up"));
   userInputs.login = userInputs.password = userInputs.confirmationPassowrd = "";
-  let reg = document.querySelector("#regAndAuth-window");
   let changeActiveWindow = (classToAnimate: string, to: string, from: string, timeout: number) => {
-    reg?.classList.add(classToAnimate);
+    regAndAuthWindowRef.value?.classList.add(classToAnimate);
     animationProperties.to = to;
     animationProperties.from = from;
     animationProperties.timeout = timeout;
     setTimeout(() => {
-      reg?.classList.remove(classToAnimate);
+      regAndAuthWindowRef.value?.classList.remove(classToAnimate);
     }, timeout);
     setTimeout(() => {
       addConfirmPassword.value = !addConfirmPassword.value;
@@ -176,7 +176,7 @@ let inputIsActive = (el: EventTarget | null) => {
 }
 //static styles
 #regAndAuth-window {
-  border-radius: 25px;
+  border-radius: $border-prime;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   padding: 1rem;
   margin: 3rem 1rem;
@@ -197,15 +197,15 @@ let inputIsActive = (el: EventTarget | null) => {
       border: none;
       font-size: 1rem;
       outline: none;
-      border-bottom: 1px solid $prim-text;
+      border-bottom: 1px solid $color-white;
       background-color: transparent;
-      color: $prim-text;
+      color: $color-white;
       font-family: $font;
       &:focus {
-        border-bottom: 1px solid $prim-color;
+        border-bottom: 1px solid $color-violet;
       }
       &:placeholder {
-        color: $grey-color;
+        color: $color-grey;
       }
     }
     label {
@@ -217,7 +217,7 @@ let inputIsActive = (el: EventTarget | null) => {
     }
     button {
       justify-self: center;
-      border-radius: 25px;
+      border-radius: $border-prime;
       cursor: pointer;
       background: $gradient;
       border: none;
@@ -226,10 +226,10 @@ let inputIsActive = (el: EventTarget | null) => {
       transition: 0.5s ease;
       padding: 1rem;
       font-size: 1.5rem;
-      color: $prim-text;
+      color: $color-white;
       font-family: $font;
       &:disabled {
-        background: $grey-color;
+        background: $color-grey;
         cursor: default;
         color: black;
         transform: scale(90%);
@@ -240,7 +240,7 @@ let inputIsActive = (el: EventTarget | null) => {
     }
   }
   .error-message {
-    background: $bad-gradient;
+    background: $gradient-red;
     @include bcg-for-text();
     animation: error-shaking 0.9s ease-in-out;
     @keyframes error-shaking {

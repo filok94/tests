@@ -2,8 +2,8 @@
     -webkit-backdrop-filter: blur(30px);
     backdrop-filter: blur(30px);
     background: hsla(240, 1%, 16%, 0.521);
-    box-shadow: $card-shadow;
-    border-radius: 25px;
+    box-shadow: $shadow-black;
+    border-radius: $border-prime;
 }
 
 @mixin bcg-for-text() {
@@ -41,7 +41,7 @@
 }
 
 @mixin primary-button() {
-    border-radius: 25px;
+    border-radius: $border-prime;
     border: none;
 
     font-family: $font;
@@ -49,9 +49,9 @@
 
     padding: 1rem;
 
-    color: $prim-text;
+    color: $color-white;
     background: $gradient;
-    box-shadow: $card-shadow;
+    box-shadow: $shadow-black;
 
     cursor: pointer;
     &:hover {

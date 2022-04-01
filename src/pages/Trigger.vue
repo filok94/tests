@@ -41,12 +41,12 @@
     <Loading v-else />
   </transition>
   <transition @enter="buttonEnteringFromBottom">
-    <button
-      class="end-test-button"
+    <v-button
       v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || (wasTestEnded && !conclusionIsShown)"
       ref="allGameEndedButton"
       @click.prevent="goToEndingSection"
-    >Узнать, кто же я</button>
+      :purpose="'primary'"
+    >Узнать, кто же я</v-button>
   </transition>
   <div class="dark-bcg" v-if="conclusionIsShown || isWarriorTestStarted"></div>
   <router-view v-if="isWarriorTestStarted" @close-trigger-modal="endTheTestAndCloseModal"></router-view>
@@ -60,6 +60,7 @@ import { useRouter } from 'vue-router'
 import { Appearances } from '../components/Animations'
 import Loading from '../components/Loading.vue'
 import { WarriorCardType } from '../types/testsTypes.interface';
+import VButton from '../components/vButton.vue';
 
 let triggerStore = useTriggerStore()
 let router = useRouter()
@@ -139,7 +140,7 @@ onMounted(async () => {
 $cardWidth: 10rem;
 // $cardHeight: calc($cardWidth + 5.7rem);
 .card-boarded {
-  outline: solid $prim-color 0.1rem;
+  outline: solid $color-violet 0.1rem;
   h2 {
     background: $gradient;
     @include bcg-for-text;
@@ -191,7 +192,7 @@ $cardWidth: 10rem;
           }
         }
         &:focus {
-          outline: solid $prim-color 0.1rem;
+          outline: solid $color-violet 0.1rem;
         }
       }
       .rules-list {
@@ -210,7 +211,7 @@ $cardWidth: 10rem;
         }
       }
       &:hover {
-        outline: solid $prim-color 0.1rem;
+        outline: solid $color-violet 0.1rem;
       }
     }
   }
@@ -251,25 +252,25 @@ $cardWidth: 10rem;
         min-height: 20%;
 
         background: $gradient;
-        color: $prim-text;
+        color: $color-white;
 
         font-family: $font;
         font-weight: bold;
         font-size: 1rem;
         &:disabled {
-          background: $grey-color;
+          background: $color-grey;
           color: black;
         }
       }
       &:hover {
-        outline: solid $prim-color 0.1rem;
+        outline: solid $color-violet 0.1rem;
         h2 {
           background: $gradient;
           @include bcg-for-text;
         }
       }
       &:target {
-        outline: solid $prim-color 0.1rem;
+        outline: solid $color-violet 0.1rem;
       }
     }
   }

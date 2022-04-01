@@ -1,28 +1,55 @@
-//colors
-$bcg: hsla(240, 4%, 5%, 0.966);
-$bcg-second: hsla(0, 1%, 17%, 0.842);
-$prim-text: #fff;
-$second-color: #005ef1;
-$prim-color: #6025c3;
-$semi-dark: #0081ff;
-$font: "Roboto Slab",
-serif;
-$neon-font:'Monoton', cursive;
-$grey-color: rgba(255, 255, 255, 0.5);
+// fonts
+$font: "Roboto Slab", serif;
+$neon-font: "Monoton", cursive;
+
+// colors
+$color-black: hsl(0, 8%, 16%);
+$color-grey: hsl(0, 0%, 72%);
+$color-white: hsl(240, 13%, 95%);
+
+$color-violet: hsla(236, 43%, 62%, 1);
+$color-violet-1: hsla(236, 57%, 68%, 1);
+$color-violet-2: hsla(236, 79%, 75%, 1);
+$color-violet-3: hsla(239, 100%, 81%, 1);
+$color-violet-4: hsla(244, 100%, 83%, 1);
+$color-violet-5: hsla(250, 100%, 84%, 1);
+$color-pink-3: hsla(260, 97%, 85%, 1);
+$color-pink-2: hsla(271, 92%, 85%, 1);
+$color-pink-1: hsla(270, 91%, 86%, 1);
+$color-pink: hsla(271, 90%, 88%, 1);
+
 //gradients
-$gradient: linear-gradient( to right top, hsl(262, 68%, 45%), hsl(254, 61%, 50%), hsl(246, 65%, 54%), hsl(238, 71%, 57%), hsl(220, 88%, 52%), hsl(211, 100%, 50%), hsl(210, 100%, 50%));
-$right-gradient: linear-gradient(to right, #1d976c, #93f9b9);
-$bad-gradient: linear-gradient(to right, #ee0979, #ff6a00);
-$sjw-gradient: linear-gradient( 124deg, rgba(212, 6, 6, 0.9878326330532213) 13%, rgba(238, 156, 0, 1) 30%, rgba(227, 255, 0, 1) 47%, rgba(6, 191, 0, 1) 68%, rgba(0, 26, 152, 1) 90%);
+$gradient: linear-gradient(
+    225deg,
+    $color-violet,
+    $color-violet-1,
+    $color-violet-2,
+    $color-violet-3,
+    $color-violet-4,
+    $color-violet-5,
+    $color-pink-3,
+    $color-pink-2,
+    $color-pink-1,
+    $color-pink
+);
+$gradient-grey: linear-gradient(225deg, hsl(180, 1%, 53%), hsl(180, 1%, 68%), hsl(0, 3%, 76%));
+$gradient-green: linear-gradient(to right, hsl(160, 36%, 47%), hsl(142, 100%, 78%));
+$gradient-red: linear-gradient(to right, hsl(331, 93%, 48%), hsl(25, 100%, 50%));
+
 //shadows
-$card-shadow: 0 10px 20px rgba(0, 0, 0, 0.19),
-0 6px 6px rgba(0, 0, 0, 0.23);
+$shadow-black: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+
+//borders
+$border-prime: 25px;
+$border-minimal: 15px;
+$border-large: 35px;
+
 //media_screens
 $medium-screen: 540px;
 $large-screen: 900px;
 $upper-large-screen: 1400px;
 
-//light theme
-$bcg-light: hsla(240, 3%, 76%, 0.966);
-$prim-text-light: rgb(70, 67, 67);
-$grey-color-light: rgba(70, 66, 66, 0.589);
+:export {
+    borderPrime: $border-prime;
+    borderLarge: $border-large;
+}

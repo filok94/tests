@@ -88,14 +88,12 @@ const { distanceX } = usePointerSwipe(questionCard, {
   onSwipeStart(e) {
     e.preventDefault();
   },
-  onSwipe() {
+  onSwipe(e: PointerEvent) {
     gsap.to(questionCard.value, { x: -distanceX.value });
     if (distanceX.value < -20 || distanceX.value > 20) {
       gsap.to(questionCard.value, { opacity: 0.5 });
     } else {
       gsap.to(questionCard.value, { opacity: 1 });
-    }
-    if (distanceX.value > 20) {
     }
   },
   onSwipeEnd(e, direction) {
@@ -144,17 +142,17 @@ onMounted(() => {
 <style lang="scss" scoped>
 //dynamic classes
 .is-right {
-  background: $right-gradient !important;
+  background: $gradient-green !important;
 }
 .is-active {
   transform: scale(180%) !important;
 }
 .is-header-right {
-  background: $right-gradient;
+  background: $gradient-green;
   @include bcg-for-text();
 }
 .is-header-wrong {
-  background: $bad-gradient;
+  background: $gradient-red;
   @include bcg-for-text();
 }
 //static classes
@@ -175,7 +173,7 @@ onMounted(() => {
     grid-template-columns: minmax(10%, 80vw);
     height: 100%;
     img {
-      border-radius: 15px;
+      border-radius: $border-minimal;
       max-width: 90%;
     }
     h2 {
@@ -183,7 +181,7 @@ onMounted(() => {
       a {
         text-decoration: none;
         &:any-link {
-          color: $prim-text;
+          color: $color-white;
         }
         &:hover {
           text-decoration: underline;
@@ -194,11 +192,11 @@ onMounted(() => {
     }
     p {
       margin: 0.4rem 0;
-      color: $grey-color;
+      color: $color-grey;
       span {
         font-weight: bold;
         font-size: 1.4rem;
-        color: $second-color;
+        color: $color-pink;
       }
     }
   }
@@ -213,7 +211,7 @@ onMounted(() => {
       .dot {
         width: 1.2rem;
         height: 1.2rem;
-        background: $bad-gradient;
+        background: $gradient-red;
         border-radius: 100%;
         cursor: pointer;
         transition: 0.3s ease-in-out;
@@ -226,7 +224,7 @@ onMounted(() => {
 
       @include card-bcg();
       p {
-        color: $grey-color;
+        color: $color-grey;
         span {
           text-decoration: underline;
           font-weight: bold;

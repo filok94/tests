@@ -30,6 +30,11 @@ export class Appearances {
         gsap.to(element, { opacity: 0, x: -toX, ease: 'ease' })
     }
 
+    static toBottom = (toY: number, element: Element | null) => {
+        gsap.to(element, { opacity: 0, y: toY, ease: 'ease' })
+        gsap.set(element, { y: 0 })
+    }
+
     static setPosition = (pos: number, element: Element | null) => {
         gsap.set(element, { x: pos, opacity: 0, delay: 0, duration: 0 })
     }

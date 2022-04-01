@@ -1,28 +1,31 @@
 <template>
   <router-view @is-button-shown="isButtonShownMethod"></router-view>
-  <button
-    @click.prevent="nextQuestion(String(route.params.step))"
-    v-show="isButtonShown"
+  <!-- <transition @enter="test($event)" @leave="testAway($event)" mode="out-in"> -->
+  <v-button
     ref="button"
-  >{{ buttonName }}</button>
+    @click.prevent="nextQuestion(String(route.params.step))"
+    :disable="!isButtonShown"
+    @entered="keyContolls($event)"
+    id="test"
+    :purpose="isButtonPrimary"
+  >{{ buttonName }}</v-button>
+  <!-- </transition> -->
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, watch, Ref } from "vue";
+import { ref, Ref, computed } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
-import { Appearances } from "../components/Animations";
 import { useSjwStore } from "../stores/sjw";
 import { storeToRefs } from "pinia";
+import VButton from "../components/vButton.vue";
 
 const { questions, userAnswers, computedFinalPerson } = storeToRefs(useSjwStore())
 
 const router = useRouter();
 const route = useRoute();
-const isButtonShownMethod = (e: boolean) => {
-  isButtonShown.value = e
-}
-
+const isButtonShownMethod = (e: boolean) => isButtonShown.value = e
+const isButtonPrimary = computed(() => isButtonShown.value ? 'primary' : undefined)
 interface DataToPost {
   answers: any,
   person: any
@@ -45,7 +48,6 @@ const nextQuestion = (i: string) => {
   if (Number(i) < questions.value.length) {
     router.push({ name: "sjw-question", params: { step: Number(i) + 1 } });
   } else if (route.name == "Conclusion") {
-    console.log("this is " + route.name);
     router.push({
       name: "User",
       params: { userName: window.localStorage.getItem("isAuthedBy") },
@@ -64,38 +66,20 @@ onBeforeRouteUpdate((to) => {
     ? (buttonName.value = "End")
     : (buttonName.value = "Next");
 });
-watch(isButtonShown, () => {
-  Appearances.fromBottom(300, button.value)
-});
 //key contolls
 let keyContolls = (e: KeyboardEvent) => {
-  if (button.value?.style.display != "none")
-    if (e.key == "Enter") {
-      nextQuestion(String(route.params.step));
-    }
+  if (e.code == "Enter" && isButtonShown.value) {
+    nextQuestion(String(route.params.step));
+
+  }
 };
-onMounted(() => {
-  document.addEventListener("keydown", keyContolls);
-});
-onUnmounted(() => document.removeEventListener("keydown", keyContolls));
 </script>
 <style lang="scss" scoped>
-button {
-  @include primary-button();
-  color: $grey-color;
-  max-width: 25rem;
-  width: 50%;
-
-  margin: 2rem auto;
+#test {
   position: fixed;
   top: 80vh;
   right: 0;
   left: 0;
-  z-index: 2;
-}
-@media (min-width: $medium-screen) {
-  button {
-    margin: 0 auto;
-  }
+  margin: 0 auto;
 }
 </style>

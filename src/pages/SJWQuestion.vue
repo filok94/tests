@@ -44,11 +44,14 @@ import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { Appearances } from "../components/Animations";
 import Loading from "../components/Loading.vue";
 import { useSjwStore } from '../stores/sjw'
+import { useEventListener } from '@vueuse/core'
 
 const sjwStore = useSjwStore()
 const route = useRoute();
 
-const emit = defineEmits(["is-button-shown"]);
+let emit = defineEmits<{
+  (ev: "is-button-shown", value: boolean): void
+}>();
 
 //отрендеренный вопрос
 const shownNowQuestion = computed(() => {
@@ -92,14 +95,9 @@ onMounted(async () => {
   isLoading.value = false;
   enteringFrom()
 });
-onMounted(() => {
-  document.addEventListener("keydown", keyContolls);
-});
-onUnmounted(() => {
-  document.removeEventListener("keydown", keyContolls);
-});
+useEventListener(document, 'keyup', keyContolls)
 //delete all classes and instance value everytime
-onBeforeRouteUpdate((to, from) => {
+onBeforeRouteUpdate(() => {
   isActive.value = true;
   usersChoice.value = null;
   emit("is-button-shown", !isActive.value);
@@ -136,7 +134,7 @@ onBeforeRouteUpdate((to, from) => {
       margin: 0;
       text-align: start;
       font-size: 1.1rem;
-      color: $grey-color;
+      color: $color-grey;
       transition: 0.3s ease-in-out;
       @include card-bcg();
       display: flex;
@@ -148,14 +146,14 @@ onBeforeRouteUpdate((to, from) => {
       }
       .answer-count-label {
         font-size: 2rem;
-        color: $prim-text;
+        color: $color-white;
       }
     }
     .right {
-      @include right-wrong($right-gradient);
+      @include right-wrong($gradient-green);
     }
     .wrong {
-      @include right-wrong($bad-gradient);
+      @include right-wrong($gradient-red);
     }
   }
   .active-answer {

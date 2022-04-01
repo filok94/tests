@@ -64,7 +64,7 @@ onMounted(() => {
     grid-gap: 1rem;
     .game-banner {
       @include card-bcg();
-      box-shadow: $card-shadow;
+      box-shadow: $shadow-black;
       justify-items: center;
       padding: 0.5rem 1.5rem;
       cursor: pointer;
@@ -73,13 +73,13 @@ onMounted(() => {
       flex-basis: auto;
       h3,
       p {
-        color: $grey-color;
+        color: $color-grey;
         .result-of-test {
           padding: 0.3rem 0;
           font-size: 1.3rem;
           background: transparent;
           border: none;
-          color: $bcg-light;
+          color: $color-grey;
           text-align: start;
           &:hover {
             text-decoration: underline;
@@ -102,8 +102,8 @@ onMounted(() => {
       }
       .is-test-ended {
         position: absolute;
-        color: $prim-color;
-        background: $right-gradient;
+        color: $color-violet;
+        background: $gradient-green;
         padding: 0.6rem;
         border-radius: 100%;
       }
@@ -121,7 +121,7 @@ onMounted(() => {
     #background-text {
       background: $gradient;
       @include bcg-for-text();
-      color: $prim-color;
+      color: $color-violet;
       margin: 0;
     }
     #broken-letter {

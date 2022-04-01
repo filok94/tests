@@ -1,48 +1,46 @@
 <template>
-    <div class="v-button-container">
-        <button class="v-button" ref="buttonRef">
-            <slot>Подтвердить</slot>
-        </button>
-        <div v-if="props.hoverable && isButtonHovered" class="overlay">s</div>
-    </div>
+    <button
+        class="v-button"
+        ref="buttonRef"
+        @mouseenter="mouseHoverEvent($event.type)"
+        @mouseleave="mouseHoverEvent($event.type)"
+        :disabled="props.disable"
+        :class="{ 'cancel': props.purpose == 'cancel', 'primary': props.purpose == 'primary' }"
+    >
+        <slot>Подтвердить</slot>
+    </button>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useEventListener } from '@vueuse/core'
+import gsap from 'gsap'
 
-let props = defineProps({
-    disabled: {
-        type: Boolean,
-        default: true
-    },
-    hoverable: {
-        type: Boolean,
-        default: true
-    },
-    oneTimeState: {
-        validator(value: string) {
-            return ['warning', 'succes'].includes(value)
-        }
-    }
-})
+let props = defineProps<{
+    disable?: boolean,
+    purpose?: 'cancel' | 'primary'
+}>()
 
-let isButtonHovered = ref(false)
+let emit = defineEmits<{
+    (ev: "entered", voice: KeyboardEvent): void
+}>()
+
 let buttonRef = ref<null | Element>(null)
-useEventListener(buttonRef, "mouseenter", (ev) => {
-    isButtonHovered.value = true
-    console.log(ev)
-})
-useEventListener(buttonRef, "mouseleave", (ev) => {
-    isButtonHovered.value = false
-    console.log(ev)
-})
+
+let mouseHoverEvent = (event: string) => {
+    let stylesArray = [{ scale: 1, border: '25px 35px' }, { scale: 1.01, border: '35px 25px' }]
+    let style = stylesArray[1]
+    style = event == "mouseenter" && !props.disable ? stylesArray[1] : stylesArray[0]
+    gsap.to(buttonRef.value, { scale: style.scale, borderRadius: style.border, duration: .3, ease: "ease" })
+}
+
+useEventListener(document, "keyup", (ev: KeyboardEvent) => ev.code == "Enter" ? emit("entered", ev) : undefined)
 
 </script>
 
 <style lang="scss" scoped>
 .v-button {
-    border-radius: 25px;
+    border-radius: $border-large $border-prime;
     border: none;
 
     font-family: $font;
@@ -50,21 +48,31 @@ useEventListener(buttonRef, "mouseleave", (ev) => {
 
     padding: 1rem;
 
-    color: $prim-text;
-    background: $gradient;
-    box-shadow: $card-shadow;
+    color: $color-white;
+    box-shadow: $shadow-black;
 
     z-index: 1;
 
+    min-width: 16rem;
+    width: 20%;
+
     cursor: pointer;
-    &:hover {
-        transform: scale(100.5%);
+    &:disabled {
+        background: $gradient-grey;
+        box-shadow: none;
+    }
+    transition: 0.3s;
+    &:active {
+        box-shadow: none;
     }
 }
-.overlay {
-    min-width: 100%;
-    min-height: 100%;
-    background: rgba(24, 136, 211, 0.664);
-    z-index: 2;
+.cancel {
+    background: $gradient-grey;
+    box-shadow: none;
+}
+.primary {
+    background: $gradient;
+    box-shadow: -1px 1px 8px 1px $color-violet,
+        1px -1px 13px 1px $color-violet-5;
 }
 </style>

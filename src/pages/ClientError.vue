@@ -20,7 +20,7 @@ const backToMainPage = () => {
 h1 {
   font-size: 15rem;
   span {
-    color: $second-color;
+    color: $color-pink;
   }
 }
 button {

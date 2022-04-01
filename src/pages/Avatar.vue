@@ -10,23 +10,20 @@
           :duration="200"
           mode="out-in"
         >
-          <button
+          <v-button
             v-if="!confirmationWindowShown"
-            class="primary-button"
             @click.prevent="confirmationWindowShown = !confirmationWindowShown"
-          >Сохранить аватар</button>
+            :purpose="'primary'"
+          >Сохранить аватар</v-button>
           <div class="confirmation-buttons-container" v-else>
             <h3 class="confirmation-title">Вы уверены?</h3>
-            <button
-              class="confirmation-button confirmation-button-not"
+            <v-button
+              :purpose="'cancel'"
               @click.prevent="
                 confirmationWindowShown = !confirmationWindowShown
               "
-            >Нет</button>
-            <button
-              class="confirmation-button confirmation-button-yes"
-              @click.prevent="saveTheRenderedAvatarAndGoBack"
-            >Да</button>
+            >Нет</v-button>
+            <v-button @click.prevent="saveTheRenderedAvatarAndGoBack" :purpose="'primary'">Да</v-button>
           </div>
         </transition>
       </div>
@@ -54,6 +51,7 @@ import Option from "../components/Option.vue";
 import Loading from "../components/Loading.vue";
 import { Appearances } from "../components/Animations";
 import { useGlobal } from "../stores/global";
+import VButton from "../components/vButton.vue";
 
 const globalStore = useGlobal()
 const router = useRouter();
@@ -173,24 +171,24 @@ let saveTheRenderedAvatarAndGoBack = async () => {
         font-size: 1.5rem;
         margin: 0;
         grid-area: title;
-        color: $prim-color;
+        color: $color-violet;
       }
       .confirmation-button {
         border: none;
         font-family: $font;
         font-size: 2rem;
-        border-radius: 25px;
+        border-radius: $border-prime;
         padding: 0.5rem 2rem;
         transition: 0.3s ease-in-out;
         cursor: pointer;
         &-not {
           grid-area: no;
-          background: $grey-color;
+          background: $color-grey;
         }
         &-yes {
           grid-area: yes;
           background: $gradient;
-          color: $prim-text;
+          color: $color-white;
           &:hover {
             transform: scale(102%);
           }
