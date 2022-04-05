@@ -1,18 +1,25 @@
 <template>
   <div class="game-collection-container" ref="gameCollectionContainer">
     <div class="games-collection" v-if="finalPersonsList">
-      <div v-for="(game, i) in games" :key="i" class="game-banner" @click.stop="goToTest(i)">
-        <h2>{{ game.title }}</h2>
-        <h3>{{ game.subtitle }}</h3>
+      <v-card
+        :title="game.title"
+        :description="game.subtitle"
+        :hover="{ isHoverable: true, onElement: 'description' }"
+        v-for="(game, i) in games"
+        :key="i"
+        @click.stop="goToTest(i)"
+      >
         <p v-if="finalPersonsList">
           Ваш результат:
           <br />
-          <button
-            @click.prevent.stop="goToConclusion(game)"
-            class="result-of-test"
-          >{{ finalPersonsList[i]?.title ? finalPersonsList[i].title : "Еще не пройдено" }}</button>
+          <button @click.prevent.stop="goToConclusion(game)" class="result-of-test">
+            {{
+              finalPersonsList[i]?.title ?
+                finalPersonsList[i].title : "Еще не пройдено"
+            }}
+          </button>
         </p>
-      </div>
+      </v-card>
     </div>
     <Loading v-else />
 
@@ -29,8 +36,9 @@ import { useGlobal } from "../stores/global";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import Loading from "./Loading.vue";
-import { useFlickeringOnText } from "./Animations";
+import { useFlickeringOnText } from "../Helpers/Animations";
 import { ListedGame } from '../types/testsTypes.interface'
+import vCard from "./vCard.vue";
 
 const router = useRouter();
 const { finalPersonsList, games } = storeToRefs(useGlobal())
@@ -62,72 +70,55 @@ onMounted(() => {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10vw, 400px));
     grid-gap: 1rem;
-    .game-banner {
-      @include card-bcg();
-      box-shadow: $shadow-black;
-      justify-items: center;
-      padding: 0.5rem 1.5rem;
-      cursor: pointer;
-      transition: 0.3s ease-in-out;
-      text-align: start;
-      flex-basis: auto;
-      h3,
-      p {
-        color: $color-grey;
-        .result-of-test {
-          padding: 0.3rem 0;
-          font-size: 1.3rem;
-          background: transparent;
-          border: none;
-          color: $color-grey;
-          text-align: start;
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
-      &:hover {
-        transform: scale(102%);
-        h2 {
-          background: $gradient;
-          @include bcg-for-text();
-        }
-      }
-      .is-test-ended-container {
-        position: relative;
-        width: 0;
-        height: 0;
-        left: 90%;
-        top: 1rem;
-      }
-      .is-test-ended {
-        position: absolute;
-        color: $color-violet;
-        background: $gradient-green;
-        padding: 0.6rem;
-        border-radius: 100%;
-      }
-    }
   }
-  .background-text-container {
-    align-self: end;
+}
+.background-text-container {
+  align-self: end;
 
-    font-size: 2.5rem;
-    transform: rotate(-35deg);
-    display: flex;
-    align-items: center;
-    font-family: $neon-font;
-    z-index: -1;
-    #background-text {
-      background: $gradient;
-      @include bcg-for-text();
-      color: $color-violet;
-      margin: 0;
-    }
-    #broken-letter {
-      margin: 0;
+  font-size: 2.5rem;
+  transform: rotate(-35deg);
+  display: flex;
+  align-items: center;
+  font-family: $neon-font;
+  z-index: -1;
+  #background-text {
+    background: $gradient;
+    @include bcg-for-text();
+    color: $color-violet;
+    margin: 0;
+  }
+  #broken-letter {
+    margin: 0;
+  }
+}
+p {
+  color: $color-grey;
+  text-align: start;
+  .result-of-test {
+    padding: 0.3rem 0;
+    font-size: 1.3rem;
+    background: transparent;
+    border: none;
+    color: $color-grey;
+    text-align: start;
+    &:hover {
+      text-decoration: underline;
     }
   }
+}
+.is-test-ended-container {
+  position: relative;
+  width: 0;
+  height: 0;
+  left: 90%;
+  top: 1rem;
+}
+.is-test-ended {
+  position: absolute;
+  color: $color-violet;
+  background: $gradient-green;
+  padding: 0.6rem;
+  border-radius: 100%;
 }
 @media (min-width: $large-screen) {
   .game-collection-container {

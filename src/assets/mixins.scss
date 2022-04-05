@@ -1,9 +1,6 @@
-@mixin card-bcg() {
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
-    background: hsla(240, 1%, 16%, 0.521);
-    box-shadow: $shadow-black;
-    border-radius: $border-prime;
+@mixin blur-bcg() {
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
 }
 
 @mixin bcg-for-text() {

@@ -14,7 +14,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { circlesMovement } from "../components/Animations";
+import { circlesMovement } from "../Helpers/Animations";
 import { onMounted, Ref, ref } from "vue";
 let loaderCirclesArray = ref<never | Element[]>([]);
 

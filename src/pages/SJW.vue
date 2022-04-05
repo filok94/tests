@@ -19,16 +19,20 @@ import { getDatabase, set, ref as fireRef } from "firebase/database";
 import { useSjwStore } from "../stores/sjw";
 import { storeToRefs } from "pinia";
 import VButton from "../components/vButton.vue";
+import { PersonType } from "../types/testsTypes.interface";
 
 const { questions, userAnswers, computedFinalPerson } = storeToRefs(useSjwStore())
 
 const router = useRouter();
 const route = useRoute();
 const isButtonShownMethod = (e: boolean) => isButtonShown.value = e
-const isButtonPrimary = computed(() => isButtonShown.value ? 'primary' : undefined)
+const isButtonPrimary = computed(() => isButtonShown.value ? 'primary' : 'cancel')
 interface DataToPost {
-  answers: any,
-  person: any
+  answers: {
+    answerIs: number,
+    isRight: boolean
+  }[],
+  person: PersonType | null
 }
 const postUserFinalResult = async (data: DataToPost) => {
   let userId = window.localStorage.getItem("isAuthedById");

@@ -73,7 +73,7 @@ const backToMainPage = () => {
     padding: 1rem;
     width: 100%;
     cursor: default;
-    @include card-bcg();
+    @include blur-bcg();
     cursor: pointer;
   }
   .active {

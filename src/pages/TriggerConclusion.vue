@@ -23,7 +23,7 @@ import { useRouter } from 'vue-router';
 import { useTriggerStore } from "../stores/trigger";
 import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from '@vueuse/core'
-import { Appearances } from '../components/Animations'
+import { Appearances } from "../Helpers/Animations"
 import Loading from '../components/Loading.vue'
 import VButton from '../components/vButton.vue';
 
@@ -85,8 +85,10 @@ onUnmounted(() => {
     margin: 0 1rem;
     left: 0;
     right: 0;
-
-    @include card-bcg;
+    background: $color-black-opacity;
+    border-radius: $border-prime;
+    box-shadow: $shadow-black;
+    @include blur-bcg;
     padding: 2rem;
     z-index: 3;
     img {

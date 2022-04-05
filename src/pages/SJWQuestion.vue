@@ -1,50 +1,11 @@
-<template>
-  <transition @enter="enteringFrom" mode="out-in">
-    <div v-if="shownNowQuestion" class="sjw-wrapper">
-      <div class="question-block" ref="questionElement">
-        <h1>{{ shownNowQuestion.question }}</h1>
-      </div>
-
-      <div class="answer-block" ref="answerElement">
-        <ul>
-          <li
-            v-for="(answer, i) of shownNowQuestion.answers"
-            :ref="
-              (el: Element | any) => {
-                if (el) allAnswersRefs[i] = el;
-              }
-            "
-            :key="i"
-            @click.prevent="chooseAnswer(i)"
-            :class="{
-              'active-answer': isActive,
-              right:
-                usersChoice == i &&
-                usersChoice != null &&
-                usersChoice == shownNowQuestion.rightAnswer,
-              wrong:
-                usersChoice == i &&
-                usersChoice != null &&
-                usersChoice != shownNowQuestion.rightAnswer,
-            }"
-          >
-            <p class="answer-count-label">{{ i + 1 }}</p>
-            <p class="answer-text">{{ answer }}</p>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <Loading v-else />
-  </transition>
-</template>
-
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { Appearances } from "../components/Animations";
+import { Appearances } from "../Helpers/Animations";
 import Loading from "../components/Loading.vue";
 import { useSjwStore } from '../stores/sjw'
 import { useEventListener } from '@vueuse/core'
+import vCard from "../components/vCard.vue";
 
 const sjwStore = useSjwStore()
 const route = useRoute();
@@ -105,6 +66,48 @@ onBeforeRouteUpdate(() => {
 });
 </script>
 
+<template>
+  <transition @enter="enteringFrom" mode="out-in">
+    <div v-if="shownNowQuestion" class="sjw-wrapper">
+      <div class="question-block" ref="questionElement">
+        <h1>{{ shownNowQuestion.question }}</h1>
+      </div>
+
+      <div class="answer-block" ref="answerElement">
+        <ul>
+          <v-card
+            v-for="(answer, i) of shownNowQuestion.answers"
+            :ref="
+              (el: Element | any) => {
+                if (el) allAnswersRefs[i] = el;
+              }
+            "
+            :hover="{ isHoverable: isActive, onElement: 'description' }"
+            :description="answer"
+            :key="i"
+            @click.prevent="chooseAnswer(i)"
+            class="static-answer"
+            :class="{
+              'active-answer': isActive,
+              right:
+                usersChoice == i &&
+                usersChoice != null &&
+                usersChoice == shownNowQuestion.rightAnswer,
+              wrong:
+                usersChoice == i &&
+                usersChoice != null &&
+                usersChoice != shownNowQuestion.rightAnswer,
+            }"
+          >
+            <p class="answer-count-label">{{ i + 1 }}</p>
+          </v-card>
+        </ul>
+      </div>
+    </div>
+    <Loading v-else />
+  </transition>
+</template>
+
 <style lang="scss" scoped>
 //static classes
 .question-block {
@@ -128,44 +131,40 @@ onBeforeRouteUpdate(() => {
     grid-gap: 1.5rem;
     justify-content: start;
     min-width: 70vw;
-    li {
-      padding: 1.3rem;
-      list-style-type: none;
-      margin: 0;
-      text-align: start;
-      font-size: 1.1rem;
-      color: $color-grey;
-      transition: 0.3s ease-in-out;
-      @include card-bcg();
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
-      p {
-        margin: 0;
-        padding: 0;
-      }
-      .answer-count-label {
-        font-size: 2rem;
-        color: $color-white;
-      }
-    }
+
     .right {
       @include right-wrong($gradient-green);
+      p {
+        transform: scale(130%);
+      }
     }
     .wrong {
       @include right-wrong($gradient-red);
+      p {
+        transform: scale(130%);
+      }
     }
   }
   .active-answer {
-    cursor: pointer;
-
     &:hover {
       .answer-count-label {
-        transform: scale(101%);
+        transform: scale(130%);
         background: $gradient;
         @include bcg-for-text();
       }
     }
   }
+}
+.static-answer {
+  padding: 1rem;
+}
+p {
+  margin: 0;
+  padding: 0;
+}
+.answer-count-label {
+  font-size: 2rem;
+  color: $color-white;
+  transition: 0.3s ease;
 }
 </style>

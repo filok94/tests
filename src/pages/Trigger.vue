@@ -57,7 +57,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { useRouter } from 'vue-router'
-import { Appearances } from '../components/Animations'
+import { Appearances } from "../Helpers/Animations"
 import Loading from '../components/Loading.vue'
 import { WarriorCardType } from '../types/testsTypes.interface';
 import VButton from '../components/vButton.vue';
@@ -170,7 +170,10 @@ $cardWidth: 10rem;
       display: flex;
       flex-direction: column;
       padding: 1rem;
-      @include card-bcg;
+      @include blur-bcg;
+      box-shadow: $shadow-black;
+      border-radius: $border-prime;
+      background: $color-black-opacity;
       margin-bottom: 1rem;
       width: fit-content;
       padding-right: 3rem;
@@ -230,7 +233,9 @@ $cardWidth: 10rem;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
       padding: 0;
       margin: 0;
-      @include card-bcg();
+      border-radius: $border-prime;
+      background: $color-black-opacity;
+      @include blur-bcg();
       width: $cardWidth;
       height: 15rem;
       img {

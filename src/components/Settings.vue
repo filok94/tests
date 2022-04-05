@@ -1,27 +1,3 @@
-<template>
-  <div class="settings-page">
-    <div class="settings-container">
-      <div class="setting-type" id="avatar" @click="chooseAvatar">
-        <img :src="avatarImageDefault" width="40" class="setting-icon" />
-        <p class="setting-text">Выбрать аватар</p>
-      </div>
-      <div class="setting-type" id="night-mode" @click="changeMode">
-        <img
-          src="../assets/dark-mode.svg"
-          width="40"
-          :class="{ 'is-dark': darkMode }"
-          class="setting-icon"
-        />
-        <p class="setting-text">
-          Переключить на {{ mode }}
-          <span>(В разработке)</span>
-        </p>
-      </div>
-    </div>
-    <img ref="imageSetting" class="image-holder" src="../assets/setting.svg" />
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
@@ -67,6 +43,30 @@ onUnmounted(() => {
 });
 </script>
 
+<template>
+  <div class="settings-page">
+    <div class="settings-container">
+      <div class="setting-type" id="avatar" @click="chooseAvatar">
+        <img :src="avatarImageDefault" width="40" class="setting-icon" />
+        <p class="setting-text">Выбрать аватар</p>
+      </div>
+      <div class="setting-type" id="night-mode" @click="changeMode">
+        <img
+          src="../assets/dark-mode.svg"
+          width="40"
+          :class="{ 'is-dark': darkMode }"
+          class="setting-icon"
+        />
+        <p class="setting-text">
+          Переключить на {{ mode }}
+          <span>(В разработке)</span>
+        </p>
+      </div>
+    </div>
+    <img ref="imageSetting" class="image-holder" src="../assets/setting.svg" />
+  </div>
+</template>
+
 <style lang="scss">
 //dynamic class
 .is-dark {
@@ -96,7 +96,9 @@ onUnmounted(() => {
       font-size: 1.2rem;
       color: $color-grey;
 
-      @include card-bcg();
+      @include blur-bcg();
+      box-shadow: $shadow-black;
+      background: $color-black-opacity;
       border-radius: $border-prime;
 
       cursor: pointer;

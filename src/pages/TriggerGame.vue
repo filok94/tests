@@ -74,7 +74,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { onClickOutside } from '@vueuse/core'
-import { Appearances, useCardGoingAside, useShakingElement, GoingAsideType } from "../components/Animations";
+import { Appearances, useCardGoingAside, useShakingElement, GoingAsideType } from "../Helpers/Animations";
 
 let emit = defineEmits(['closeTriggerModal'])
 let triggerStore = useTriggerStore()
@@ -255,7 +255,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19) !important;
 
     margin: 1rem 0;
-    @include card-bcg();
+    @include blur-bcg();
     background: hsla(240, 1%, 16%, 0.521);
 
     padding: 1rem;

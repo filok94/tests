@@ -1,14 +1,3 @@
-<template>
-  <li>
-    <button @click="chooseVariant(false)" class="option-button option-button_minus">-</button>
-    <div class="option-text-container">
-      <h3 class="option-title" :class="{ warning: warning }">{{ optionTitle }}</h3>
-      <p class="option-numbers">{{ displayedSelectedVariant }}/{{ variantsLength }}</p>
-    </div>
-    <button @click="chooseVariant(true)" class="option-button option-button_plus">+</button>
-  </li>
-</template>
-
 <script lang="ts" setup>
 import { ref, computed } from "vue";
 const props = defineProps<{
@@ -49,6 +38,17 @@ let variants = computed(() => props.variants);
 let variantsLength = computed(() => props.variants.length);
 </script>
 
+<template>
+  <li>
+    <button @click="chooseVariant(false)" class="option-button option-button_minus">-</button>
+    <div class="option-text-container">
+      <h3 class="option-title" :class="{ warning: warning }">{{ optionTitle }}</h3>
+      <p class="option-numbers">{{ displayedSelectedVariant }}/{{ variantsLength }}</p>
+    </div>
+    <button @click="chooseVariant(true)" class="option-button option-button_plus">+</button>
+  </li>
+</template>
+
 <style lang="scss" scoped>
 //dynamic classes
 .warning {
@@ -61,7 +61,10 @@ li {
   height: 4rem;
   margin: 0.5rem 0;
 
-  @include card-bcg();
+  box-shadow: $shadow-black;
+  background: $color-black-opacity;
+  border-radius: $border-prime;
+  @include blur-bcg();
   display: flex;
   justify-content: space-between;
   align-items: center;

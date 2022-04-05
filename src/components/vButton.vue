@@ -18,7 +18,7 @@ import gsap from 'gsap'
 
 let props = defineProps<{
     disable?: boolean,
-    purpose?: 'cancel' | 'primary'
+    purpose: 'cancel' | 'primary'
 }>()
 
 let emit = defineEmits<{

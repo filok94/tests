@@ -1,47 +1,3 @@
-<template>
-  <transition @enter="appearance">
-    <div class="avatar-window" v-if="avatar">
-      <div class="avatar-image-saver" ref="avatarImageRef">
-        <img :src="imageAvatar" alt="avatar_picker" />
-        <transition
-          @enter="confirmationAnimation($event)"
-          @leave="confirmationAnimationLeave($event)"
-          @before-enter="confirmationAnimationAfterLeave($event)"
-          :duration="200"
-          mode="out-in"
-        >
-          <v-button
-            v-if="!confirmationWindowShown"
-            @click.prevent="confirmationWindowShown = !confirmationWindowShown"
-            :purpose="'primary'"
-          >Сохранить аватар</v-button>
-          <div class="confirmation-buttons-container" v-else>
-            <h3 class="confirmation-title">Вы уверены?</h3>
-            <v-button
-              :purpose="'cancel'"
-              @click.prevent="
-                confirmationWindowShown = !confirmationWindowShown
-              "
-            >Нет</v-button>
-            <v-button @click.prevent="saveTheRenderedAvatarAndGoBack" :purpose="'primary'">Да</v-button>
-          </div>
-        </transition>
-      </div>
-      <ul ref="listOfOptions">
-        <Option
-          v-for="(option, i) in avatar.options"
-          :key="i"
-          :title="String(i)"
-          :variants="option"
-          :probabilty-warning="probabilityWarningTitleClass"
-          @option-changed="optionChanged"
-        />
-      </ul>
-    </div>
-    <Loading v-else />
-  </transition>
-</template>
-
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref, Ref } from "vue";
 import { useRouter } from "vue-router";
@@ -49,7 +5,7 @@ import { getDatabase, set, ref as fireRef } from "firebase/database";
 
 import Option from "../components/Option.vue";
 import Loading from "../components/Loading.vue";
-import { Appearances } from "../components/Animations";
+import { Appearances } from "../Helpers/Animations";
 import { useGlobal } from "../stores/global";
 import VButton from "../components/vButton.vue";
 
@@ -125,7 +81,49 @@ let saveTheRenderedAvatarAndGoBack = async () => {
 };
 </script>
 
-
+<template>
+  <transition @enter="appearance">
+    <div class="avatar-window" v-if="avatar">
+      <div class="avatar-image-saver" ref="avatarImageRef">
+        <img :src="imageAvatar" alt="avatar_picker" />
+        <transition
+          @enter="confirmationAnimation($event)"
+          @leave="confirmationAnimationLeave($event)"
+          @before-enter="confirmationAnimationAfterLeave($event)"
+          :duration="200"
+          mode="out-in"
+        >
+          <v-button
+            v-if="!confirmationWindowShown"
+            @click.prevent="confirmationWindowShown = !confirmationWindowShown"
+            :purpose="'primary'"
+          >Сохранить аватар</v-button>
+          <div class="confirmation-buttons-container" v-else>
+            <h3 class="confirmation-title">Вы уверены?</h3>
+            <v-button
+              :purpose="'cancel'"
+              @click.prevent="
+                confirmationWindowShown = !confirmationWindowShown
+              "
+            >Нет</v-button>
+            <v-button @click.prevent="saveTheRenderedAvatarAndGoBack" :purpose="'primary'">Да</v-button>
+          </div>
+        </transition>
+      </div>
+      <ul ref="listOfOptions">
+        <Option
+          v-for="(option, i) in avatar.options"
+          :key="i"
+          :title="String(i)"
+          :variants="option"
+          :probabilty-warning="probabilityWarningTitleClass"
+          @option-changed="optionChanged"
+        />
+      </ul>
+    </div>
+    <Loading v-else />
+  </transition>
+</template>
 
 <style lang="scss" scoped>
 .avatar-window {
@@ -142,7 +140,10 @@ let saveTheRenderedAvatarAndGoBack = async () => {
     gap: 1rem;
     flex-direction: column;
     align-items: center;
-    @include card-bcg();
+    box-shadow: $shadow-black;
+    background: $color-black-opacity;
+    border-radius: $border-prime;
+    @include blur-bcg();
     img {
       width: 15rem;
       align-self: center;

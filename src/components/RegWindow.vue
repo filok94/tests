@@ -180,7 +180,7 @@ let inputIsActive = (el: EventTarget | null) => {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   padding: 1rem;
   margin: 3rem 1rem;
-  @include card-bcg();
+  @include blur-bcg();
 
   h1 {
     margin: 0 auto 4rem auto;

@@ -87,9 +87,9 @@ export const useSjwStore = defineStore('sjwStore', {
         }
     },
     getters: {
-        computedFinalPerson: (state) => {
+        computedFinalPerson: (state): PersonType | null => {
             let rightCount = state.userAnswers.filter((e) => e.isRight).length
-            let computedFinalPerson = state.allPersons ? state.allPersons[rightCount] : undefined
+            let computedFinalPerson = state.allPersons ? state.allPersons[rightCount] : null
             return computedFinalPerson
         }
     }

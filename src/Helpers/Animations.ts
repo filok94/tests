@@ -132,3 +132,11 @@ export let circlesMovement = (circle: number, arrayOfCircles: never[] | Element[
         .to(arrayOfCircles[circle], { x: 0, background: "#005ef1" })
         .to(arrayOfCircles[circle], { y: 0, background: "#6025c3" });
 };
+
+export let hoverEffectOnText = (element: Element | null, color: string) => {
+    gsap.to(element, { color: color, ease: 'back' })
+}
+
+export let hoverTransformScale = (element: Element | null, scalePercentage: number) => {
+    gsap.to(element, { scale: scalePercentage / 100, ease: 'back' })
+}

@@ -1,85 +1,18 @@
-<template>
-  <transition mode="out-in" @enter="enteringFrom">
-    <div
-      class="is-conclusion-loaded"
-      v-if="userAnswers.length > 0 && person && questions.length > 0"
-    >
-      <div class="person-card" ref="card">
-        <img :src="person.img" width="150" />
-        <h2>
-          <a :href="person.src">Вы {{ person.title }}</a>
-        </h2>
-        <p>{{ person.description }}</p>
-        <p>
-          Результат:
-          <span>{{ userAnswers.filter((e) => e.isRight).length }}</span>
-          из
-          {{ questions.length }}
-        </p>
-      </div>
-      <div class="result-qusetions-block">
-        <div class="dots-list-constainer">
-          <div
-            class="dot"
-            v-for="(q, i) of questions"
-            :key="i"
-            @click="activateDot(i)"
-            :ref="
-              (el: Element) => {
-                if (el) allDotsRef[i] = el;
-              }
-            "
-            ref="test"
-            :class="{
-              'is-right': userAnswers[i].isRight,
-              'is-active': i == activatedDotIs,
-            }"
-          ></div>
-        </div>
-        <div class="question-card" ref="questionCard">
-          <h2
-            :class="{
-              'is-header-right': userAnswers[activatedDotIs].isRight,
-              'is-header-wrong': !userAnswers[activatedDotIs].isRight,
-            }"
-          >{{ questions[activatedDotIs].question }}</h2>
-          <p class="right-answer">
-            <span>Правильный ответ:</span>
-            {{
-              questions[activatedDotIs].answers[
-                questions[activatedDotIs].rightAnswer
-              ]
-            }}
-          </p>
-          <p class="user-answer">
-            <span>Ваш ответ:</span>
-            {{
-              questions[activatedDotIs].answers[
-                userAnswers[activatedDotIs].answerIs
-              ]
-            }}
-          </p>
-        </div>
-      </div>
-    </div>
-    <Loading v-else />
-  </transition>
-</template>
-
 <script lang="ts" setup>
 import { useSjwStore } from "../stores/sjw";
 import { computed, onMounted, ref } from "vue";
 import Loading from "../components/Loading.vue";
 import gsap from "gsap";
-import { Appearances } from "../components/Animations";
+import { Appearances } from "../Helpers/Animations";
 import { usePointerSwipe } from "@vueuse/core";
+import VCard from '../components/vCard.vue'
 
 //store vars
 const emit = defineEmits(["is-button-shown"]);
 const sjwStore = useSjwStore()
 //refs
 let allDotsRef = ref<Element[] | never>([]);
-let card = ref<HTMLElement | null>(null);
+let card = ref<InstanceType<typeof VCard> | null>(null);
 let questionCard = ref(null);
 let activatedDotIs = ref(0);
 
@@ -89,6 +22,7 @@ const { distanceX } = usePointerSwipe(questionCard, {
     e.preventDefault();
   },
   onSwipe(e: PointerEvent) {
+    e.preventDefault();
     gsap.to(questionCard.value, { x: -distanceX.value });
     if (distanceX.value < -20 || distanceX.value > 20) {
       gsap.to(questionCard.value, { opacity: 0.5 });
@@ -128,8 +62,8 @@ let activateDot = (i: number) => {
   tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
 };
 let enteringFrom = () => {
-  Appearances.fromTop(150, card.value)
-  Appearances.fromBottom(400, questionCard.value)
+  Appearances.fromTop(150, card.value?.card!)
+  Appearances.fromBottom(100, questionCard.value)
 };
 onMounted(() => {
   sjwStore.getQusetions()
@@ -138,6 +72,73 @@ onMounted(() => {
   emit("is-button-shown", true);
 });
 </script>
+
+<template>
+  <transition mode="out-in" @enter="enteringFrom">
+    <div
+      class="is-conclusion-loaded"
+      v-if="userAnswers.length > 0 && person && questions.length > 0"
+    >
+      <v-card
+        :title="person.title"
+        :description="person.description"
+        :image="person.img"
+        ref="card"
+      >
+        <p class="card-result">
+          Результат:
+          <span>{{ userAnswers.filter((e) => e.isRight).length }}</span>
+          из
+          {{ questions.length }}
+        </p>
+      </v-card>
+      <div class="result-qusetions-block">
+        <div class="dots-list-constainer">
+          <div
+            class="dot"
+            v-for="(q, i) of questions"
+            :key="i"
+            @click="activateDot(i)"
+            :ref="
+              (el: any) => {
+                if (el) allDotsRef[i] = el;
+              }
+            "
+            :class="{
+              'is-right': userAnswers[i].isRight,
+              'is-active': i == activatedDotIs,
+            }"
+          ></div>
+        </div>
+        <div class="question-card" ref="questionCard">
+          <h2
+            :class="{
+              'is-header-right': userAnswers[activatedDotIs].isRight,
+              'is-header-wrong': !userAnswers[activatedDotIs].isRight,
+            }"
+          >{{ questions[activatedDotIs].question }}</h2>
+          <p class="right-answer">
+            <span>Правильный ответ:</span>
+            {{
+              questions[activatedDotIs].answers[
+                questions[activatedDotIs].rightAnswer
+              ]
+            }}
+          </p>
+          <p class="user-answer">
+            <span>Ваш ответ:</span>
+            {{
+              questions[activatedDotIs].answers[
+                userAnswers[activatedDotIs].answerIs
+              ]
+            }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <Loading v-else />
+  </transition>
+</template>
 
 <style lang="scss" scoped>
 //dynamic classes
@@ -159,47 +160,11 @@ onMounted(() => {
 .is-conclusion-loaded {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 1.5rem;
   overflow: hidden;
+  padding: 2rem 0;
 
-  .person-card {
-    @include card-bcg();
-    padding: 1.5rem;
-    text-align: left;
-    display: grid;
-    max-width: 90%;
-    grid-template-rows: repeat (4, 1fr);
-    grid-template-columns: minmax(10%, 80vw);
-    height: 100%;
-    img {
-      border-radius: $border-minimal;
-      max-width: 90%;
-    }
-    h2 {
-      margin: 1rem 0;
-      a {
-        text-decoration: none;
-        &:any-link {
-          color: $color-white;
-        }
-        &:hover {
-          text-decoration: underline;
-          background: $gradient;
-          @include bcg-for-text();
-        }
-      }
-    }
-    p {
-      margin: 0.4rem 0;
-      color: $color-grey;
-      span {
-        font-weight: bold;
-        font-size: 1.4rem;
-        color: $color-pink;
-      }
-    }
-  }
   .result-qusetions-block {
     max-width: 100%;
     margin: 0.5rem 0;
@@ -221,8 +186,9 @@ onMounted(() => {
     .question-card {
       padding: 1rem;
       text-align: start;
-
-      @include card-bcg();
+      border-radius: $border-prime;
+      background: $color-black-opacity;
+      @include blur-bcg();
       p {
         color: $color-grey;
         span {
@@ -233,12 +199,17 @@ onMounted(() => {
       }
     }
   }
+  .card-result {
+    margin: 0.4rem 0;
+    color: $color-grey;
+    span {
+      font-weight: bold;
+      font-size: 1.4rem;
+      color: $color-pink;
+    }
+  }
 
   @media (min-width: $large-screen) {
-    .person-card {
-      width: 40%;
-      margin-top: 3rem;
-    }
     .result-qusetions-block {
       width: 40%;
     }
