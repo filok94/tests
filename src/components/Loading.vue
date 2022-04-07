@@ -1,18 +1,3 @@
-<template>
-  <div class="loader-square-container">
-    <div
-      class="loader-square"
-      v-for="(square, i) of [1, 2, 3, 4]"
-      :key="i"
-      :ref="
-        (el: Element) => {
-          if (el) loaderCirclesArray[i] = el;
-        }
-      "
-      ref="test"
-    ></div>
-  </div>
-</template>
 <script lang="ts" setup>
 import { circlesMovement } from "../Helpers/Animations";
 import { onMounted, Ref, ref } from "vue";
@@ -35,6 +20,22 @@ onMounted(() => {
   setInterval(() => changingBorders(borders), 1000);
 });
 </script>
+
+<template>
+  <div class="loader-square-container">
+    <div
+      class="loader-square"
+      v-for="(square, i) of [1, 2, 3, 4]"
+      :key="i"
+      :ref="
+        (el: Element) => {
+          if (el) loaderCirclesArray[i] = el;
+        }
+      "
+      ref="test"
+    ></div>
+  </div>
+</template>
 
 <style lang="scss">
 .loader-square-container {

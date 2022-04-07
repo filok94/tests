@@ -1,75 +1,3 @@
-<template>
-    <div
-        class="trigger-modal"
-        @wheel.prevent
-        @touchmove.prevent
-        @scroll.prevent
-        ref="triggerModal"
-        :class="{ 'trigger-modal-opacity': sureToLeaveIsShown }"
-    >
-        <div id="trigger-modal-swiper"></div>
-        <button class="closing-modal-button" @click.prevent="closingModal(true, false)">X</button>
-        <div class="warrior-card">
-            <div>
-                <p class="trigger-label">
-                    Текущий
-                    <br />триггер
-                </p>
-                <p
-                    class="trigger-count"
-                >{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength : currentQuestion + 1 }}</p>
-            </div>
-
-            <img :src="warrior.imageUrl" />
-            <div>
-                <p class="trigger-label">Из</p>
-                <p class="trigger-count">{{ triggerQuestionsLength }}</p>
-            </div>
-        </div>
-        <transition mode="out-in" @enter="buttonEntering">
-            <div
-                class="trigger-game-block"
-                ref="card"
-                v-if="currentQuestion < triggerQuestionsLength"
-            >
-                <div class="trigger-question">
-                    <h3>{{ triggerQuestions[currentQuestion] }}</h3>
-                </div>
-                <div class="trigger-reacts-container">
-                    <div
-                        class="react react-left"
-                        @click.prevent="chooseEmoji(0)"
-                        ref="leftEmoji"
-                    >&#128525;</div>
-
-                    <div
-                        class="react react-right"
-                        @click.prevent="chooseEmoji(1)"
-                        ref="rightEmoji"
-                    >&#128548;</div>
-                </div>
-            </div>
-            <button
-                v-else
-                class="trigger-end-button"
-                ref="endingButton"
-                @click.prevent="closingModal(false, true)"
-            >Завершить</button>
-        </transition>
-    </div>
-    <div class="sure-to-leave-background">
-        <div class="sure-to-leave" v-if="sureToLeaveIsShown" ref="sureToLeave">
-            <h4>Вы уверены, что хотите выйти?</h4>
-            <p>Результат не сохранится</p>
-            <div id="stl-buttons">
-                <button id="stl-buttons-yes" @click.prevent="closingModal(false, false)">Да</button>
-                <button id="stl-buttons-no" @click.prevent="destroySureToLeave">Нет</button>
-            </div>
-        </div>
-    </div>
-</template>
-
-
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
@@ -158,6 +86,78 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
 }
 
 </script>
+
+<template>
+    <div
+        class="trigger-modal"
+        @wheel.prevent
+        @touchmove.prevent
+        @scroll.prevent
+        ref="triggerModal"
+        :class="{ 'trigger-modal-opacity': sureToLeaveIsShown }"
+    >
+        <div id="trigger-modal-swiper"></div>
+        <button class="closing-modal-button" @click.prevent="closingModal(true, false)">X</button>
+        <div class="warrior-card">
+            <div>
+                <p class="trigger-label">
+                    Текущий
+                    <br />триггер
+                </p>
+                <p
+                    class="trigger-count"
+                >{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength : currentQuestion + 1 }}</p>
+            </div>
+
+            <img :src="warrior.imageUrl" />
+            <div>
+                <p class="trigger-label">Из</p>
+                <p class="trigger-count">{{ triggerQuestionsLength }}</p>
+            </div>
+        </div>
+        <transition mode="out-in" @enter="buttonEntering">
+            <div
+                class="trigger-game-block"
+                ref="card"
+                v-if="currentQuestion < triggerQuestionsLength"
+            >
+                <div class="trigger-question">
+                    <h3>{{ triggerQuestions[currentQuestion] }}</h3>
+                </div>
+                <div class="trigger-reacts-container">
+                    <div
+                        class="react react-left"
+                        @click.prevent="chooseEmoji(0)"
+                        ref="leftEmoji"
+                    >&#128525;</div>
+
+                    <div
+                        class="react react-right"
+                        @click.prevent="chooseEmoji(1)"
+                        ref="rightEmoji"
+                    >&#128548;</div>
+                </div>
+            </div>
+            <button
+                v-else
+                class="trigger-end-button"
+                ref="endingButton"
+                @click.prevent="closingModal(false, true)"
+            >Завершить</button>
+        </transition>
+    </div>
+    <div class="sure-to-leave-background">
+        <div class="sure-to-leave" v-if="sureToLeaveIsShown" ref="sureToLeave">
+            <h4>Вы уверены, что хотите выйти?</h4>
+            <p>Результат не сохранится</p>
+            <div id="stl-buttons">
+                <button id="stl-buttons-yes" @click.prevent="closingModal(false, false)">Да</button>
+                <button id="stl-buttons-no" @click.prevent="destroySureToLeave">Нет</button>
+            </div>
+        </div>
+    </div>
+</template>
+
 <style lang="scss" scoped>
 //dynamic-classes
 //static-classes

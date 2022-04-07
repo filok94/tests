@@ -1,41 +1,3 @@
-<template>
-  <div
-    class="wrapper-for-circle"
-    ref="wrapperForCircle"
-    style="position: fixed; touch-action: none"
-    :style="style"
-  >
-    <div
-      class="nav-circle"
-      @click.prevent.stop="activateNavCircle"
-      :class="{ 'nav-circle-is-active': isCirclesActive }"
-      ref="navCircle"
-    >
-      <img :src="avatarImage" alt="navigation_circle" />
-      <p>Navigate</p>
-      <div
-        v-show="isCirclesActive"
-        :ref="
-          (el: Element | any) => {
-            if (el) circles[i] = el;
-          }
-        "
-        @click.self.stop.prevent="button($event)"
-        :class="{ 'active-target': activeTabIs == i }"
-        v-for="(tab, i) of props.tabs"
-        :key="i"
-        class="target-circle"
-      >{{ tab.name }}</div>
-      <div
-        class="main-target-circle"
-        @click.self.stop.prevent="logoutTab.action"
-        v-show="isCirclesActive"
-        ref="logoutTabRef"
-      >{{ logoutTab.name }}</div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { ref, onMounted, watch, Ref, computed } from "vue";
 import gsap from "gsap";
@@ -163,6 +125,45 @@ onMounted(() => {
   setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
 });
 </script>
+
+<template>
+  <div
+    class="wrapper-for-circle"
+    ref="wrapperForCircle"
+    style="position: fixed; touch-action: none"
+    :style="style"
+  >
+    <div
+      class="nav-circle"
+      @click.prevent.stop="activateNavCircle"
+      :class="{ 'nav-circle-is-active': isCirclesActive }"
+      ref="navCircle"
+    >
+      <img :src="avatarImage" alt="navigation_circle" />
+      <p>Navigate</p>
+      <div
+        v-show="isCirclesActive"
+        :ref="
+          (el: Element | any) => {
+            if (el) circles[i] = el;
+          }
+        "
+        @click.self.stop.prevent="button($event)"
+        :class="{ 'active-target': activeTabIs == i }"
+        v-for="(tab, i) of props.tabs"
+        :key="i"
+        class="target-circle"
+      >{{ tab.name }}</div>
+      <div
+        class="main-target-circle"
+        @click.self.stop.prevent="logoutTab.action"
+        v-show="isCirclesActive"
+        ref="logoutTabRef"
+      >{{ logoutTab.name }}</div>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 @mixin targetCircle($background) {
   font-size: 0.8rem;

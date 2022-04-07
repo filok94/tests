@@ -1,13 +1,3 @@
-<template >
-  <div class="activated-window">
-    <h1 ref="header">{{ tabs[activeTabIndex].name }}</h1>
-    <transition @enter="enter" @leave="leave" mode="out-in">
-      <component :is="activeTabIndex == 0 ? GameCollection : Settings"></component>
-    </transition>
-  </div>
-  <navigation-circle :tabs="tabs" @activation="activeTarget"></navigation-circle>
-</template>
-
 <script lang="ts" setup>
 import { ref, onMounted, reactive, watch } from "vue";
 import { useGlobal } from "../stores/global";
@@ -22,15 +12,12 @@ const activeTabIndex = ref(0);
 const activeTarget = (target: number) => activeTabIndex.value = target
 
 class Tab {
-  name: string
-  target: string
-
-  constructor(name: string, target: string) {
+  constructor(public name: string, public target: string) {
     this.name = name
     this.target = target
   }
 }
-const tabs = reactive<Array<TabsUser>>([
+const tabs = reactive<TabsUser[]>([
   new Tab("Games", ""), new Tab("Settings", "")
 ]);
 
@@ -45,6 +32,16 @@ onMounted(async () => {
   }
 });
 </script>
+
+<template >
+  <div class="activated-window">
+    <h1 ref="header">{{ tabs[activeTabIndex].name }}</h1>
+    <transition @enter="enter" @leave="leave" mode="out-in">
+      <component :is="activeTabIndex == 0 ? GameCollection : Settings"></component>
+    </transition>
+  </div>
+  <navigation-circle :tabs="tabs" @activation="activeTarget"></navigation-circle>
+</template>
 
 <style lang='scss' scoped>
 .activated-window {

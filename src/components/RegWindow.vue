@@ -1,34 +1,3 @@
-<template>
-  <div id="regAndAuth-window" ref="regAndAuthWindowRef">
-    <form action="register">
-      <label for="new-user">Login</label>
-      <input
-        id="new-user"
-        type="text"
-        v-model="userInputs.login"
-        @focus.prevent="inputIsActive($event.target)"
-      />
-      <label for="new-password">Password</label>
-      <input
-        id="new-password"
-        type="password"
-        v-model="userInputs.password"
-        @focus.prevent="inputIsActive($event.target)"
-      />
-      <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
-      <input
-        v-if="addConfirmPassword"
-        id="confirm-password"
-        type="password"
-        v-model="userInputs.confirmationPassowrd"
-        @focus.prevent="inputIsActive($event.target)"
-      />
-      <button @click.prevent="registerAndSigniIn()" :disabled="disableButton">Подтвердить</button>
-    </form>
-    <p v-show="errorMessage" class="error-message">{{ errorMessage }}</p>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { reactive, watch, ref, computed } from "vue";
 import {
@@ -38,6 +7,7 @@ import {
 } from "firebase/auth";
 import { AnimationPropertiesRegWindow } from '../types/testsTypes.interface'
 import { useRouter } from "vue-router";
+import VButton from "./vButton.vue";
 const localStorageSet = (key: string, value: any) => JSON.stringify(window.localStorage.setItem(key, value));
 const router = useRouter();
 const props = defineProps({
@@ -162,6 +132,38 @@ let inputIsActive = (el: EventTarget | null) => {
   inputElement.addEventListener("blur", changeClass);
 };
 </script>
+
+<template>
+  <div id="regAndAuth-window" ref="regAndAuthWindowRef">
+    <form action="register">
+      <label for="new-user">Login</label>
+      <input
+        id="new-user"
+        type="text"
+        v-model="userInputs.login"
+        @focus.prevent="inputIsActive($event.target)"
+      />
+      <label for="new-password">Password</label>
+      <input
+        id="new-password"
+        type="password"
+        v-model="userInputs.password"
+        @focus.prevent="inputIsActive($event.target)"
+      />
+      <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
+      <input
+        v-if="addConfirmPassword"
+        id="confirm-password"
+        type="password"
+        v-model="userInputs.confirmationPassowrd"
+        @focus.prevent="inputIsActive($event.target)"
+      />
+      <VButton :purpose="'primary'" :disable="disableButton" @click.prevent="registerAndSigniIn()" />
+    </form>
+    <p v-show="errorMessage" class="error-message">{{ errorMessage }}</p>
+  </div>
+</template>
+
 <style lang="scss">
 // state dynamic classes
 .label_up {

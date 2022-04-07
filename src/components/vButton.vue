@@ -1,16 +1,3 @@
-<template>
-    <button
-        class="v-button"
-        ref="buttonRef"
-        @mouseenter="mouseHoverEvent($event.type)"
-        @mouseleave="mouseHoverEvent($event.type)"
-        :disabled="props.disable"
-        :class="{ 'cancel': props.purpose == 'cancel', 'primary': props.purpose == 'primary' }"
-    >
-        <slot>Подтвердить</slot>
-    </button>
-</template>
-
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useEventListener } from '@vueuse/core'
@@ -37,6 +24,19 @@ let mouseHoverEvent = (event: string) => {
 useEventListener(document, "keyup", (ev: KeyboardEvent) => ev.code == "Enter" ? emit("entered", ev) : undefined)
 
 </script>
+
+<template>
+    <button
+        class="v-button"
+        ref="buttonRef"
+        @mouseenter="mouseHoverEvent($event.type)"
+        @mouseleave="mouseHoverEvent($event.type)"
+        :disabled="props.disable"
+        :class="{ 'cancel': props.purpose == 'cancel', 'primary': props.purpose == 'primary' }"
+    >
+        <slot>Подтвердить</slot>
+    </button>
+</template>
 
 <style lang="scss" scoped>
 .v-button {

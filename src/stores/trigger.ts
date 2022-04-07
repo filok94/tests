@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
-import { getDatabase, onValue, set, ref as fireRef } from 'firebase/database'
+import { getDatabase, onValue, set, ref as fireRef, child, get } from 'firebase/database'
 import { WarriorCardType, TriggerPerson } from "../types/testsTypes.interface";
 let userId = window.localStorage.getItem("isAuthedById");
-let pathes = {
-    toTrigger: 'global/trigger',
-    toTriggerConclusion: 'global/trigger-conclusion',
-    toUserTriggerPerson: `users/${userId}/Trigger_result/person`,
-    toUserTriggerAnswers: `users/${userId}/Trigger_result/answers`,
-    toUserTriggerTestEnded: `users/${userId}/Trigger_result/isEnded`
+class Pathes {
+    static toTrigger = 'global/trigger'
+    static toTriggerConclusion = 'global/trigger-conclusion'
+    static toUserTriggerPerson = `users/${userId}/Trigger_result/person`
+    static toUserTriggerAnswers = `users/${userId}/Trigger_result/answers`
+    static toUserTriggerTestEnded = `users/${userId}/Trigger_result/isEnded`
 }
 
 interface TriggerState {
@@ -42,7 +42,7 @@ export const useTriggerStore = defineStore('triggerStore', {
     actions: {
         async getTriggerGame() {
             let db = getDatabase()
-            const triggerInfo = fireRef(db, pathes.toTrigger)
+            const triggerInfo = fireRef(db, Pathes.toTrigger)
             onValue(triggerInfo, async (snapshot) => {
                 try {
                     const data = await snapshot.val();
@@ -58,7 +58,7 @@ export const useTriggerStore = defineStore('triggerStore', {
         },
         async getTriggerConclusion() {
             let db = getDatabase()
-            const triggerConclusion = fireRef(db, pathes.toTriggerConclusion)
+            const triggerConclusion = fireRef(db, Pathes.toTriggerConclusion)
             onValue(triggerConclusion, async (snapshot) => {
                 try {
                     const data = await snapshot.val();
@@ -71,16 +71,16 @@ export const useTriggerStore = defineStore('triggerStore', {
         async postResults() {
             let db = getDatabase()
             try {
-                await set(fireRef(db, pathes.toUserTriggerPerson), this.person);
-                await set(fireRef(db, pathes.toUserTriggerAnswers), this.triggerAnswersResults);
-                await set(fireRef(db, pathes.toUserTriggerTestEnded), true);
+                await set(fireRef(db, Pathes.toUserTriggerPerson), this.person);
+                await set(fireRef(db, Pathes.toUserTriggerAnswers), this.triggerAnswersResults);
+                await set(fireRef(db, Pathes.toUserTriggerTestEnded), true);
             } catch (err) {
                 console.error(err)
             }
         },
         async getCurrentUserResults() {
             let db = getDatabase()
-            onValue(fireRef(db, pathes.toUserTriggerAnswers), async (snapshot) => {
+            onValue(fireRef(db, Pathes.toUserTriggerAnswers), async (snapshot) => {
                 try {
                     const data = await snapshot.val();
                     data !== null ? this.triggerAnswersResults = data : undefined
@@ -91,7 +91,7 @@ export const useTriggerStore = defineStore('triggerStore', {
         },
         async getIfTheTestWasEnded() {
             let db = getDatabase()
-            let wasTestEnded = fireRef(db, pathes.toUserTriggerTestEnded)
+            let wasTestEnded = fireRef(db, Pathes.toUserTriggerTestEnded)
             onValue(wasTestEnded, async (snapshot) => {
                 try {
                     const data = await snapshot.val();

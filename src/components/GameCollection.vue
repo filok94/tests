@@ -1,3 +1,31 @@
+<script lang="ts" setup>
+import { onMounted, Ref, ref } from "vue";
+import { useGlobal } from "../stores/global";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import Loading from "./Loading.vue";
+import { useFlickeringOnText } from "../Helpers/Animations";
+import { ListedGame } from '../types/testsTypes.interface'
+import vCard from "./vCard.vue";
+
+const router = useRouter();
+const { finalPersonsList, games } = storeToRefs(useGlobal())
+
+const goToTest = (i: number) => {
+  router.push({
+    name: games.value![i].route,
+    params: { step: games.value![i].firstStep },
+  });
+};
+const goToConclusion = (game: ListedGame) => router.push({ name: game.routeToConclusion })
+
+let gameCollectionContainer = ref(null)
+let brokenLetter: Ref<null | Element> = ref(null)
+onMounted(() => {
+  useFlickeringOnText(brokenLetter.value)
+})
+</script>
+
 <template>
   <div class="game-collection-container" ref="gameCollectionContainer">
     <div class="games-collection" v-if="finalPersonsList">
@@ -29,34 +57,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts" setup>
-import { onMounted, Ref, ref } from "vue";
-import { useGlobal } from "../stores/global";
-import { storeToRefs } from "pinia";
-import { useRouter } from "vue-router";
-import Loading from "./Loading.vue";
-import { useFlickeringOnText } from "../Helpers/Animations";
-import { ListedGame } from '../types/testsTypes.interface'
-import vCard from "./vCard.vue";
-
-const router = useRouter();
-const { finalPersonsList, games } = storeToRefs(useGlobal())
-
-const goToTest = (i: number) => {
-  router.push({
-    name: games.value![i].route,
-    params: { step: games.value![i].firstStep },
-  });
-};
-const goToConclusion = (game: ListedGame) => router.push({ name: game.routeToConclusion })
-
-let gameCollectionContainer = ref(null)
-let brokenLetter: Ref<null | Element> = ref(null)
-onMounted(() => {
-  useFlickeringOnText(brokenLetter.value)
-})
-</script>
 
 <style lang="scss" scoped>
 .game-collection-container {

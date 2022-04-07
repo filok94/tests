@@ -1,22 +1,3 @@
-<template>
-    <div class="conclusion-container-visible">
-        <transition>
-            <div class="trigger-conclusion-container" ref="conclusionCardRef" v-if="finalPerson">
-                <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
-                <h1 class="trigger-conclusion-title">
-                    <a :href="finalPerson.link">{{ finalPerson.title }}</a>
-                </h1>
-                <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
-                <v-button
-                    @click.prevent="goBackToMainMenu"
-                    :purpose="'primary'"
-                >Вернуться на главную</v-button>
-            </div>
-            <Loading v-else />
-        </transition>
-    </div>
-</template>
-
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -77,6 +58,25 @@ onUnmounted(() => {
     document.removeEventListener('keydown', enterEventListener)
 })
 </script>
+
+<template>
+    <div class="conclusion-container-visible">
+        <transition>
+            <div class="trigger-conclusion-container" ref="conclusionCardRef" v-if="finalPerson">
+                <img class="trigger-conclusion-image" :src="finalPerson.image" alt="image of fem" />
+                <h1 class="trigger-conclusion-title">
+                    <a :href="finalPerson.link">{{ finalPerson.title }}</a>
+                </h1>
+                <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
+                <v-button
+                    @click.prevent="goBackToMainMenu"
+                    :purpose="'primary'"
+                >Вернуться на главную</v-button>
+            </div>
+            <Loading v-else />
+        </transition>
+    </div>
+</template>
 
 <style scoped lang="scss">
 .trigger-conclusion-container {

@@ -1,23 +1,3 @@
-<template>
-  <div class="has-rights-to-login" v-if="doesUserHasRightToLogin">
-    <div class="home-navigation">
-      <div
-        @click="nameOfActiveWindow = Window.auth"
-        :class="{ active: nameOfActiveWindow == Window.auth }"
-      >Авторизация</div>
-      <div
-        @click="nameOfActiveWindow = Window.registration"
-        :class="{ active: nameOfActiveWindow == Window.registration }"
-      >Регистрация</div>
-    </div>
-    <Reg :activeWindow="nameOfActiveWindow"></Reg>
-  </div>
-  <div class="has-no-rights-to-login" v-else>
-    <h1>Вы уже вошли в систему, пожалуйста, вернитесь на главную страницу</h1>
-    <button @click.prevent="backToMainPage">Вернуться</button>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import Reg from "../components/RegWindow.vue";
 import { ref, computed } from "vue";
@@ -52,6 +32,26 @@ const backToMainPage = () => {
   });
 };
 </script>
+
+<template>
+  <div class="has-rights-to-login" v-if="doesUserHasRightToLogin">
+    <div class="home-navigation">
+      <div
+        @click="nameOfActiveWindow = Window.auth"
+        :class="{ active: nameOfActiveWindow == Window.auth }"
+      >Авторизация</div>
+      <div
+        @click="nameOfActiveWindow = Window.registration"
+        :class="{ active: nameOfActiveWindow == Window.registration }"
+      >Регистрация</div>
+    </div>
+    <Reg :activeWindow="nameOfActiveWindow"></Reg>
+  </div>
+  <div class="has-no-rights-to-login" v-else>
+    <h1>Вы уже вошли в систему, пожалуйста, вернитесь на главную страницу</h1>
+    <button @click.prevent="backToMainPage">Вернуться</button>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .has-rights-to-login {

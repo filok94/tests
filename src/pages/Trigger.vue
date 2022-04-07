@@ -1,58 +1,3 @@
-<template>
-  <transition @enter="entering">
-    <div
-      class="trigger-game-container"
-      :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
-      v-if="femWarriors"
-    >
-      <div class="trigger-head">
-        <h1 id="trigger-name" ref="triggerTitle">Trigger Game</h1>
-        <div class="trigger-rules-container" ref="triggerRulesRef">
-          <div class="trigger-rules-header" @click="isRulesShown = !isRulesShown">
-            <img
-              class="rule-header-icon"
-              src="https://img.icons8.com/glyph-neue/64/ffffff/info.png"
-            />
-            <h2 class="trigger-rule-name">
-              <span>П</span>равила
-            </h2>
-          </div>
-          <ul class="rules-list" v-if="isRulesShown">
-            <li v-for="rule in triggerRules" class="trigger-rule">{{ rule }}</li>
-          </ul>
-        </div>
-      </div>
-      <div class="warriors-container" ref="triggerCardsContainer">
-        <div
-          class="warrior-card"
-          v-for="(warrior, index) in femWarriors"
-          @click.prevent="activateCard(warrior)"
-        >
-          <img :src="warrior.imageUrl" />
-          <h2 class="card-name">{{ warrior.name }}</h2>
-          <button
-            class="start-card-button"
-            :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded || isWarriorTestStarted"
-            @click.prevent="startTheTestForChosenWarrior(warrior)"
-          >{{ isCardHaveResultAlready.includes(index) || wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
-        </div>
-      </div>
-    </div>
-    <Loading v-else />
-  </transition>
-  <transition @enter="buttonEnteringFromBottom">
-    <v-button
-      v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || (wasTestEnded && !conclusionIsShown)"
-      ref="allGameEndedButton"
-      @click.prevent="goToEndingSection"
-      :purpose="'primary'"
-    >Узнать, кто же я</v-button>
-  </transition>
-  <div class="dark-bcg" v-if="conclusionIsShown || isWarriorTestStarted"></div>
-  <router-view v-if="isWarriorTestStarted" @close-trigger-modal="endTheTestAndCloseModal"></router-view>
-  <router-view v-if="conclusionIsShown"></router-view>
-</template>
-
 <script lang="ts" setup>
 import { computed, ref, onMounted } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
@@ -134,6 +79,61 @@ onMounted(async () => {
 })
 
 </script>
+
+<template>
+  <transition @enter="entering">
+    <div
+      class="trigger-game-container"
+      :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
+      v-if="femWarriors"
+    >
+      <div class="trigger-head">
+        <h1 id="trigger-name" ref="triggerTitle">Trigger Game</h1>
+        <div class="trigger-rules-container" ref="triggerRulesRef">
+          <div class="trigger-rules-header" @click="isRulesShown = !isRulesShown">
+            <img
+              class="rule-header-icon"
+              src="https://img.icons8.com/glyph-neue/64/ffffff/info.png"
+            />
+            <h2 class="trigger-rule-name">
+              <span>П</span>равила
+            </h2>
+          </div>
+          <ul class="rules-list" v-if="isRulesShown">
+            <li v-for="rule in triggerRules" class="trigger-rule">{{ rule }}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="warriors-container" ref="triggerCardsContainer">
+        <div
+          class="warrior-card"
+          v-for="(warrior, index) in femWarriors"
+          @click.prevent="activateCard(warrior)"
+        >
+          <img :src="warrior.imageUrl" />
+          <h2 class="card-name">{{ warrior.name }}</h2>
+          <button
+            class="start-card-button"
+            :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded || isWarriorTestStarted"
+            @click.prevent="startTheTestForChosenWarrior(warrior)"
+          >{{ isCardHaveResultAlready.includes(index) || wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
+        </div>
+      </div>
+    </div>
+    <Loading v-else />
+  </transition>
+  <transition @enter="buttonEnteringFromBottom">
+    <v-button
+      v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || (wasTestEnded && !conclusionIsShown)"
+      ref="allGameEndedButton"
+      @click.prevent="goToEndingSection"
+      :purpose="'primary'"
+    >Узнать, кто же я</v-button>
+  </transition>
+  <div class="dark-bcg" v-if="conclusionIsShown || isWarriorTestStarted"></div>
+  <router-view v-if="isWarriorTestStarted" @close-trigger-modal="endTheTestAndCloseModal"></router-view>
+  <router-view v-if="conclusionIsShown"></router-view>
+</template>
 
 <style lang='scss' scoped>
 //dynamic-css
