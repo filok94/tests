@@ -1,42 +1,67 @@
 import gsap from "gsap"
+type ease = 'ease' | 'elastic' | 'bounce' | 'back' | 'power4'
+export class Animations {
 
-export class Appearances {
-
-    static fromTop = (fromY: number, element: Element | null) => {
+    static fromTop = (fromY: number, element: HTMLElement | null) => {
         gsap.set(element, { y: 0, opacity: 1 })
         gsap.from(element, { opacity: 0, y: -fromY, ease: 'ease' })
     }
 
-    static fromBottom = (fromY: number, element: Element | null) => {
+    static fromBottom = (fromY: number, element: HTMLElement | null) => {
         gsap.set(element, { y: 0, opacity: 1 })
         gsap.from(element, { opacity: 0, y: fromY, ease: 'ease' })
     }
 
-    static fromLeft = (fromX: number, element: Element | null) => {
+    static fromLeft = (fromX: number, element: HTMLElement | null) => {
         gsap.set(element, { x: 0, opacity: 1 })
         gsap.from(element, { opacity: 0, x: -fromX, ease: 'ease' })
     }
 
-    static fromRight = (fromX: number, element: Element | null) => {
+    static fromRight = (fromX: number, element: HTMLElement | null) => {
         gsap.set(element, { x: 0, opacity: 1 })
         gsap.from(element, { opacity: 0, x: fromX, ease: 'ease' })
     }
 
-    static toRight = (toX: number, element: Element | null) => {
+    static fromTopRight = (fromX: number, fromY: number, element: HTMLElement | null) => {
+        gsap.set(element, { x: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, x: fromX, y: -fromY, ease: 'ease' })
+    }
+    static fromTopLeft = (fromX: number, fromY: number, element: HTMLElement | null) => {
+        gsap.set(element, { x: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, x: -fromX, y: -fromY, ease: 'ease' })
+    }
+    static fromBottomLeft = (fromX: number, fromY: number, element: HTMLElement | null) => {
+        gsap.set(element, { x: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, x: -fromX, y: fromY, ease: 'ease' })
+    }
+    static fromBottomRight = (fromX: number, fromY: number, element: HTMLElement | null) => {
+        gsap.set(element, { x: 0, opacity: 1 })
+        gsap.from(element, { opacity: 0, x: fromX, y: fromY, ease: 'ease' })
+    }
+
+    static toRight = (toX: number, element: HTMLElement | null) => {
         gsap.to(element, { opacity: 0, x: toX, ease: 'ease' })
     }
 
-    static toLeft = (toX: number, element: Element | null) => {
+    static toLeft = (toX: number, element: HTMLElement | null) => {
         gsap.to(element, { opacity: 0, x: -toX, ease: 'ease' })
     }
 
-    static toBottom = (toY: number, element: Element | null) => {
+    static toBottom = (toY: number, element: HTMLElement | null) => {
         gsap.to(element, { opacity: 0, y: toY, ease: 'ease' })
         gsap.set(element, { y: 0 })
     }
 
-    static setPosition = (pos: number, element: Element | null) => {
+    static setPosition = (pos: number, element: HTMLElement | null) => {
         gsap.set(element, { x: pos, opacity: 0, delay: 0, duration: 0 })
+    }
+
+    static setScaleToDefault = (element: HTMLElement | null) => {
+        gsap.set(element, { scale: 1 })
+    }
+
+    static changeBorderAndScale = (border: string, scale: number, element: HTMLElement | null, ease: ease) => {
+        gsap.to(element, { borderRadius: border, scale: scale, ease: ease })
     }
 }
 
@@ -44,7 +69,7 @@ export enum GoingAsideType {
     left = "left",
     right = 'right'
 }
-export let useCardGoingAside = async (side: GoingAsideType, duration: number, element: Element | null) => {
+export let useCardGoingAside = async (side: GoingAsideType, duration: number, element: HTMLElement | null) => {
     let dividedDuration = duration / 1000
     switch (side) {
         case GoingAsideType.right:
@@ -66,7 +91,7 @@ export let useCardGoingAside = async (side: GoingAsideType, duration: number, el
     }
 }
 
-export let useShakingElement = (element: Element | null) => {
+export let useShakingElement = (element: HTMLElement | null) => {
     let shakingTimeLine = gsap.timeline({ defaults: { duration: 0.1 } })
     shakingTimeLine
         .to(element, { x: 5 })
@@ -78,7 +103,7 @@ export let useShakingElement = (element: Element | null) => {
         .set(element, { x: 0 })
 }
 
-export let useFlickeringOnText = (brokenLetter: Element | null) => {
+export let useFlickeringOnText = (brokenLetter: HTMLElement | null) => {
     let flickerTimeLime = gsap.timeline({
         repeat: 0,
         defaults: { duration: 3, ease: "elastic" },
@@ -120,7 +145,7 @@ export let useFlickeringOnText = (brokenLetter: Element | null) => {
     })
 }
 
-export let circlesMovement = (circle: number, arrayOfCircles: never[] | Element[]) => {
+export let circlesMovement = (circle: number, arrayOfCircles: never[] | HTMLElement[]) => {
     let timeline = gsap.timeline({
         repeat: -1,
         delay: circle / 5,
@@ -133,10 +158,10 @@ export let circlesMovement = (circle: number, arrayOfCircles: never[] | Element[
         .to(arrayOfCircles[circle], { y: 0, background: "#6025c3" });
 };
 
-export let hoverEffectOnText = (element: Element | null, color: string) => {
+export let hoverEffectOnText = (element: HTMLElement | null, color: string) => {
     gsap.to(element, { color: color, ease: 'back' })
 }
 
-export let hoverTransformScale = (element: Element | null, scalePercentage: number) => {
+export let hoverTransformScale = (element: HTMLElement | null, scalePercentage: number) => {
     gsap.to(element, { scale: scalePercentage / 100, ease: 'back' })
 }

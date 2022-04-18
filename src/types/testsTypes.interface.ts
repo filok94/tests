@@ -1,6 +1,6 @@
 export interface TabsUser {
+  id: number,
   name: string,
-  target: string
 }
 
 export interface ListedGame {
@@ -47,4 +47,9 @@ export interface TriggerPerson {
   level: number,
   link: string,
   title: string
+}
+
+export type OptionEmit = {
+  optionTitle: string,
+  optionVariant: string | number
 }

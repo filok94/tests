@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { Appearances } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations";
 import Loading from "../components/Loading.vue";
 import { useSjwStore } from '../stores/sjw'
 import { useEventListener } from '@vueuse/core'
@@ -46,8 +46,8 @@ const isLoading = ref(true);
 const questionElement = ref(null);
 const answerElement = ref<Element | null>(null);
 let enteringFrom = () => {
-  Appearances.fromLeft(100, answerElement.value)
-  Appearances.fromTop(150, questionElement.value)
+  Animations.fromLeft(100, answerElement.value)
+  Animations.fromTop(150, questionElement.value)
 };
 onMounted(async () => {
   console.log(allAnswersRefs.value.length)
@@ -75,19 +75,12 @@ onBeforeRouteUpdate(() => {
 
       <div class="answer-block" ref="answerElement">
         <ul>
-          <v-card
-            v-for="(answer, i) of shownNowQuestion.answers"
-            :ref="
-              (el: Element | any) => {
-                if (el) allAnswersRefs[i] = el;
-              }
-            "
-            :hover="{ isHoverable: isActive, onElement: 'description' }"
-            :description="answer"
-            :key="i"
-            @click.prevent="chooseAnswer(i)"
-            class="static-answer"
-            :class="{
+          <v-card v-for="(answer, i) of shownNowQuestion.answers" :ref="
+            (el: Element | any) => {
+              if (el) allAnswersRefs[i] = el;
+            }
+          " :hover="{ isHoverable: isActive, onElement: 'description' }" :description="answer" :key="i"
+            @click.prevent="chooseAnswer(i)" class="static-answer" :class="{
               'active-answer': isActive,
               right:
                 usersChoice == i &&
@@ -97,8 +90,7 @@ onBeforeRouteUpdate(() => {
                 usersChoice == i &&
                 usersChoice != null &&
                 usersChoice != shownNowQuestion.rightAnswer,
-            }"
-          >
+            }">
             <p class="answer-count-label">{{ i + 1 }}</p>
           </v-card>
         </ul>
@@ -117,13 +109,16 @@ onBeforeRouteUpdate(() => {
   justify-content: start;
   flex-wrap: wrap-reverse;
   max-width: 70vw;
+
   h1 {
     text-align: start;
     font-size: 1.8rem;
   }
 }
+
 .answer-block {
   margin: 2rem 0;
+
   ul {
     padding: 0;
     display: grid;
@@ -134,17 +129,21 @@ onBeforeRouteUpdate(() => {
 
     .right {
       @include right-wrong($gradient-green);
+
       p {
         transform: scale(130%);
       }
     }
+
     .wrong {
       @include right-wrong($gradient-red);
+
       p {
         transform: scale(130%);
       }
     }
   }
+
   .active-answer {
     &:hover {
       .answer-count-label {
@@ -155,13 +154,16 @@ onBeforeRouteUpdate(() => {
     }
   }
 }
+
 .static-answer {
   padding: 1rem;
 }
+
 p {
   margin: 0;
   padding: 0;
 }
+
 .answer-count-label {
   font-size: 2rem;
   color: $color-white;

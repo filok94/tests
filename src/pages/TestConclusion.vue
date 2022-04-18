@@ -3,7 +3,7 @@ import { useSjwStore } from "../stores/sjw";
 import { computed, onMounted, ref } from "vue";
 import Loading from "../components/Loading.vue";
 import gsap from "gsap";
-import { Appearances } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations";
 import { usePointerSwipe } from "@vueuse/core";
 import VCard from '../components/vCard.vue'
 
@@ -62,8 +62,8 @@ let activateDot = (i: number) => {
   tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
 };
 let enteringFrom = () => {
-  Appearances.fromTop(150, card.value?.card!)
-  Appearances.fromBottom(100, questionCard.value)
+  Animations.fromTop(150, card.value?.card!)
+  Animations.fromBottom(100, questionCard.value)
 };
 onMounted(() => {
   sjwStore.getQusetions()
@@ -75,16 +75,8 @@ onMounted(() => {
 
 <template>
   <transition mode="out-in" @enter="enteringFrom">
-    <div
-      class="is-conclusion-loaded"
-      v-if="userAnswers.length > 0 && person && questions.length > 0"
-    >
-      <v-card
-        :title="person.title"
-        :description="person.description"
-        :image="person.img"
-        ref="card"
-      >
+    <div class="is-conclusion-loaded" v-if="userAnswers.length > 0 && person && questions.length > 0">
+      <v-card :title="person.title" :description="person.description" :image="person.img" ref="card">
         <p class="card-result">
           Результат:
           <span>{{ userAnswers.filter((e) => e.isRight).length }}</span>
@@ -94,43 +86,34 @@ onMounted(() => {
       </v-card>
       <div class="result-qusetions-block">
         <div class="dots-list-constainer">
-          <div
-            class="dot"
-            v-for="(q, i) of questions"
-            :key="i"
-            @click="activateDot(i)"
-            :ref="
-              (el: any) => {
-                if (el) allDotsRef[i] = el;
-              }
-            "
-            :class="{
+          <div class="dot" v-for="(q, i) of questions" :key="i" @click="activateDot(i)" :ref="
+            (el: any) => {
+              if (el) allDotsRef[i] = el;
+            }
+          " :class="{
               'is-right': userAnswers[i].isRight,
               'is-active': i == activatedDotIs,
-            }"
-          ></div>
+            }"></div>
         </div>
         <div class="question-card" ref="questionCard">
-          <h2
-            :class="{
-              'is-header-right': userAnswers[activatedDotIs].isRight,
-              'is-header-wrong': !userAnswers[activatedDotIs].isRight,
-            }"
-          >{{ questions[activatedDotIs].question }}</h2>
+          <h2 :class="{
+            'is-header-right': userAnswers[activatedDotIs].isRight,
+            'is-header-wrong': !userAnswers[activatedDotIs].isRight,
+          }">{{ questions[activatedDotIs].question }}</h2>
           <p class="right-answer">
             <span>Правильный ответ:</span>
             {{
-              questions[activatedDotIs].answers[
-                questions[activatedDotIs].rightAnswer
-              ]
+            questions[activatedDotIs].answers[
+            questions[activatedDotIs].rightAnswer
+            ]
             }}
           </p>
           <p class="user-answer">
             <span>Ваш ответ:</span>
             {{
-              questions[activatedDotIs].answers[
-                userAnswers[activatedDotIs].answerIs
-              ]
+            questions[activatedDotIs].answers[
+            userAnswers[activatedDotIs].answerIs
+            ]
             }}
           </p>
         </div>
@@ -145,17 +128,21 @@ onMounted(() => {
 .is-right {
   background: $gradient-green !important;
 }
+
 .is-active {
   transform: scale(180%) !important;
 }
+
 .is-header-right {
   background: $gradient-green;
   @include bcg-for-text();
 }
+
 .is-header-wrong {
   background: $gradient-red;
   @include bcg-for-text();
 }
+
 //static classes
 .is-conclusion-loaded {
   display: flex;
@@ -168,11 +155,13 @@ onMounted(() => {
   .result-qusetions-block {
     max-width: 100%;
     margin: 0.5rem 0;
+
     .dots-list-constainer {
       display: flex;
       justify-content: space-evenly;
       gap: 0.3rem;
       margin-bottom: 1.5rem;
+
       .dot {
         width: 1.2rem;
         height: 1.2rem;
@@ -189,8 +178,10 @@ onMounted(() => {
       border-radius: $border-prime;
       background: $color-black-opacity;
       @include blur-bcg();
+
       p {
         color: $color-grey;
+
         span {
           text-decoration: underline;
           font-weight: bold;
@@ -199,9 +190,11 @@ onMounted(() => {
       }
     }
   }
+
   .card-result {
     margin: 0.4rem 0;
     color: $color-grey;
+
     span {
       font-weight: bold;
       font-size: 1.4rem;

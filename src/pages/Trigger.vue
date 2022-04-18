@@ -2,7 +2,7 @@
 import { computed, ref, onMounted } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { useRouter } from 'vue-router'
-import { Appearances } from "../Helpers/Animations"
+import { Animations } from "../Helpers/Animations"
 import Loading from '../components/Loading.vue'
 import { WarriorCardType } from '../types/testsTypes.interface';
 import VButton from '../components/vButton.vue';
@@ -47,7 +47,7 @@ let conclusionIsShown = ref(false)
 let allGameEndedButton = ref(null)
 let computeAllGamesAreEnded = computed(() => !triggerStore.triggerAnswersResults?.includes(0))
 
-let buttonEnteringFromBottom = (() => Appearances.fromBottom(100, allGameEndedButton.value))
+let buttonEnteringFromBottom = (() => Animations.fromBottom(100, allGameEndedButton.value))
 let goToEndingSection = () => {
   conclusionIsShown.value = true
   router.push({ name: 'TriggerConclusion' })
@@ -58,9 +58,9 @@ let triggerTitle = ref<null | Element>(null)
 let triggerRulesRef = ref<null | Element>(null)
 let triggerCardsContainer = ref<null | Element>(null)
 let entering = () => {
-  Appearances.fromTop(300, triggerTitle.value)
-  Appearances.fromLeft(300, triggerRulesRef.value)
-  Appearances.fromLeft(300, triggerCardsContainer.value)
+  Animations.fromTop(300, triggerTitle.value)
+  Animations.fromLeft(300, triggerRulesRef.value)
+  Animations.fromLeft(300, triggerCardsContainer.value)
 }
 //Запрос всех данных для игры
 
@@ -82,19 +82,13 @@ onMounted(async () => {
 
 <template>
   <transition @enter="entering">
-    <div
-      class="trigger-game-container"
-      :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
-      v-if="femWarriors"
-    >
+    <div class="trigger-game-container" :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
+      v-if="femWarriors">
       <div class="trigger-head">
         <h1 id="trigger-name" ref="triggerTitle">Trigger Game</h1>
         <div class="trigger-rules-container" ref="triggerRulesRef">
           <div class="trigger-rules-header" @click="isRulesShown = !isRulesShown">
-            <img
-              class="rule-header-icon"
-              src="https://img.icons8.com/glyph-neue/64/ffffff/info.png"
-            />
+            <img class="rule-header-icon" src="https://img.icons8.com/glyph-neue/64/ffffff/info.png" />
             <h2 class="trigger-rule-name">
               <span>П</span>равила
             </h2>
@@ -105,18 +99,13 @@ onMounted(async () => {
         </div>
       </div>
       <div class="warriors-container" ref="triggerCardsContainer">
-        <div
-          class="warrior-card"
-          v-for="(warrior, index) in femWarriors"
-          @click.prevent="activateCard(warrior)"
-        >
+        <div class="warrior-card" v-for="(warrior, index) in femWarriors" @click.prevent="activateCard(warrior)">
           <img :src="warrior.imageUrl" />
           <h2 class="card-name">{{ warrior.name }}</h2>
-          <button
-            class="start-card-button"
+          <button class="start-card-button"
             :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded || isWarriorTestStarted"
-            @click.prevent="startTheTestForChosenWarrior(warrior)"
-          >{{ isCardHaveResultAlready.includes(index) || wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
+            @click.prevent="startTheTestForChosenWarrior(warrior)">{{ isCardHaveResultAlready.includes(index) ||
+            wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
         </div>
       </div>
     </div>
@@ -125,10 +114,7 @@ onMounted(async () => {
   <transition @enter="buttonEnteringFromBottom">
     <v-button
       v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || (wasTestEnded && !conclusionIsShown)"
-      ref="allGameEndedButton"
-      @click.prevent="goToEndingSection"
-      :purpose="'primary'"
-    >Узнать, кто же я</v-button>
+      ref="allGameEndedButton" @click.prevent="goToEndingSection" :purpose="'primary'">Узнать, кто же я</v-button>
   </transition>
   <div class="dark-bcg" v-if="conclusionIsShown || isWarriorTestStarted"></div>
   <router-view v-if="isWarriorTestStarted" @close-trigger-modal="endTheTestAndCloseModal"></router-view>
@@ -138,9 +124,11 @@ onMounted(async () => {
 <style lang='scss' scoped>
 //dynamic-css
 $cardWidth: 10rem;
+
 // $cardHeight: calc($cardWidth + 5.7rem);
 .card-boarded {
   outline: solid $color-violet 0.1rem;
+
   h2 {
     background: $gradient;
     @include bcg-for-text;
@@ -157,15 +145,18 @@ $cardWidth: 10rem;
   backdrop-filter: blur(3px);
   z-index: 2;
 }
+
 //static-css
 .trigger-game-container {
   display: grid;
   grid-template-rows: repeat(auto-fill, minmax(2rem, 1fr));
   margin: 1rem;
+
   .trigger-head {
     #trigger-name {
       text-align: left;
     }
+
     .trigger-rules-container {
       display: flex;
       flex-direction: column;
@@ -177,27 +168,33 @@ $cardWidth: 10rem;
       margin-bottom: 1rem;
       width: fit-content;
       padding-right: 3rem;
+
       .trigger-rules-header {
         display: flex;
         align-items: center;
         cursor: pointer;
+
         .rule-header-icon {
           max-width: 10%;
           max-height: 2rem;
           margin-right: 1rem;
         }
+
         .trigger-rule-name {
           text-align: left;
           font-weight: bold;
+
           span {
             background: $gradient;
             @include bcg-for-text;
           }
         }
+
         &:focus {
           outline: solid $color-violet 0.1rem;
         }
       }
+
       .rules-list {
         display: flex;
         flex-direction: column;
@@ -208,16 +205,19 @@ $cardWidth: 10rem;
           list-style-type: none;
           text-align: left;
           margin: 0.5rem 0;
+
           &::before {
             content: "👩🏾‍🎤 ";
           }
         }
       }
+
       &:hover {
         outline: solid $color-violet 0.1rem;
       }
     }
   }
+
   .warriors-container {
     display: flex;
     flex-wrap: wrap;
@@ -225,6 +225,7 @@ $cardWidth: 10rem;
     align-content: flex-start;
     padding: 0;
     gap: 0.5rem;
+
     .warrior-card {
       display: flex;
       flex-direction: column;
@@ -238,13 +239,16 @@ $cardWidth: 10rem;
       @include blur-bcg();
       width: $cardWidth;
       height: 15rem;
+
       img {
         width: 5rem;
         margin: 0.3rem;
       }
+
       .card-name {
         margin: 0.3rem;
       }
+
       .start-card-button {
         border: none;
         border-radius: 0 0 25px 25px;
@@ -262,24 +266,29 @@ $cardWidth: 10rem;
         font-family: $font;
         font-weight: bold;
         font-size: 1rem;
+
         &:disabled {
           background: $color-grey;
           color: black;
         }
       }
+
       &:hover {
         outline: solid $color-violet 0.1rem;
+
         h2 {
           background: $gradient;
           @include bcg-for-text;
         }
       }
+
       &:target {
         outline: solid $color-violet 0.1rem;
       }
     }
   }
 }
+
 .end-test-button {
   position: fixed;
   width: 15rem;
@@ -298,9 +307,11 @@ $cardWidth: 10rem;
     .warrior-card {
       width: 100% !important;
       height: 25rem;
+
       img {
         width: 6rem !important;
       }
+
       .start-card-button {
         height: 29% !important;
       }

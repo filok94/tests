@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { useTriggerStore } from "../stores/trigger";
 import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from '@vueuse/core'
-import { Appearances } from "../Helpers/Animations"
+import { Animations } from "../Helpers/Animations"
 import Loading from '../components/Loading.vue'
 import VButton from '../components/vButton.vue';
 
@@ -52,7 +52,7 @@ let enterEventListener = (e: KeyboardEvent) => {
 onMounted(() => {
     triggerStore.getTriggerConclusion()
     document.addEventListener('keydown', enterEventListener)
-    Appearances.fromBottom(300, conclusionCardRef.value)
+    Animations.fromBottom(300, conclusionCardRef.value)
 })
 onUnmounted(() => {
     document.removeEventListener('keydown', enterEventListener)
@@ -68,10 +68,7 @@ onUnmounted(() => {
                     <a :href="finalPerson.link">{{ finalPerson.title }}</a>
                 </h1>
                 <h2 class="trigger-conclusion-description">{{ finalPerson.description }}</h2>
-                <v-button
-                    @click.prevent="goBackToMainMenu"
-                    :purpose="'primary'"
-                >Вернуться на главную</v-button>
+                <v-button @click.prevent="goBackToMainMenu" :purpose="'primary'">Вернуться на главную</v-button>
             </div>
             <Loading v-else />
         </transition>
@@ -91,10 +88,12 @@ onUnmounted(() => {
     @include blur-bcg;
     padding: 2rem;
     z-index: 3;
+
     img {
         width: 15rem;
         border-radius: $border-minimal;
     }
+
     h1 {
         font-size: 3rem;
         background: $gradient;
@@ -102,9 +101,11 @@ onUnmounted(() => {
         cursor: pointer;
         line-height: 2.9rem;
         margin: 0.8rem;
+
         a {
             text-decoration: none;
         }
+
         &:hover {
             text-decoration: underline;
             text-decoration-color: $color-pink;
@@ -118,6 +119,7 @@ onUnmounted(() => {
         color: $color-grey;
     }
 }
+
 @media (min-width: $large-screen) {
     .trigger-conclusion-container {
         width: 60%;

@@ -2,6 +2,8 @@ import { defineStore } from "pinia";
 import { getDatabase, onValue, ref as fireRef } from "firebase/database";
 import { PersonType } from "../types/testsTypes.interface";
 
+let userId = window.localStorage.getItem("isAuthedById")
+
 interface GameBannerType {
   firstStep: number,
   id: number,
@@ -26,6 +28,7 @@ interface State {
   avatar: null | AvatarOptionType,
   avatarImage: null | string,
   avatarImageDefault: string
+  isAdmin: boolean
 }
 
 export const useGlobal = defineStore('global', {
@@ -35,13 +38,27 @@ export const useGlobal = defineStore('global', {
       games: null,
       avatar: null,
       avatarImage: null,
-      avatarImageDefault: "https://avatars.dicebear.com/api/pixel-art/:seed.svg"
+      avatarImageDefault: "https://avatars.dicebear.com/api/pixel-art/:seed.svg",
+      isAdmin: false
     }
   },
   actions: {
+    async getUserParams() {
+      const db = getDatabase()
+      let userParam = fireRef(db, `users/${userId}/isAdmin`)
+      onValue(userParam, async (snapshot) => {
+        try {
+          this.isAdmin = await snapshot.val()
+        } catch (err) {
+          if (!snapshot.exists) {
+            this.isAdmin = false
+          }
+        }
+      })
+    },
     async getPersonNamesToTestDescription(link: string) {
       const db = getDatabase()
-      let userId = window.localStorage.getItem("isAuthedById")
+
       let person = fireRef(db, `users/${userId}/${link}`)
       onValue(person, async (snapshot) => {
         try {
@@ -84,7 +101,7 @@ export const useGlobal = defineStore('global', {
     },
     async getAvatarImageForCircle() {
       const db = getDatabase()
-      let userId = window.localStorage.getItem("isAuthedById");
+
       const avatar = fireRef(db, `users/${userId}/avatar`)
       onValue(avatar, async (snapshot) => {
         try {

@@ -2,12 +2,12 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useTriggerStore } from "../stores/trigger";
 import { onClickOutside } from '@vueuse/core'
-import { Appearances, useCardGoingAside, useShakingElement, GoingAsideType } from "../Helpers/Animations";
+import { Animations, useCardGoingAside, useShakingElement, GoingAsideType } from "../Helpers/Animations";
 
 let emit = defineEmits(['closeTriggerModal'])
 let triggerStore = useTriggerStore()
 
-onMounted(() => Appearances.fromBottom(400, triggerModal.value))
+onMounted(() => Animations.fromBottom(400, triggerModal.value))
 
 let warrior = computed(() => triggerStore.activeTriggerCardIs)
 
@@ -39,7 +39,7 @@ let enterEvent = (e: KeyboardEvent) => {
 }
 onMounted(() => {
     document.addEventListener('keydown', arrowEvent)
-    Appearances.fromBottom(300, triggerModal.value)
+    Animations.fromBottom(300, triggerModal.value)
 })
 
 //управление кнопками и дестрой ивентлиснеров
@@ -88,14 +88,8 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
 </script>
 
 <template>
-    <div
-        class="trigger-modal"
-        @wheel.prevent
-        @touchmove.prevent
-        @scroll.prevent
-        ref="triggerModal"
-        :class="{ 'trigger-modal-opacity': sureToLeaveIsShown }"
-    >
+    <div class="trigger-modal" @wheel.prevent @touchmove.prevent @scroll.prevent ref="triggerModal"
+        :class="{ 'trigger-modal-opacity': sureToLeaveIsShown }">
         <div id="trigger-modal-swiper"></div>
         <button class="closing-modal-button" @click.prevent="closingModal(true, false)">X</button>
         <div class="warrior-card">
@@ -104,9 +98,8 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
                     Текущий
                     <br />триггер
                 </p>
-                <p
-                    class="trigger-count"
-                >{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength : currentQuestion + 1 }}</p>
+                <p class="trigger-count">{{ currentQuestion + 1 > triggerQuestionsLength ? triggerQuestionsLength :
+                currentQuestion + 1 }}</p>
             </div>
 
             <img :src="warrior.imageUrl" />
@@ -116,34 +109,18 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
             </div>
         </div>
         <transition mode="out-in" @enter="buttonEntering">
-            <div
-                class="trigger-game-block"
-                ref="card"
-                v-if="currentQuestion < triggerQuestionsLength"
-            >
+            <div class="trigger-game-block" ref="card" v-if="currentQuestion < triggerQuestionsLength">
                 <div class="trigger-question">
                     <h3>{{ triggerQuestions[currentQuestion] }}</h3>
                 </div>
                 <div class="trigger-reacts-container">
-                    <div
-                        class="react react-left"
-                        @click.prevent="chooseEmoji(0)"
-                        ref="leftEmoji"
-                    >&#128525;</div>
+                    <div class="react react-left" @click.prevent="chooseEmoji(0)" ref="leftEmoji">&#128525;</div>
 
-                    <div
-                        class="react react-right"
-                        @click.prevent="chooseEmoji(1)"
-                        ref="rightEmoji"
-                    >&#128548;</div>
+                    <div class="react react-right" @click.prevent="chooseEmoji(1)" ref="rightEmoji">&#128548;</div>
                 </div>
             </div>
-            <button
-                v-else
-                class="trigger-end-button"
-                ref="endingButton"
-                @click.prevent="closingModal(false, true)"
-            >Завершить</button>
+            <button v-else class="trigger-end-button" ref="endingButton"
+                @click.prevent="closingModal(false, true)">Завершить</button>
         </transition>
     </div>
     <div class="sure-to-leave-background">
@@ -182,6 +159,7 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
         border-radius: $border-prime;
         margin: 0 auto;
     }
+
     .closing-modal-button {
         background: transparent;
         border: none;
@@ -194,15 +172,19 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
 
         position: relative;
         right: -40%;
+
         &:active {
             opacity: 0.8;
         }
+
         cursor: pointer;
     }
+
     &-opacity {
         filter: blur(3px);
     }
 }
+
 .sure-to-leave {
     position: absolute;
     top: 40%;
@@ -220,14 +202,17 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     h4 {
         margin: 0.8rem 0;
     }
+
     p {
         color: $color-grey;
         font-size: 0.8rem;
         margin: 0.8rem;
     }
+
     #stl-buttons {
         display: flex;
         justify-content: space-evenly;
+
         button {
             border: none;
             box-shadow: $shadow-black;
@@ -238,13 +223,16 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
             width: 3rem;
             cursor: pointer;
             transition: 0.3s ease-in-out;
+
             &:hover {
                 transform: scale(104%);
             }
         }
+
         &-no {
             background: $gradient;
         }
+
         &-yes {
             background: $color-grey;
         }
@@ -266,14 +254,17 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
     img {
         width: 5rem;
     }
+
     div {
         flex-basis: min-content;
+
         .trigger-count {
             background: $gradient;
             @include bcg-for-text();
             font-size: 3rem;
             margin: 0;
         }
+
         .trigger-label {
             color: $color-grey;
             font-size: 1rem;
@@ -281,26 +272,31 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
         }
     }
 }
+
 .trigger-game-block {
     padding: 1rem;
 
     .trigger-reacts-container {
         display: flex;
         justify-content: center;
+
         .react {
             font-size: 4rem;
             padding: 1rem;
             background: hsla(240, 1%, 16%, 0.521);
             width: 45%;
             cursor: pointer;
+
             &:active {
                 box-shadow: 0 0px 0px rgba(0, 0, 0, 0) !important;
             }
+
             &-left {
                 box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19);
                 border-radius: $border-prime 0px 0px 25px;
                 // background: $color-violet;
             }
+
             &-right {
                 box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.19);
                 border-radius: 0px 25px 25px 0px;
@@ -309,9 +305,11 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
         }
     }
 }
+
 .trigger-end-button {
     @include primary-button();
 }
+
 @media (min-width: $medium-screen) {
     .trigger-modal {
         width: 80%;
@@ -322,19 +320,24 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
         margin: 0 auto;
         padding: 2rem;
     }
+
     .warrior-card {
         width: 60%;
         margin: 1rem auto;
     }
+
     .sure-to-leave {
         width: fit-content;
         padding: 1.5rem;
+
         h4 {
             font-size: 1.6rem !important;
         }
+
         p {
             font-size: 1.3rem;
         }
+
         #stl-buttons-yes,
         #stl-buttons-no {
             font-size: 1.8rem;
@@ -343,10 +346,12 @@ let closingModal = (withPopup: boolean, isTestEnded: boolean) => {
         }
     }
 }
+
 @media (min-width: $large-screen) {
     .trigger-modal {
         width: 50%;
     }
+
     h3 {
         font-size: 1.7rem;
     }

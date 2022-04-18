@@ -1,3 +1,14 @@
+@mixin targetCircle($background) {
+    font-size: 0.8rem;
+    line-height: 4rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 100%;
+    background: $background;
+    color: $color-grey;
+    cursor: pointer;
+}
+
 @mixin blur-bcg() {
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
