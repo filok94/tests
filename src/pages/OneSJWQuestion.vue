@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import { Animations } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
 import Loading from "../components/OneLoading.vue";
 import { useSjwStore } from "../stores/sjw";
 import { useEventListener } from "@vueuse/core";

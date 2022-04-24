@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { circlesMovement } from "../Helpers/Animations";
+import { circlesMovement } from "../Helpers/Animations/CommonAnimations";
 import { onMounted, Ref, ref } from "vue";
 let loaderCirclesArray = ref<never | HTMLElement[]>([]);
 

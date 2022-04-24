@@ -4,7 +4,7 @@ import { useGlobal } from "../stores/global";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import Loading from "./OneLoading.vue";
-import { useFlickeringOnText } from "../Helpers/Animations";
+import { AnimationFlickeringOnText } from "../Helpers/Animations/GameCollection";
 import { ListedGame } from "../types/testsTypes.interface";
 import vCard from "./vCard.vue";
 
@@ -23,7 +23,7 @@ const goToConclusion = (game: ListedGame) =>
 let gameCollectionContainer = ref(null);
 let brokenLetter: Ref<null | HTMLElement> = ref(null);
 onMounted(() => {
-  useFlickeringOnText(brokenLetter.value);
+  AnimationFlickeringOnText(brokenLetter.value);
 });
 </script>
 

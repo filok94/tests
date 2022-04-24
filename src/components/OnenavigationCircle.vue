@@ -6,7 +6,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { TabsUser } from "../types/testsTypes.interface";
 import { useGlobal } from "../stores/global";
-import { Animations } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
 let globalStore = useGlobal();
 let props = defineProps<{
   tabs: Array<TabsUser>;

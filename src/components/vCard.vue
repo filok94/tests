@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { hoverEffectOnText, hoverTransformScale } from "../Helpers/Animations";
+import {
+  hoverEffectOnText,
+  hoverTransformScale,
+} from "../Helpers/Animations/CommonAnimations";
 
 let props = defineProps<{
   title?: string;

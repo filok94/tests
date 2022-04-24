@@ -5,7 +5,7 @@ import { getDatabase, set, ref as fireRef } from "firebase/database";
 
 import Option from "../components/OneOption.vue";
 import Loading from "../components/OneLoading.vue";
-import { Animations } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { useGlobal } from "../stores/global";
 import VButton from "../components/vButton.vue";
 import { OptionEmit } from "../types/testsTypes.interface";

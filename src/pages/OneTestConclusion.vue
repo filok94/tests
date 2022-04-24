@@ -2,8 +2,9 @@
 import { useSjwStore } from "../stores/sjw";
 import { computed, onMounted, ref } from "vue";
 import Loading from "../components/OneLoading.vue";
-import gsap from "gsap";
-import { Animations } from "../Helpers/Animations";
+
+import { Animations } from "../Helpers/Animations/CommonAnimations";
+import { cardScrolling } from "../Helpers/Animations/AnimationsSJW";
 import { usePointerSwipe } from "@vueuse/core";
 import VCard from "../components/vCard.vue";
 
@@ -23,17 +24,17 @@ const { distanceX } = usePointerSwipe(questionCard, {
   },
   onSwipe(e: PointerEvent) {
     e.preventDefault();
-    gsap.to(questionCard.value, { x: -distanceX.value });
+    Animations.toLeft(distanceX.value, questionCard.value, 1);
     if (distanceX.value < -20 || distanceX.value > 20) {
-      gsap.to(questionCard.value, { opacity: 0.5 });
+      Animations.toOpacity(0.5, questionCard.value);
     } else {
-      gsap.to(questionCard.value, { opacity: 1 });
+      Animations.toOpacity(1, questionCard.value);
     }
   },
   onSwipeEnd(e, direction) {
     e.preventDefault();
-    gsap.from(questionCard.value, { x: distanceX.value, opacity: 1 });
-    gsap.to(questionCard.value, { x: 0, opacity: 1 });
+    Animations.fromToHorizontal(distanceX.value, 0, questionCard.value);
+
     if (direction == "RIGHT") {
       if (activatedDotIs.value == 0) {
         activatedDotIs.value = questions.value.length - 1;
@@ -55,11 +56,10 @@ const questions = computed(() => sjwStore.questions);
 const userAnswers = computed(() => sjwStore.userAnswers);
 const person = computed(() => sjwStore.person);
 let activateDot = (i: number) => {
+  let previousDotIndex = activatedDotIs.value;
+  let xDirection = i < previousDotIndex ? -100 : 100;
   activatedDotIs.value = i;
-  let tl = gsap.timeline({ defaults: { duration: 0.2, ease: "circle" } });
-  tl.to(questionCard.value, { opacity: 0 });
-  tl.from(questionCard.value, { x: -100, opacity: 0 });
-  tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
+  cardScrolling(0, 0, xDirection, questionCard.value);
 };
 let enteringFrom = () => {
   if (card.value?.card) {

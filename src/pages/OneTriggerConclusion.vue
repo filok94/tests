@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { useTriggerStore } from "../stores/trigger";
 import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from "@vueuse/core";
-import { Animations } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
 import Loading from "../components/OneLoading.vue";
 import VButton from "../components/vButton.vue";
 

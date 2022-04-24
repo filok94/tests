@@ -2,7 +2,7 @@
 import { computed, ref, onMounted } from "vue";
 import { useTriggerStore } from "../stores/trigger";
 import { useRouter } from "vue-router";
-import { Animations } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
 import Loading from "../components/OneLoading.vue";
 import { WarriorCardType } from "../types/testsTypes.interface";
 import VButton from "../components/vButton.vue";

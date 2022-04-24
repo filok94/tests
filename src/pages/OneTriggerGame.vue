@@ -4,10 +4,10 @@ import { useTriggerStore } from "../stores/trigger";
 import { onClickOutside } from "@vueuse/core";
 import {
   Animations,
-  useCardGoingAside,
-  useShakingElement,
-  GoingAsideType,
-} from "../Helpers/Animations";
+  AnimationCardGoingAside,
+  AnimationShakingElement,
+  GOING_ASIDE,
+} from "../Helpers/Animations/CommonAnimations";
 
 let emit = defineEmits(["closeTriggerModal"]);
 let triggerStore = useTriggerStore();
@@ -31,8 +31,8 @@ let chooseEmoji = (emojiAnswer: number) => {
     );
     let duration = 100;
     emojiAnswer
-      ? useCardGoingAside(GoingAsideType.right, duration, card.value)
-      : useCardGoingAside(GoingAsideType.left, duration, card.value);
+      ? AnimationCardGoingAside(GOING_ASIDE.right, duration, card.value)
+      : AnimationCardGoingAside(GOING_ASIDE.left, duration, card.value);
     setTimeout(() => {
       currentQuestion.value++;
     }, duration);
@@ -69,7 +69,7 @@ onUnmounted(() => {
 
 //анимация завершения
 let endingButton = ref(null);
-let buttonEntering = () => useShakingElement(endingButton.value);
+let buttonEntering = () => AnimationShakingElement(endingButton.value);
 
 //управление показом модального окна
 let triggerModal = ref(null);

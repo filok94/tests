@@ -5,7 +5,7 @@ import navigationCircle from "../components/OnenavigationCircle.vue";
 import OneSettings from "../components/OneSettings.vue";
 import GameCollection from "../components/OneGameCollection.vue";
 import oneAdmin from "../components/OneAdmin.vue";
-import { Animations } from "../Helpers/Animations";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { TabsUser } from "../types/testsTypes.interface";
 
 const globalStore = useGlobal();
@@ -38,7 +38,7 @@ onMounted(async () => {
     await globalStore.getGames();
   }
   await globalStore.getUserParams().then(() => {
-    isUserAdmin.value ? tabs.push(new Tab(2, "oneAdmin")) : null;
+    isUserAdmin.value ? tabs.push(new Tab(2, "Admin")) : null;
   });
 });
 </script>

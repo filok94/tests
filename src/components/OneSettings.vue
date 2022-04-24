@@ -3,7 +3,10 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobal } from "../stores/global";
 import { storeToRefs } from "pinia";
-import gsap from "gsap";
+import {
+  detailMoveFromAside,
+  detailRotating,
+} from "../Helpers/Animations/AnimationSettings";
 
 let { avatarImageDefault } = storeToRefs(useGlobal());
 const MODETYPES = {
@@ -27,18 +30,11 @@ const changeMode = () => {
 };
 
 let imageSetting = ref<null | HTMLImageElement>(null);
-let tl = gsap.timeline({ defaults: { duration: 3, ease: "none" } });
 let settingsRotation: ReturnType<typeof setInterval>;
 onMounted(() => {
-  tl.from(imageSetting.value, { x: 500, rotate: 180, ease: "ease" }).to(
-    imageSetting.value,
-    {
-      rotate: "-=60",
-      duration: 7,
-    }
-  );
+  detailMoveFromAside(imageSetting.value);
   settingsRotation = setInterval(() => {
-    gsap.to(imageSetting.value, { rotate: "-=60", ease: "none", duration: 10 });
+    detailRotating(imageSetting.value);
   }, 10000);
 });
 onUnmounted(() => {
