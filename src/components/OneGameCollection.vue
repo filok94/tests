@@ -3,13 +3,13 @@ import { onMounted, Ref, ref } from "vue";
 import { useGlobal } from "../stores/global";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import Loading from "./Loading.vue";
+import Loading from "./OneLoading.vue";
 import { useFlickeringOnText } from "../Helpers/Animations";
-import { ListedGame } from '../types/testsTypes.interface'
+import { ListedGame } from "../types/testsTypes.interface";
 import vCard from "./vCard.vue";
 
 const router = useRouter();
-const { finalPersonsList, games } = storeToRefs(useGlobal())
+const { finalPersonsList, games } = storeToRefs(useGlobal());
 
 const goToTest = (i: number) => {
   router.push({
@@ -17,33 +17,38 @@ const goToTest = (i: number) => {
     params: { step: games.value![i].firstStep },
   });
 };
-const goToConclusion = (game: ListedGame) => router.push({ name: game.routeToConclusion })
+const goToConclusion = (game: ListedGame) =>
+  router.push({ name: game.routeToConclusion });
 
-let gameCollectionContainer = ref(null)
-let brokenLetter: Ref<null | Element> = ref(null)
+let gameCollectionContainer = ref(null);
+let brokenLetter: Ref<null | HTMLElement> = ref(null);
 onMounted(() => {
-  useFlickeringOnText(brokenLetter.value)
-})
+  useFlickeringOnText(brokenLetter.value);
+});
 </script>
 
 <template>
-  <div class="game-collection-container" ref="gameCollectionContainer">
-    <div class="games-collection" v-if="finalPersonsList">
+  <div ref="gameCollectionContainer" class="game-collection-container">
+    <div v-if="finalPersonsList" class="games-collection">
       <v-card
+        v-for="(game, i) in games"
+        :key="i"
         :title="game.title"
         :description="game.subtitle"
         :hover="{ isHoverable: true, onElement: 'description' }"
-        v-for="(game, i) in games"
-        :key="i"
         @click.stop="goToTest(i)"
       >
         <p v-if="finalPersonsList">
           Ваш результат:
           <br />
-          <button @click.prevent.stop="goToConclusion(game)" class="result-of-test">
+          <button
+            class="result-of-test"
+            @click.prevent.stop="goToConclusion(game)"
+          >
             {{
-              finalPersonsList[i]?.title ?
-                finalPersonsList[i].title : "Еще не пройдено"
+              finalPersonsList[i]?.title
+                ? finalPersonsList[i].title
+                : "Еще не пройдено"
             }}
           </button>
         </p>
@@ -51,9 +56,9 @@ onMounted(() => {
     </div>
     <Loading v-else />
 
-    <div class="background-text-container" v-show="games">
+    <div v-show="games" class="background-text-container">
       <h1 id="background-text">GAME</h1>
-      <h1 ref="brokenLetter" id="broken-letter">S</h1>
+      <h1 id="broken-letter" ref="brokenLetter">S</h1>
     </div>
   </div>
 </template>

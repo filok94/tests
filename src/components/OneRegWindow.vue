@@ -5,14 +5,15 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { AnimationPropertiesRegWindow } from '../types/testsTypes.interface'
+import { AnimationPropertiesRegWindow } from "../types/testsTypes.interface";
 import { useRouter } from "vue-router";
 import VButton from "./vButton.vue";
-const localStorageSet = (key: string, value: any) => JSON.stringify(window.localStorage.setItem(key, value));
+const localStorageSet = (key: string, value: any) =>
+  JSON.stringify(window.localStorage.setItem(key, value));
 const router = useRouter();
-const props = defineProps({
-  activeWindow: String,
-});
+const props = defineProps<{
+  activeWindow: String;
+}>();
 const auth = getAuth();
 
 let addConfirmPassword = ref(false);
@@ -63,8 +64,7 @@ const registerAndSigniIn = () => {
           userInputs.login,
           userInputs.password
         )
-          .then((data) => {
-            const user = data.user;
+          .then(() => {
             signIn(userInputs.login, userInputs.password);
           })
           .catch((error) => {
@@ -95,13 +95,18 @@ let animationProperties = reactive<AnimationPropertiesRegWindow>({
     return (this.timeout / 1000).toString() + "s";
   },
 });
-let regAndAuthWindowRef = ref<Element | null>(null)
+let regAndAuthWindowRef = ref<Element | null>(null);
 watch(props, () => {
   document
     .querySelectorAll("label")
     .forEach((e) => e.classList.remove("label_up"));
   userInputs.login = userInputs.password = userInputs.confirmationPassowrd = "";
-  let changeActiveWindow = (classToAnimate: string, to: string, from: string, timeout: number) => {
+  let changeActiveWindow = (
+    classToAnimate: string,
+    to: string,
+    from: string,
+    timeout: number
+  ) => {
     regAndAuthWindowRef.value?.classList.add(classToAnimate);
     animationProperties.to = to;
     animationProperties.from = from;
@@ -120,7 +125,7 @@ watch(props, () => {
   }
 });
 let inputIsActive = (el: EventTarget | null) => {
-  let inputElement = el as HTMLInputElement
+  let inputElement = el as HTMLInputElement;
   let labels = Array.prototype.slice.call(document.querySelectorAll("label"));
   let activeLabel = labels.filter((e) => e.htmlFor == inputElement.id)[0];
   activeLabel.classList.add("label_up");
@@ -139,26 +144,32 @@ let inputIsActive = (el: EventTarget | null) => {
       <label for="new-user">Login</label>
       <input
         id="new-user"
-        type="text"
         v-model="userInputs.login"
+        type="text"
         @focus.prevent="inputIsActive($event.target)"
       />
       <label for="new-password">Password</label>
       <input
         id="new-password"
-        type="password"
         v-model="userInputs.password"
+        type="password"
         @focus.prevent="inputIsActive($event.target)"
       />
-      <label v-if="addConfirmPassword" for="confirm-password">Confirm Password</label>
+      <label v-if="addConfirmPassword" for="confirm-password"
+        >Confirm Password</label
+      >
       <input
         v-if="addConfirmPassword"
         id="confirm-password"
-        type="password"
         v-model="userInputs.confirmationPassowrd"
+        type="password"
         @focus.prevent="inputIsActive($event.target)"
       />
-      <VButton :purpose="'primary'" :disable="disableButton" @click.prevent="registerAndSigniIn()" />
+      <VButton
+        :purpose="'primary'"
+        :disable="disableButton"
+        @click.prevent="registerAndSigniIn()"
+      />
     </form>
     <p v-show="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>

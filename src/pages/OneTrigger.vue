@@ -1,111 +1,145 @@
 <script lang="ts" setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from "vue";
 import { useTriggerStore } from "../stores/trigger";
-import { useRouter } from 'vue-router'
-import { Animations } from "../Helpers/Animations"
-import Loading from '../components/Loading.vue'
-import { WarriorCardType } from '../types/testsTypes.interface';
-import VButton from '../components/vButton.vue';
+import { useRouter } from "vue-router";
+import { Animations } from "../Helpers/Animations";
+import Loading from "../components/OneLoading.vue";
+import { WarriorCardType } from "../types/testsTypes.interface";
+import VButton from "../components/vButton.vue";
 
-let triggerStore = useTriggerStore()
-let router = useRouter()
-let triggerRules = ['Вам нужно выбрать бойца из представленных ниже феминисток',
-  "Начать игру за выбранного бойца", "На экране будут показываться триггеры, на которые ваш боец должен отреагировать",
+let triggerStore = useTriggerStore();
+let router = useRouter();
+let triggerRules = [
+  "Вам нужно выбрать бойца из представленных ниже феминисток",
+  "Начать игру за выбранного бойца",
+  "На экране будут показываться триггеры, на которые ваш боец должен отреагировать",
   "Если вы отвечаете согласно системы моральных координат вашего бойца, вам засчитываются баллы",
-  "Пройдите игру за всех бойцов и узнайте, кто вы в мире феминизма"]
+  "Пройдите игру за всех бойцов и узнайте, кто вы в мире феминизма",
+];
 
-let isRulesShown = ref(false)
+let isRulesShown = ref(false);
 
-let femWarriors = computed(() => triggerStore.warriorCards.length > 0 ? triggerStore.warriorCards : false)
-let activeCardIs = ref<WarriorCardType | null>(null)
+let femWarriors = computed(() =>
+  triggerStore.warriorCards.length > 0 ? triggerStore.warriorCards : false
+);
+let activeCardIs = ref<WarriorCardType | null>(null);
 let activateCard = (el: WarriorCardType) => {
-  activeCardIs.value = el
-}
+  activeCardIs.value = el;
+};
 
 //дизейблить кнопку начала игры за бойца, если уже пройдено
 let isCardHaveResultAlready = computed(() => {
-  let indexesWithAnswer: number[] = []
+  let indexesWithAnswer: number[] = [];
   triggerStore.triggerAnswersResults?.forEach((e, index) => {
-    e !== 0 ? indexesWithAnswer.push(index) : false
-  })
-  return indexesWithAnswer
-})
+    e !== 0 ? indexesWithAnswer.push(index) : false;
+  });
+  return indexesWithAnswer;
+});
 
-let isWarriorTestStarted = ref(false)
+let isWarriorTestStarted = ref(false);
 let startTheTestForChosenWarrior = (warrior: WarriorCardType) => {
-  isWarriorTestStarted.value = !isWarriorTestStarted.value
-  triggerStore.activeTriggerCardIs = warrior
-  router.push({ name: 'TriggerGame' })
-}
+  isWarriorTestStarted.value = !isWarriorTestStarted.value;
+  triggerStore.activeTriggerCardIs = warrior;
+  router.push({ name: "TriggerGame" });
+};
 let endTheTestAndCloseModal = () => {
-  router.go(-1)
-  isWarriorTestStarted.value = false
-}
+  router.go(-1);
+  isWarriorTestStarted.value = false;
+};
 
 //Если все карточки пройдены, то появляется возможность завершить игру
-let conclusionIsShown = ref(false)
-let allGameEndedButton = ref(null)
-let computeAllGamesAreEnded = computed(() => !triggerStore.triggerAnswersResults?.includes(0))
+let conclusionIsShown = ref(false);
+let allGameEndedButton = ref(null);
+let computeAllGamesAreEnded = computed(
+  () => !triggerStore.triggerAnswersResults?.includes(0)
+);
 
-let buttonEnteringFromBottom = (() => Animations.fromBottom(100, allGameEndedButton.value))
+let buttonEnteringFromBottom = () =>
+  Animations.fromBottom(100, allGameEndedButton.value);
 let goToEndingSection = () => {
-  conclusionIsShown.value = true
-  router.push({ name: 'TriggerConclusion' })
-}
+  conclusionIsShown.value = true;
+  router.push({ name: "TriggerConclusion" });
+};
 
 //Анимация появления
-let triggerTitle = ref<null | Element>(null)
-let triggerRulesRef = ref<null | Element>(null)
-let triggerCardsContainer = ref<null | Element>(null)
+let triggerTitle = ref<null | HTMLElement>(null);
+let triggerRulesRef = ref<null | HTMLElement>(null);
+let triggerCardsContainer = ref<null | HTMLElement>(null);
 let entering = () => {
-  Animations.fromTop(300, triggerTitle.value)
-  Animations.fromLeft(300, triggerRulesRef.value)
-  Animations.fromLeft(300, triggerCardsContainer.value)
-}
+  Animations.fromTop(300, triggerTitle.value);
+  Animations.fromLeft(300, triggerRulesRef.value);
+  Animations.fromLeft(300, triggerCardsContainer.value);
+};
 //Запрос всех данных для игры
 
-let wasTestEnded = computed(() => triggerStore.wasTestEnded)
+let wasTestEnded = computed(() => triggerStore.wasTestEnded);
 onMounted(async () => {
   if (!femWarriors.value) {
-    await triggerStore.getTriggerGame()
+    await triggerStore.getTriggerGame();
   }
-  await triggerStore.getCurrentUserResults()
+  await triggerStore.getCurrentUserResults();
   await triggerStore.getIfTheTestWasEnded();
 
   if (wasTestEnded.value) {
-    goToEndingSection()
+    goToEndingSection();
   }
-  entering()
-})
-
+  entering();
+});
 </script>
 
 <template>
   <transition @enter="entering">
-    <div class="trigger-game-container" :class="{ 'opacity-while-modal': isWarriorTestStarted || conclusionIsShown }"
-      v-if="femWarriors">
+    <div
+      v-if="femWarriors"
+      class="trigger-game-container"
+      :class="{
+        'opacity-while-modal': isWarriorTestStarted || conclusionIsShown,
+      }"
+    >
       <div class="trigger-head">
         <h1 id="trigger-name" ref="triggerTitle">Trigger Game</h1>
-        <div class="trigger-rules-container" ref="triggerRulesRef">
-          <div class="trigger-rules-header" @click="isRulesShown = !isRulesShown">
-            <img class="rule-header-icon" src="https://img.icons8.com/glyph-neue/64/ffffff/info.png" />
-            <h2 class="trigger-rule-name">
-              <span>П</span>равила
-            </h2>
+        <div ref="triggerRulesRef" class="trigger-rules-container">
+          <div
+            class="trigger-rules-header"
+            @click="isRulesShown = !isRulesShown"
+          >
+            <img
+              class="rule-header-icon"
+              src="https://img.icons8.com/glyph-neue/64/ffffff/info.png"
+            />
+            <h2 class="trigger-rule-name"><span>П</span>равила</h2>
           </div>
-          <ul class="rules-list" v-if="isRulesShown">
-            <li v-for="rule in triggerRules" class="trigger-rule">{{ rule }}</li>
+          <ul v-if="isRulesShown" class="rules-list">
+            <li v-for="rule in triggerRules" :key="rule" class="trigger-rule">
+              {{ rule }}
+            </li>
           </ul>
         </div>
       </div>
-      <div class="warriors-container" ref="triggerCardsContainer">
-        <div class="warrior-card" v-for="(warrior, index) in femWarriors" @click.prevent="activateCard(warrior)">
+      <div ref="triggerCardsContainer" class="warriors-container">
+        <div
+          v-for="(warrior, index) in femWarriors"
+          :key="index"
+          class="warrior-card"
+          @click.prevent="activateCard(warrior)"
+        >
           <img :src="warrior.imageUrl" />
           <h2 class="card-name">{{ warrior.name }}</h2>
-          <button class="start-card-button"
-            :disabled="isCardHaveResultAlready.includes(index) || wasTestEnded || isWarriorTestStarted"
-            @click.prevent="startTheTestForChosenWarrior(warrior)">{{ isCardHaveResultAlready.includes(index) ||
-            wasTestEnded ? `${warrior.name} уже закончила` : `Пройти за ${warrior.name}` }}</button>
+          <button
+            class="start-card-button"
+            :disabled="
+              isCardHaveResultAlready.includes(index) ||
+              wasTestEnded ||
+              isWarriorTestStarted
+            "
+            @click.prevent="startTheTestForChosenWarrior(warrior)"
+          >
+            {{
+              isCardHaveResultAlready.includes(index) || wasTestEnded
+                ? `${warrior.name} уже закончила`
+                : `Пройти за ${warrior.name}`
+            }}
+          </button>
         </div>
       </div>
     </div>
@@ -113,15 +147,27 @@ onMounted(async () => {
   </transition>
   <transition @enter="buttonEnteringFromBottom">
     <v-button
-      v-if="(computeAllGamesAreEnded && !isWarriorTestStarted && !conclusionIsShown) || (wasTestEnded && !conclusionIsShown)"
-      ref="allGameEndedButton" @click.prevent="goToEndingSection" :purpose="'primary'">Узнать, кто же я</v-button>
+      v-if="
+        (computeAllGamesAreEnded &&
+          !isWarriorTestStarted &&
+          !conclusionIsShown) ||
+        (wasTestEnded && !conclusionIsShown)
+      "
+      ref="allGameEndedButton"
+      :purpose="'primary'"
+      @click.prevent="goToEndingSection"
+      >Узнать, кто же я</v-button
+    >
   </transition>
-  <div class="dark-bcg" v-if="conclusionIsShown || isWarriorTestStarted"></div>
-  <router-view v-if="isWarriorTestStarted" @close-trigger-modal="endTheTestAndCloseModal"></router-view>
+  <div v-if="conclusionIsShown || isWarriorTestStarted" class="dark-bcg"></div>
+  <router-view
+    v-if="isWarriorTestStarted"
+    @close-trigger-modal="endTheTestAndCloseModal"
+  ></router-view>
   <router-view v-if="conclusionIsShown"></router-view>
 </template>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 //dynamic-css
 $cardWidth: 10rem;
 

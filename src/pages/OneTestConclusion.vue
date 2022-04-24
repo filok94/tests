@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { useSjwStore } from "../stores/sjw";
 import { computed, onMounted, ref } from "vue";
-import Loading from "../components/Loading.vue";
+import Loading from "../components/OneLoading.vue";
 import gsap from "gsap";
 import { Animations } from "../Helpers/Animations";
 import { usePointerSwipe } from "@vueuse/core";
-import VCard from '../components/vCard.vue'
+import VCard from "../components/vCard.vue";
 
 //store vars
 const emit = defineEmits(["is-button-shown"]);
-const sjwStore = useSjwStore()
+const sjwStore = useSjwStore();
 //refs
 let allDotsRef = ref<Element[] | never>([]);
 let card = ref<InstanceType<typeof VCard> | null>(null);
@@ -62,21 +62,31 @@ let activateDot = (i: number) => {
   tl.set(questionCard.value, { y: 0, opacity: 1, zIndex: -3 });
 };
 let enteringFrom = () => {
-  Animations.fromTop(150, card.value?.card!)
-  Animations.fromBottom(100, questionCard.value)
+  if (card.value?.card) {
+    Animations.fromTop(150, card.value.card);
+  }
+  Animations.fromBottom(100, questionCard.value);
 };
 onMounted(() => {
-  sjwStore.getQusetions()
-  sjwStore.getUserResults()
-  sjwStore.getFinalPerson()
+  sjwStore.getQusetions();
+  sjwStore.getUserResults();
+  sjwStore.getFinalPerson();
   emit("is-button-shown", true);
 });
 </script>
 
 <template>
   <transition mode="out-in" @enter="enteringFrom">
-    <div class="is-conclusion-loaded" v-if="userAnswers.length > 0 && person && questions.length > 0">
-      <v-card :title="person.title" :description="person.description" :image="person.img" ref="card">
+    <div
+      v-if="userAnswers.length > 0 && person && questions.length > 0"
+      class="is-conclusion-loaded"
+    >
+      <v-card
+        ref="card"
+        :title="person.title"
+        :description="person.description"
+        :image="person.img"
+      >
         <p class="card-result">
           Результат:
           <span>{{ userAnswers.filter((e) => e.isRight).length }}</span>
@@ -86,34 +96,45 @@ onMounted(() => {
       </v-card>
       <div class="result-qusetions-block">
         <div class="dots-list-constainer">
-          <div class="dot" v-for="(q, i) of questions" :key="i" @click="activateDot(i)" :ref="
+          <div
+            v-for="(q, i) of questions"
+            :key="i"
+            :ref="
             (el: any) => {
               if (el) allDotsRef[i] = el;
             }
-          " :class="{
+          "
+            class="dot"
+            :class="{
               'is-right': userAnswers[i].isRight,
               'is-active': i == activatedDotIs,
-            }"></div>
+            }"
+            @click="activateDot(i)"
+          ></div>
         </div>
-        <div class="question-card" ref="questionCard">
-          <h2 :class="{
-            'is-header-right': userAnswers[activatedDotIs].isRight,
-            'is-header-wrong': !userAnswers[activatedDotIs].isRight,
-          }">{{ questions[activatedDotIs].question }}</h2>
+        <div ref="questionCard" class="question-card">
+          <h2
+            :class="{
+              'is-header-right': userAnswers[activatedDotIs].isRight,
+              'is-header-wrong': !userAnswers[activatedDotIs].isRight,
+            }"
+          >
+            {{ questions[activatedDotIs].question }}
+          </h2>
           <p class="right-answer">
             <span>Правильный ответ:</span>
             {{
-            questions[activatedDotIs].answers[
-            questions[activatedDotIs].rightAnswer
-            ]
+              questions[activatedDotIs].answers[
+                questions[activatedDotIs].rightAnswer
+              ]
             }}
           </p>
           <p class="user-answer">
             <span>Ваш ответ:</span>
             {{
-            questions[activatedDotIs].answers[
-            userAnswers[activatedDotIs].answerIs
-            ]
+              questions[activatedDotIs].answers[
+                userAnswers[activatedDotIs].answerIs
+              ]
             }}
           </p>
         </div>

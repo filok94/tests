@@ -1,17 +1,18 @@
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { Animations } from "../Helpers/Animations";
-import Loading from "../components/Loading.vue";
-import { useSjwStore } from '../stores/sjw'
-import { useEventListener } from '@vueuse/core'
+import Loading from "../components/OneLoading.vue";
+import { useSjwStore } from "../stores/sjw";
+import { useEventListener } from "@vueuse/core";
 import vCard from "../components/vCard.vue";
 
-const sjwStore = useSjwStore()
+const sjwStore = useSjwStore();
 const route = useRoute();
 
 let emit = defineEmits<{
-  (ev: "is-button-shown", value: boolean): void
+  // eslint-disable-next-line no-unused-vars
+  (ev: "is-button-shown", value: boolean): void;
 }>();
 
 //отрендеренный вопрос
@@ -20,14 +21,14 @@ const shownNowQuestion = computed(() => {
 });
 //answers are inActive and active
 const isActive = ref(true);
-let allAnswersRefs = ref<never | Element[]>([])
+let allAnswersRefs = ref<never | HTMLElement[]>([]);
 const usersChoice = ref<null | number>(null);
 const chooseAnswer = (i: number) => {
   if (isActive.value) {
     sjwStore.chooseQuestion({
       answer: i,
-      number: Number(route.params.step) - 1
-    })
+      number: Number(route.params.step) - 1,
+    });
     isActive.value = false;
     usersChoice.value = i;
     emit("is-button-shown", !isActive.value);
@@ -44,19 +45,19 @@ let keyContolls = (event: KeyboardEvent) => {
 };
 const isLoading = ref(true);
 const questionElement = ref(null);
-const answerElement = ref<Element | null>(null);
+const answerElement = ref<HTMLElement | null>(null);
 let enteringFrom = () => {
-  Animations.fromLeft(100, answerElement.value)
-  Animations.fromTop(150, questionElement.value)
+  Animations.fromLeft(100, answerElement.value);
+  Animations.fromTop(150, questionElement.value);
 };
 onMounted(async () => {
-  console.log(allAnswersRefs.value.length)
-  await sjwStore.getQusetions()
-  await sjwStore.getAllPersons()
+  console.log(allAnswersRefs.value.length);
+  await sjwStore.getQusetions();
+  await sjwStore.getAllPersons();
   isLoading.value = false;
-  enteringFrom()
+  enteringFrom();
 });
-useEventListener(document, 'keyup', keyContolls)
+useEventListener(document, "keyup", keyContolls);
 //delete all classes and instance value everytime
 onBeforeRouteUpdate(() => {
   isActive.value = true;
@@ -67,20 +68,26 @@ onBeforeRouteUpdate(() => {
 </script>
 
 <template>
-  <transition @enter="enteringFrom" mode="out-in">
+  <transition mode="out-in" @enter="enteringFrom">
     <div v-if="shownNowQuestion" class="sjw-wrapper">
-      <div class="question-block" ref="questionElement">
+      <div ref="questionElement" class="question-block">
         <h1>{{ shownNowQuestion.question }}</h1>
       </div>
 
-      <div class="answer-block" ref="answerElement">
+      <div ref="answerElement" class="answer-block">
         <ul>
-          <v-card v-for="(answer, i) of shownNowQuestion.answers" :ref="
-            (el: Element | any) => {
+          <v-card
+            v-for="(answer, i) of shownNowQuestion.answers"
+            :ref="
+            (el: HTMLElement | any) => {
               if (el) allAnswersRefs[i] = el;
             }
-          " :hover="{ isHoverable: isActive, onElement: 'description' }" :description="answer" :key="i"
-            @click.prevent="chooseAnswer(i)" class="static-answer" :class="{
+          "
+            :key="i"
+            :hover="{ isHoverable: isActive, onElement: 'description' }"
+            :description="answer"
+            class="static-answer"
+            :class="{
               'active-answer': isActive,
               right:
                 usersChoice == i &&
@@ -90,7 +97,9 @@ onBeforeRouteUpdate(() => {
                 usersChoice == i &&
                 usersChoice != null &&
                 usersChoice != shownNowQuestion.rightAnswer,
-            }">
+            }"
+            @click.prevent="chooseAnswer(i)"
+          >
             <p class="answer-count-label">{{ i + 1 }}</p>
           </v-card>
         </ul>

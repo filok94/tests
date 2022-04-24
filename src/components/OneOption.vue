@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { ref, computed } from "vue";
-import { OptionEmit } from '../types/testsTypes.interface'
+import { OptionEmit } from "../types/testsTypes.interface";
 const props = defineProps<{
-  title: String,
-  variants: Array<string | number>,
-  probabiltyWarning: boolean | string
-}>()
-const emit = defineEmits<{ (e: "option-changed", target: OptionEmit): void }>()
+  title: String;
+  variants: Array<string | number>;
+  probabiltyWarning: boolean | string;
+}>();
+// eslint-disable-next-line no-unused-vars
+const emit = defineEmits<{ (e: "option-changed", target: OptionEmit): void }>();
 
 //compute warning class for the probabilities API issue
 let warning = computed(() => {
@@ -16,21 +17,24 @@ let warning = computed(() => {
     !String(props.title).includes("Color")
   ) {
     return String(props.title).includes(props.probabiltyWarning as string);
-  }
+  } else return null;
 });
 
 //chooser of option
 let selectedVariant = ref(0);
 let chooseVariant = (e: boolean) => {
-  e ?
-    selectedVariant.value + 1 != variants.value.length
+  e
+    ? selectedVariant.value + 1 != variants.value.length
       ? selectedVariant.value++
       : (selectedVariant.value = 0)
     : selectedVariant.value == 0
-      ? (selectedVariant.value = variants.value.length - 1)
-      : selectedVariant.value--
+    ? (selectedVariant.value = variants.value.length - 1)
+    : selectedVariant.value--;
 
-  emit("option-changed", { optionTitle: props.title as string, optionVariant: variants.value[selectedVariant.value] });
+  emit("option-changed", {
+    optionTitle: props.title as string,
+    optionVariant: variants.value[selectedVariant.value],
+  });
 };
 
 //computed properties for rendering
@@ -41,12 +45,26 @@ let variants = computed(() => props.variants);
 
 <template>
   <li>
-    <button @click="chooseVariant(false)" class="option-button option-button_minus">-</button>
+    <button
+      class="option-button option-button_minus"
+      @click="chooseVariant(false)"
+    >
+      -
+    </button>
     <div class="option-text-container">
-      <h3 class="option-title" :class="{ warning: warning }">{{ optionTitle }}</h3>
-      <p class="option-numbers">{{ displayedSelectedVariant }}/{{ variants.length }}</p>
+      <h3 class="option-title" :class="{ warning: warning }">
+        {{ optionTitle }}
+      </h3>
+      <p class="option-numbers">
+        {{ displayedSelectedVariant }}/{{ variants.length }}
+      </p>
     </div>
-    <button @click="chooseVariant(true)" class="option-button option-button_plus">+</button>
+    <button
+      class="option-button option-button_plus"
+      @click="chooseVariant(true)"
+    >
+      +
+    </button>
   </li>
 </template>
 

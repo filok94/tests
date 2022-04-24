@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { circlesMovement } from "../Helpers/Animations";
 import { onMounted, Ref, ref } from "vue";
-let loaderCirclesArray = ref<never | Element[]>([]);
+let loaderCirclesArray = ref<never | HTMLElement[]>([]);
 
 let changingBorders = (stringToChange: Ref<string>) => {
   let arrayHelper = [];
@@ -24,15 +24,14 @@ onMounted(() => {
 <template>
   <div class="loader-square-container">
     <div
-      class="loader-square"
       v-for="(square, i) of [1, 2, 3, 4]"
       :key="i"
       :ref="
-        (el: Element) => {
+        (el: Element | any) => {
           if (el) loaderCirclesArray[i] = el;
         }
       "
-      ref="test"
+      class="loader-square"
     ></div>
   </div>
 </template>

@@ -1,26 +1,29 @@
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, Ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useGlobal } from "../stores/global";
 import { storeToRefs } from "pinia";
 import gsap from "gsap";
 
-let { avatarImageDefault } = storeToRefs(useGlobal())
-enum ModeTypes {
-  night = "Ночной",
-  day = "Дневной"
-}
+let { avatarImageDefault } = storeToRefs(useGlobal());
+const MODETYPES = {
+  night: "Ночной",
+  day: "Дневной",
+} as const;
+// eslint-disable-next-line no-redeclare
+type MODETYPES = typeof MODETYPES[keyof typeof MODETYPES];
+
 const router = useRouter();
-const mode: Ref<ModeTypes> = ref(ModeTypes.night);
+const mode = ref<MODETYPES>(MODETYPES.night);
 const darkMode = ref(true);
 const chooseAvatar = () => {
   router.push({ name: "Avatar" });
 };
 const changeMode = () => {
   darkMode.value = !darkMode.value;
-  if (mode.value == ModeTypes.day) {
-    mode.value = ModeTypes.night;
-  } else mode.value = ModeTypes.day;
+  if (mode.value == MODETYPES.day) {
+    mode.value = MODETYPES.night;
+  } else mode.value = MODETYPES.day;
 };
 
 let imageSetting = ref<null | HTMLImageElement>(null);
@@ -46,11 +49,11 @@ onUnmounted(() => {
 <template>
   <div class="settings-page">
     <div class="settings-container">
-      <div class="setting-type" id="avatar" @click="chooseAvatar">
+      <div id="avatar" class="setting-type" @click="chooseAvatar">
         <img :src="avatarImageDefault" width="40" class="setting-icon" />
         <p class="setting-text">Выбрать аватар</p>
       </div>
-      <div class="setting-type" id="night-mode" @click="changeMode">
+      <div id="night-mode" class="setting-type" @click="changeMode">
         <img
           src="../assets/dark-mode.svg"
           width="40"
@@ -72,18 +75,21 @@ onUnmounted(() => {
 .is-dark {
   transform: rotate(180deg);
 }
+
 // static class
 .settings-page {
   display: grid;
   grid-gap: 2rem;
   grid-template-columns: repeat(auto-fit, minmax(300px, 420px));
   justify-content: space-between;
+  overflow: hidden;
 
   .settings-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(10vw, 430px));
     grid-gap: 1rem;
     align-content: center;
+
     .setting-type {
       display: grid;
       grid-template-columns: 1fr 3fr;
@@ -103,8 +109,10 @@ onUnmounted(() => {
 
       cursor: pointer;
       transition: 0.3s ease-in-out;
+
       &:hover {
         transform: scale(101%);
+
         .setting-text {
           color: $color-violet;
         }
@@ -113,15 +121,18 @@ onUnmounted(() => {
       .setting-icon {
         transition: 0.3s ease-in-out;
       }
+
       .setting-text {
         text-align: left;
         margin: 0;
+
         span {
           font-size: 0.8rem;
         }
       }
     }
   }
+
   .image-holder {
     justify-self: center;
     width: 300px;

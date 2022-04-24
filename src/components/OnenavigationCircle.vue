@@ -4,16 +4,14 @@ import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
 import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
-import { TabsUser } from '../types/testsTypes.interface'
+import { TabsUser } from "../types/testsTypes.interface";
 import { useGlobal } from "../stores/global";
-import { Animations } from '../Helpers/Animations'
-import gsap from 'gsap'
-let globalStore = useGlobal()
+import { Animations } from "../Helpers/Animations";
+let globalStore = useGlobal();
 let props = defineProps<{
-  tabs: Array<TabsUser>
-}
->();
-let router = useRouter()
+  tabs: Array<TabsUser>;
+}>();
+let router = useRouter();
 //avatar in the circle
 let avatarImage = computed(() => {
   return globalStore.avatarImage
@@ -37,28 +35,62 @@ let changingBorders = (stringToChange: Ref<string>) => {
 const isCirclesActive = ref(false);
 const circles = ref<HTMLElement[] | never[]>([]);
 let navCircle = ref<null | HTMLElement>(null);
-let logoutTabRef = ref<HTMLElement | null>(null)
+let logoutTabRef = ref<HTMLElement | null>(null);
 let wrapperForCircle = ref(null);
-const { x, y, style } = useDraggable(wrapperForCircle, {
+const { style } = useDraggable(wrapperForCircle, {
   initialValue: { x: window.innerWidth / 1.5, y: window.innerHeight / 1.5 },
   preventDefault: true,
 });
 
 let activateNavCircle = () => {
-  if (!isCirclesActive.value && navCircle.value?.offsetHeight && navCircle.value?.offsetWidth) {
+  if (
+    !isCirclesActive.value &&
+    navCircle.value?.offsetHeight &&
+    navCircle.value?.offsetWidth
+  ) {
     isCirclesActive.value = true;
     circles.value.forEach((e, index) => {
       if (e != null && navCircle.value) {
-        index === 0 ? Animations.fromTop(navCircle.value.offsetHeight, e) : null
-        index === 1 ? Animations.fromTopRight(navCircle.value.offsetWidth, navCircle.value?.offsetHeight, e) : null
-        index === 2 ? Animations.fromRight(navCircle.value.offsetWidth, circles.value[2]) : null
-        index === 3 ? Animations.fromBottomRight(navCircle.value?.offsetWidth, navCircle.value?.offsetHeight, e) : null
-        index === 4 ? Animations.fromBottom(navCircle.value.offsetHeight, e) : null
-        index === 5 ? Animations.fromBottomLeft(navCircle.value?.offsetWidth, navCircle.value?.offsetHeight, e) : null
-        index === 6 ? Animations.fromLeft(navCircle.value.offsetWidth, e) : null
+        index === 0
+          ? Animations.fromTop(navCircle.value.offsetHeight, e)
+          : null;
+        index === 1
+          ? Animations.fromTopRight(
+              navCircle.value.offsetWidth,
+              navCircle.value?.offsetHeight,
+              e
+            )
+          : null;
+        index === 2
+          ? Animations.fromRight(navCircle.value.offsetWidth, circles.value[2])
+          : null;
+        index === 3
+          ? Animations.fromBottomRight(
+              navCircle.value?.offsetWidth,
+              navCircle.value?.offsetHeight,
+              e
+            )
+          : null;
+        index === 4
+          ? Animations.fromBottom(navCircle.value.offsetHeight, e)
+          : null;
+        index === 5
+          ? Animations.fromBottomLeft(
+              navCircle.value?.offsetWidth,
+              navCircle.value?.offsetHeight,
+              e
+            )
+          : null;
+        index === 6
+          ? Animations.fromLeft(navCircle.value.offsetWidth, e)
+          : null;
       }
-    })
-    Animations.fromTopLeft(navCircle.value?.offsetWidth, navCircle.value?.offsetHeight, logoutTabRef.value)
+    });
+    Animations.fromTopLeft(
+      navCircle.value?.offsetWidth,
+      navCircle.value?.offsetHeight,
+      logoutTabRef.value
+    );
   } else {
     isCirclesActive.value = false;
   }
@@ -66,7 +98,8 @@ let activateNavCircle = () => {
 };
 
 //controll opened tabs
-let emit = defineEmits<{ (e: "activation", target: number): void }>()
+// eslint-disable-next-line no-unused-vars
+let emit = defineEmits<{ (e: "activation", target: number): void }>();
 const activeTabIs = ref(0);
 let button = (event: Event) => {
   let indexOfElem = Array.from(
@@ -76,9 +109,14 @@ let button = (event: Event) => {
   activeTabIs.value = indexOfElem;
   changingBorders(stringifiedBordersOfActiveTarget);
   for (let i of circles.value) {
-    Animations.setScaleToDefault(i)
+    Animations.setScaleToDefault(i);
   }
-  Animations.changeBorderAndScale(stringifiedBordersOfActiveTarget.value, 1.3, circles.value[activeTabIs.value], 'back')
+  Animations.changeBorderAndScale(
+    stringifiedBordersOfActiveTarget.value,
+    1.3,
+    circles.value[activeTabIs.value],
+    "back"
+  );
 };
 let keyControls = (e: KeyboardEvent) => {
   if (e.code == "ArrowLeft") {
@@ -101,15 +139,17 @@ let keyControls = (e: KeyboardEvent) => {
 //signOut method
 const auth = getAuth();
 let signOutFromNavCircle = () => {
-  signOut(auth).then(() => {
-    router.push({ name: "Home" })
-  }).catch((error) => {
-    console.log(error);
-  });
-}
+  signOut(auth)
+    .then(() => {
+      router.push({ name: "Home" });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 //main-user-actions tabs
-const logoutTab = { name: "Logout", action: () => signOutFromNavCircle() }
+const logoutTab = { name: "Logout", action: () => signOutFromNavCircle() };
 
 //deactivate circle navigation and watch the status
 onClickOutside(wrapperForCircle, () => (isCirclesActive.value = false));
@@ -131,21 +171,44 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="wrapper-for-circle" ref="wrapperForCircle" style="position: fixed; touch-action: none" :style="style">
-    <div class="nav-circle" @click.prevent.stop="activateNavCircle" :class="{ 'nav-circle-is-active': isCirclesActive }"
-      ref="navCircle">
+  <div
+    ref="wrapperForCircle"
+    class="wrapper-for-circle"
+    style="position: fixed; touch-action: none"
+    :style="style"
+  >
+    <div
+      ref="navCircle"
+      class="nav-circle"
+      :class="{ 'nav-circle-is-active': isCirclesActive }"
+      @click.prevent.stop="activateNavCircle"
+    >
       <img :src="avatarImage" alt="navigation_circle" />
       <p>Navigate</p>
-
     </div>
-    <div v-show="isCirclesActive" :ref="
+    <div
+      v-for="(tab, i) of props.tabs"
+      v-show="isCirclesActive"
+      :key="i"
+      :ref="
       (el: Element | any) => {
         if (el) circles[i] = el;
       }
-    " @click.self.stop.prevent="button($event)" :class="{ 'active-target': activeTabIs == i }"
-      v-for="(tab, i) of props.tabs" :key="i" class="target-circle">{{ tab.name }}</div>
-    <div class="logout-target-circle" @click.self.stop.prevent="logoutTab.action" v-show="isCirclesActive"
-      ref="logoutTabRef">{{ logoutTab.name }}</div>
+    "
+      class="target-circle"
+      :class="{ 'active-target': activeTabIs == i }"
+      @click.self.stop.prevent="button($event)"
+    >
+      {{ tab.name }}
+    </div>
+    <div
+      v-show="isCirclesActive"
+      ref="logoutTabRef"
+      class="logout-target-circle"
+      @click.self.stop.prevent="logoutTab.action"
+    >
+      {{ logoutTab.name }}
+    </div>
   </div>
 </template>
 
@@ -153,14 +216,17 @@ onMounted(() => {
 .wrapper-for-circle {
   display: grid;
   grid-template-areas:
-    'lt ct rt'
-    'lc cc rc'
-    'lb cb rb';
+    "lt ct rt"
+    "lc cc rc"
+    "lb cb rb";
   position: relative;
   $areas: cb lb lc lt ct rt rc;
 
   @each $i in $areas {
-    $c: index($list: $areas, $value: $i);
+    $c: index(
+      $list: $areas,
+      $value: $i,
+    );
     $c: $c + 1;
 
     .target-circle:nth-of-type(#{$c}) {
@@ -201,7 +267,6 @@ onMounted(() => {
     transform: scale(110%);
     background: $color-violet-3;
   }
-
 }
 
 .target-circle {
@@ -215,6 +280,5 @@ onMounted(() => {
 
 .active-target {
   background: $color-violet-3 !important;
-
 }
 </style>

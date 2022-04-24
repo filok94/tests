@@ -1,29 +1,31 @@
 <script lang="ts" setup>
-import Reg from "../components/RegWindow.vue";
+import Reg from "../components/OneRegWindow.vue";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useEventListener } from '@vueuse/core'
+import { useEventListener } from "@vueuse/core";
 
 //watch on which window is active and change the animation
-enum Window {
-  auth = "auth",
-  registration = 'registration'
-}
-let nameOfActiveWindow = ref<Window>(Window.auth);
+const WINDOW = {
+  auth: "auth",
+  registration: "registration",
+} as const;
+// eslint-disable-next-line no-redeclare
+type WINDOW = typeof WINDOW[keyof typeof WINDOW];
+let nameOfActiveWindow = ref<WINDOW>(WINDOW.auth);
 
 // key_arrows directions
 let arrowDirections = (e: KeyboardEvent) => {
   if (e.code == "ArrowLeft") {
-    nameOfActiveWindow.value = Window.auth;
+    nameOfActiveWindow.value = WINDOW.auth;
   } else if (e.code == "ArrowRight") {
-    nameOfActiveWindow.value = Window.registration;
+    nameOfActiveWindow.value = WINDOW.registration;
   }
 };
 const doesUserHasRightToLogin = computed(() => {
   return !JSON.parse(window.localStorage.getItem("isAuthed")!);
 });
 
-useEventListener(document, 'keydown', (ev) => arrowDirections(ev))
+useEventListener(document, "keydown", (ev) => arrowDirections(ev));
 const router = useRouter();
 const backToMainPage = () => {
   router.push({
@@ -34,20 +36,24 @@ const backToMainPage = () => {
 </script>
 
 <template>
-  <div class="has-rights-to-login" v-if="doesUserHasRightToLogin">
+  <div v-if="doesUserHasRightToLogin" class="has-rights-to-login">
     <div class="home-navigation">
       <div
-        @click="nameOfActiveWindow = Window.auth"
-        :class="{ active: nameOfActiveWindow == Window.auth }"
-      >Авторизация</div>
+        :class="{ active: nameOfActiveWindow == WINDOW.auth }"
+        @click="nameOfActiveWindow = WINDOW.auth"
+      >
+        Авторизация
+      </div>
       <div
-        @click="nameOfActiveWindow = Window.registration"
-        :class="{ active: nameOfActiveWindow == Window.registration }"
-      >Регистрация</div>
+        :class="{ active: nameOfActiveWindow == WINDOW.registration }"
+        @click="nameOfActiveWindow = WINDOW.registration"
+      >
+        Регистрация
+      </div>
     </div>
-    <Reg :activeWindow="nameOfActiveWindow"></Reg>
+    <Reg :active-window="nameOfActiveWindow"></Reg>
   </div>
-  <div class="has-no-rights-to-login" v-else>
+  <div v-else class="has-no-rights-to-login">
     <h1>Вы уже вошли в систему, пожалуйста, вернитесь на главную страницу</h1>
     <button @click.prevent="backToMainPage">Вернуться</button>
   </div>

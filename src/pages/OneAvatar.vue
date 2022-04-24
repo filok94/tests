@@ -3,38 +3,36 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { getDatabase, set, ref as fireRef } from "firebase/database";
 
-import Option from "../components/Option.vue";
-import Loading from "../components/Loading.vue";
+import Option from "../components/OneOption.vue";
+import Loading from "../components/OneLoading.vue";
 import { Animations } from "../Helpers/Animations";
 import { useGlobal } from "../stores/global";
 import VButton from "../components/vButton.vue";
-import { OptionEmit } from '../types/testsTypes.interface'
-const globalStore = useGlobal()
+import { OptionEmit } from "../types/testsTypes.interface";
+const globalStore = useGlobal();
 const router = useRouter();
 
 // Pull avatar options from backend and render it
 onMounted(() => {
-  globalStore.getAvatars()
+  globalStore.getAvatars();
 });
-let avatar = computed(() =>
-  globalStore.avatar ? globalStore.avatar : null
-);
+let avatar = computed(() => (globalStore.avatar ? globalStore.avatar : null));
 
 //animate apearence and exits
-let avatarImageRef = ref<Element | null>(null);
-let listOfOptions = ref<Element | null>(null);
+let avatarImageRef = ref<HTMLElement | null>(null);
+let listOfOptions = ref<HTMLElement | null>(null);
 let appearance = () => {
-  Animations.fromLeft(300, listOfOptions.value)
-  Animations.fromTop(300, avatarImageRef.value)
+  Animations.fromLeft(300, listOfOptions.value);
+  Animations.fromTop(300, avatarImageRef.value);
 };
-let confirmationAnimation = (i: Element) => {
-  Animations.fromLeft(300, i)
+let confirmationAnimation = (i: HTMLElement) => {
+  Animations.fromLeft(300, i);
 };
-let confirmationAnimationLeave = (i: Element) => {
-  Animations.toRight(300, i)
+let confirmationAnimationLeave = (i: HTMLElement) => {
+  Animations.toRight(300, i);
 };
-let confirmationAnimationAfterLeave = (i: Element) => {
-  Animations.setPosition(300, i)
+let confirmationAnimationAfterLeave = (i: HTMLElement) => {
+  Animations.setPosition(300, i);
 };
 //every change from children call this function and rerender the avatar
 let optionChanged = (event: OptionEmit) => {
@@ -83,25 +81,48 @@ let saveTheRenderedAvatarAndGoBack = async () => {
 
 <template>
   <transition @enter="appearance">
-    <div class="avatar-window" v-if="avatar">
-      <div class="avatar-image-saver" ref="avatarImageRef">
+    <div v-if="avatar" class="avatar-window">
+      <div ref="avatarImageRef" class="avatar-image-saver">
         <img :src="imageAvatar" alt="avatar_picker" />
-        <transition @enter="confirmationAnimation($event)" @leave="confirmationAnimationLeave($event)"
-          @before-enter="confirmationAnimationAfterLeave($event)" :duration="200" mode="out-in">
-          <v-button v-if="!confirmationWindowShown" @click.prevent="confirmationWindowShown = !confirmationWindowShown"
-            :purpose="'primary'">Сохранить аватар</v-button>
-          <div class="confirmation-buttons-container" v-else>
+        <transition
+          :duration="200"
+          mode="out-in"
+          @enter="confirmationAnimation($event)"
+          @leave="confirmationAnimationLeave($event)"
+          @before-enter="confirmationAnimationAfterLeave($event)"
+        >
+          <v-button
+            v-if="!confirmationWindowShown"
+            :purpose="'primary'"
+            @click.prevent="confirmationWindowShown = !confirmationWindowShown"
+            >Сохранить аватар</v-button
+          >
+          <div v-else class="confirmation-buttons-container">
             <h3 class="confirmation-title">Вы уверены?</h3>
-            <v-button :purpose="'cancel'" @click.prevent="
-              confirmationWindowShown = !confirmationWindowShown
-            ">Нет</v-button>
-            <v-button @click.prevent="saveTheRenderedAvatarAndGoBack" :purpose="'primary'">Да</v-button>
+            <v-button
+              :purpose="'cancel'"
+              @click.prevent="
+                confirmationWindowShown = !confirmationWindowShown
+              "
+              >Нет</v-button
+            >
+            <v-button
+              :purpose="'primary'"
+              @click.prevent="saveTheRenderedAvatarAndGoBack"
+              >Да</v-button
+            >
           </div>
         </transition>
       </div>
       <ul ref="listOfOptions">
-        <Option v-for="(option, i) in avatar.options" :key="i" :title="String(i)" :variants="option"
-          :probabilty-warning="probabilityWarningTitleClass" @option-changed="optionChanged" />
+        <Option
+          v-for="(option, i) in avatar.options"
+          :key="i"
+          :title="String(i)"
+          :variants="option"
+          :probabilty-warning="probabilityWarningTitleClass"
+          @option-changed="optionChanged"
+        />
       </ul>
     </div>
     <Loading v-else />
@@ -152,7 +173,8 @@ let saveTheRenderedAvatarAndGoBack = async () => {
 
     .confirmation-buttons-container {
       display: grid;
-      grid-template-areas: "title title"
+      grid-template-areas:
+        "title title"
         "no yes";
       justify-content: space-evenly;
       justify-items: stretch;

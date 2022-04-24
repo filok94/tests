@@ -7,18 +7,22 @@ import { storeToRefs } from "pinia";
 import VButton from "../components/vButton.vue";
 import { PersonType } from "../types/testsTypes.interface";
 
-const { questions, userAnswers, computedFinalPerson } = storeToRefs(useSjwStore())
+const { questions, userAnswers, computedFinalPerson } = storeToRefs(
+  useSjwStore()
+);
 
 const router = useRouter();
 const route = useRoute();
-const isButtonShownMethod = (e: boolean) => isButtonShown.value = e
-const isButtonPrimary = computed(() => isButtonShown.value ? 'primary' : 'cancel')
+const isButtonShownMethod = (e: boolean) => (isButtonShown.value = e);
+const isButtonPrimary = computed(() =>
+  isButtonShown.value ? "primary" : "cancel"
+);
 interface DataToPost {
   answers: {
-    answerIs: number,
-    isRight: boolean
-  }[],
-  person: PersonType | null
+    answerIs: number;
+    isRight: boolean;
+  }[];
+  person: PersonType | null;
 }
 const postUserFinalResult = async (data: DataToPost) => {
   let userId = window.localStorage.getItem("isAuthedById");
@@ -60,7 +64,6 @@ onBeforeRouteUpdate((to) => {
 let keyContolls = (e: KeyboardEvent) => {
   if (e.code == "Enter" && isButtonShown.value) {
     nextQuestion(String(route.params.step));
-
   }
 };
 </script>
@@ -75,7 +78,8 @@ let keyContolls = (e: KeyboardEvent) => {
     @entered="keyContolls($event)"
     id="test"
     :purpose="isButtonPrimary"
-  >{{ buttonName }}</v-button>
+    >{{ buttonName }}</v-button
+  >
   <!-- </transition> -->
 </template>
 
