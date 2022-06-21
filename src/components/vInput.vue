@@ -1,0 +1,128 @@
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
+
+const props = defineProps<{
+  label: string;
+  maxLength?: number;
+  minLength?: number;
+  type: "text" | "number" | "password";
+  error?: string | undefined;
+}>();
+
+const inputValue = ref("");
+const inputIsFocused = ref(false);
+const inputLabelUpCondition = computed(
+  () => inputValue.value.length != 0 || inputIsFocused.value
+);
+
+const focusAndBlur = () => (inputIsFocused.value = !inputIsFocused.value);
+
+const errorMessageRef = ref(null);
+watch(props, (nValue) => {
+  if (nValue.error) {
+    Animations.fromTop(10, errorMessageRef.value);
+  }
+});
+</script>
+<template>
+  <form class="v_form">
+    <label
+      for="v_input"
+      :class="{ v_form_label_up: inputLabelUpCondition }"
+      class="v_form_label"
+      >{{ props.label }}</label
+    >
+    <div class="v_form_wrapper">
+      <input
+        v-model="inputValue"
+        class="v_form_input"
+        :class="{ v_input_error: props.error }"
+        :type="props.type"
+        :maxlength="props.maxLength"
+        :minlength="props.minLength"
+        @focus="focusAndBlur"
+        @blur="focusAndBlur"
+      />
+      <svg
+        width="25"
+        height="25"
+        :fill="props.error ? '#f94d67' : '#747ac8'"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 2H2v10h2v2h2v2h2v2h2v2h2v2h2v-2h2v-2h2v-2h2v-2h2v-2h-2v-2h-2V8h-2V6h-2V4h-2V2Zm0 2v2h2v2h2v2h2v2h2v2h-2v2h-2v2h-2v2h-2v-2h-2v-2H8v-2H6v-2H4V4h8ZM6 6h2v2H6V6Z"
+        ></path>
+      </svg>
+    </div>
+    <p
+      v-show="props.error != undefined"
+      ref="errorMessageRef"
+      class="v_form_error"
+    >
+      {{ props.error }}
+    </p>
+  </form>
+</template>
+<style lang="scss" scoped>
+//dynamic class
+.v_form_label_up {
+  transform: translateY(-1.3rem);
+  background-color: $color-black;
+}
+
+.v_input_error {
+  outline-color: $color-red !important;
+}
+//static class
+.v_form {
+  max-width: max-content;
+  margin: 0.5rem;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+
+  &_input {
+    text-indent: 0.5rem;
+    display: block;
+    border-radius: $border-prime;
+    padding: 0.7rem 1.9rem;
+    font-size: 1rem;
+    outline: $color-violet-1 solid;
+    border: none;
+    background-color: $color-black;
+    color: $color-white;
+    font-family: $font;
+    &:focus {
+      outline-color: $color-violet;
+    }
+  }
+
+  &_label {
+    padding: 0 0.5rem;
+    position: relative;
+    top: 3.3rem;
+    left: 1rem;
+    justify-self: start;
+    align-self: start;
+    line-height: 1.3rem;
+    font-weight: bolder;
+    color: rgba(255, 255, 255, 0.568);
+    transition: 0.3s ease-in-out;
+    border-radius: $border-minimal;
+  }
+  &_error {
+    margin: 0;
+    color: $color-red;
+    position: relative;
+  }
+}
+.v_form_wrapper {
+  display: flex;
+  align-items: center;
+  svg {
+    position: relative;
+    left: -2rem;
+  }
+}
+</style>

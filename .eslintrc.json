@@ -12,6 +12,7 @@
   },
   "plugins": ["vue", "@typescript-eslint"],
   "rules": {
-    "vue/script-setup-uses-vars": "error"
+    "vue/script-setup-uses-vars": "error",
+    "vue/no-setup-props-destructure": "off"
   }
 }

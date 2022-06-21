@@ -10,7 +10,9 @@
     },
     "dependencies": {
         "@vueuse/core": "^6.9.2",
-        "dicebear": "^4.10.1",
+        "@vueuse/integrations": "^8.7.3",
+        "axios": "^0.27.2",
+        "dotenv": "^16.0.1",
         "firebase": "^9.2.0",
         "gsap": "^3.8.0",
         "pinia": "^2.0.11",

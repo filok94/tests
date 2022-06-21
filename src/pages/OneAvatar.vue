@@ -9,16 +9,20 @@ import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { useGlobal } from "../stores/global";
 import VButton from "../components/vButton.vue";
 import { OptionEmit } from "../types/testsTypes.interface";
+import { useAxios } from "@vueuse/integrations/useAxios";
+
 const globalStore = useGlobal();
 const router = useRouter();
 
 // Pull avatar options from backend and render it
-onMounted(() => {
+onMounted(async () => {
   globalStore.getAvatars();
+  const { data } = await useAxios("http://localhost:4040/auth/sign_in'");
+  console.log(data);
 });
 let avatar = computed(() => (globalStore.avatar ? globalStore.avatar : null));
 
-//animate apearence and exits
+//animate appearance and exits
 let avatarImageRef = ref<HTMLElement | null>(null);
 let listOfOptions = ref<HTMLElement | null>(null);
 let appearance = () => {

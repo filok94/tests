@@ -1,6 +1,6 @@
 export interface TabsUser {
-  id: number,
-  name: string,
+  id: number;
+  name: string;
 }
 
 export interface ListedGame {
@@ -14,42 +14,40 @@ export interface ListedGame {
   title: string;
 }
 
-export interface AnimationPropertiesRegWindow {
-  to: null | string,
-  from: null | string,
-  timeout: null | number,
-  translatedTimeout: string,
-}
-
 export interface PersonType {
-  description: string,
-  img: string,
-  src: string,
-  title: string,
-  value: number
+  description: string;
+  img: string;
+  src: string;
+  title: string;
+  value: number;
 }
 
 export interface ChooseSjwAnswer {
-  answer: number,
-  number: number
+  answer: number;
+  number: number;
 }
 
 export interface WarriorCardType {
-  answers: number[],
-  id: number,
-  imageUrl: string,
-  name: string
+  answers: number[];
+  id: number;
+  imageUrl: string;
+  name: string;
 }
 
 export interface TriggerPerson {
-  description: string,
-  image: string,
-  level: number,
-  link: string,
-  title: string
+  description: string;
+  image: string;
+  level: number;
+  link: string;
+  title: string;
 }
 
 export type OptionEmit = {
-  optionTitle: string,
-  optionVariant: string | number
+  optionTitle: string;
+  optionVariant: string | number;
+};
+
+export interface IInputError {
+  message: string;
+  showSeconds: number;
 }

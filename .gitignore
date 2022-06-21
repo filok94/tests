@@ -3,3 +3,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.idea
+.env
+.gitignore
+launch.json
+package-lock.json

@@ -115,7 +115,7 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const requireAuth = to.matched.some((record) => record.meta.requireAuth);
-  const isAuthed = JSON.parse(window.localStorage.getItem("isAuthed")!);
+  const isAuthed: boolean = window.localStorage.getItem("user") != null;
   if (requireAuth && !isAuthed) {
     next("/login");
   } else {

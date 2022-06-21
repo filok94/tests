@@ -16,16 +16,11 @@ let emit = defineEmits<{
 let buttonRef = ref<null | Element>(null);
 
 let mouseHoverEvent = (event: string) => {
-  let stylesArray = [
-    { scale: 1, border: "25px 35px" },
-    { scale: 1.01, border: "35px 25px" },
-  ];
-  let style = stylesArray[1];
-  style =
-    event == "mouseenter" && !props.disable ? stylesArray[1] : stylesArray[0];
+  let borders = [30, 35];
+  let style = borders[1];
+  style = event == "mouseenter" && !props.disable ? borders[1] : borders[0];
   gsap.to(buttonRef.value, {
-    scale: style.scale,
-    borderRadius: style.border,
+    borderRadius: style,
     duration: 0.3,
     ease: "ease",
   });
