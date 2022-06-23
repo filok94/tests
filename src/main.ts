@@ -34,4 +34,5 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 getDatabase(fireApp);
-createApp(App).use(createPinia()).use(router).mount("#app");
+const app = createApp(App);
+app.use(createPinia()).use(router).mount("#app");

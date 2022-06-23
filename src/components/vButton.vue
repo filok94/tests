@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { useEventListener } from "@vueuse/core";
 import gsap from "gsap";
 
 let props = defineProps<{
   disable?: boolean;
   purpose: "cancel" | "primary";
+  size?: "small" | "medium" | "large";
 }>();
 
 let emit = defineEmits<{
@@ -29,17 +30,22 @@ let mouseHoverEvent = (event: string) => {
 useEventListener(document, "keyup", (ev: KeyboardEvent) =>
   ev.code == "Enter" ? emit("entered", ev) : undefined
 );
+
+const dynamicClasses = reactive({
+  v_button_cancel: props.purpose == "cancel",
+  v_button_primary: props.purpose == "primary",
+  v_button_small: props.size == "small",
+  v_button_medium: props.size == "medium" || props.size == undefined,
+  v_button_large: props.size == "large",
+});
 </script>
 
 <template>
   <button
     ref="buttonRef"
     :disabled="props.disable"
-    :class="{
-      cancel: props.purpose == 'cancel',
-      primary: props.purpose == 'primary',
-    }"
-    class="v-button"
+    :class="dynamicClasses"
+    class="v_button"
     @mouseenter="mouseHoverEvent($event.type)"
     @mouseleave="mouseHoverEvent($event.type)"
   >
@@ -48,9 +54,10 @@ useEventListener(document, "keyup", (ev: KeyboardEvent) =>
 </template>
 
 <style lang="scss" scoped>
-.v-button {
-  border-radius: $border-large $border-prime;
+.v_button {
+  border-radius: $border-large;
   border: none;
+  max-height: 5rem;
 
   font-family: $font;
   font-size: 1.5rem;
@@ -62,8 +69,7 @@ useEventListener(document, "keyup", (ev: KeyboardEvent) =>
 
   z-index: 1;
 
-  min-width: 16rem;
-  width: 20%;
+  //width: 20%;
 
   cursor: pointer;
   &:disabled {
@@ -74,13 +80,28 @@ useEventListener(document, "keyup", (ev: KeyboardEvent) =>
   &:active {
     box-shadow: none;
   }
-}
-.cancel {
-  background: $gradient-grey;
-  box-shadow: none;
-}
-.primary {
-  background: $gradient;
-  box-shadow: -1px 1px 8px 1px $color-violet, 1px -1px 13px 1px $color-violet-5;
+  &_cancel {
+    background: $gradient-grey;
+    box-shadow: none;
+  }
+  &_primary {
+    background: $gradient;
+    box-shadow: -1px 1px 8px 1px $color-violet,
+      1px -1px 13px 1px $color-violet-5;
+  }
+  &_small {
+    max-width: 6rem;
+    font-size: 0.5rem;
+  }
+
+  &_medium {
+    max-width: 10rem;
+    font-size: 1rem;
+  }
+
+  &_large {
+    max-width: 16rem;
+    font-size: 1.5rem;
+  }
 }
 </style>

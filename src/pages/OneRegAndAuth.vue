@@ -1,68 +1,76 @@
 <script lang="ts" setup>
-import Reg from "../components/OneRegWindow.vue";
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useEventListener } from "@vueuse/core";
+import { Animations } from "../Helpers/Animations/CommonAnimations";
+import { loginPage } from "../locales/loginPage";
 
-//watch on which window is active and change the animation
-const WINDOW = {
-  auth: "auth",
-  registration: "registration",
-} as const;
-// eslint-disable-next-line no-redeclare
-type WINDOW = typeof WINDOW[keyof typeof WINDOW];
-let nameOfActiveWindow = ref<WINDOW>(WINDOW.auth);
+const route = useRoute();
 
 // key_arrows directions
 let arrowDirections = (e: KeyboardEvent) => {
-  if (e.code == "ArrowLeft") {
-    nameOfActiveWindow.value = WINDOW.auth;
-  } else if (e.code == "ArrowRight") {
-    nameOfActiveWindow.value = WINDOW.registration;
+  if (!document.activeElement?.classList.contains("v_form_input")) {
+    if (e.code == "ArrowLeft") {
+      router.push({ name: "Sign_in" });
+    } else if (e.code == "ArrowRight") {
+      router.push({ name: "Sign_up" });
+    }
   }
 };
-const doesUserHasRightToLogin = computed(() => {
-  return !JSON.parse(window.localStorage.getItem("isAuthed")!);
-});
 
 useEventListener(document, "keydown", (ev) => arrowDirections(ev));
 const router = useRouter();
-const backToMainPage = () => {
+onMounted(() => {
   router.push({
-    name: "User",
-    params: { userName: window.localStorage.getItem("isAuthedBy") },
+    name: "Sign_in",
   });
+});
+const panelEntering = (el: HTMLDivElement) => {
+  if (route.name == "Sign_in") {
+    Animations.fromLeft(100, el);
+  } else {
+    Animations.fromRight(100, el);
+  }
+};
+const panelAway = (el: HTMLDivElement) => {
+  if (route.name == "Sign_in") {
+    Animations.toRight(100, el);
+  } else {
+    Animations.toLeft(100, el);
+  }
 };
 </script>
 
 <template>
-  <div v-if="doesUserHasRightToLogin" class="has-rights-to-login">
-    <div class="home-navigation">
-      <div
-        :class="{ active: nameOfActiveWindow == WINDOW.auth }"
-        @click="nameOfActiveWindow = WINDOW.auth"
-      >
-        Авторизация
-      </div>
-      <div
-        :class="{ active: nameOfActiveWindow == WINDOW.registration }"
-        @click="nameOfActiveWindow = WINDOW.registration"
-      >
-        Регистрация
-      </div>
+  <div class="home-navigation">
+    <div
+      :class="{ active: route.name == 'Sign_in' }"
+      @click="router.push({ name: 'Sign_in' })"
+    >
+      {{ loginPage.auth }}
     </div>
-    <Reg :active-window="nameOfActiveWindow"></Reg>
+    <div
+      :class="{ active: route.name == 'Sign_up' }"
+      @click="router.push({ name: 'Sign_up' })"
+    >
+      {{ loginPage.reg }}
+    </div>
   </div>
-  <div v-else class="has-no-rights-to-login">
-    <h1>Вы уже вошли в систему, пожалуйста, вернитесь на главную страницу</h1>
-    <button @click.prevent="backToMainPage">Вернуться</button>
-  </div>
+  <router-view v-slot="{ Component }">
+    <transition
+      mode="out-in"
+      :duration="200"
+      @enter="panelEntering"
+      @leave="panelAway"
+    >
+      <component :is="Component" :key="route.path" />
+    </transition>
+  </router-view>
 </template>
 
 <style lang="scss" scoped>
-.has-rights-to-login {
-  overflow: hidden;
-}
+//dynamic
+
 .home-navigation {
   border-radius: $border-prime;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
@@ -78,30 +86,11 @@ const backToMainPage = () => {
     max-width: 100%;
     padding: 1rem;
     width: 100%;
-    cursor: default;
-    @include blur-bcg();
     cursor: pointer;
+    background: $color-black;
   }
   .active {
     background: $gradient;
-  }
-}
-.has-no-rights-to-login {
-  button {
-    outline: none;
-    border: none;
-    border-radius: $border-prime;
-    background: $color-violet;
-    font-size: 3rem;
-    padding: 1rem;
-    color: $color-white;
-    box-shadow: $shadow-black;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    &:hover {
-      background: $color-pink;
-      transform: scale(102%);
-    }
   }
 }
 

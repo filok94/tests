@@ -29,6 +29,7 @@ interface State {
   avatarImage: null | string;
   avatarImageDefault: string;
   isAdmin: boolean;
+  errorToShow: string | null;
 }
 
 export const useGlobal = defineStore("global", {
@@ -41,9 +42,16 @@ export const useGlobal = defineStore("global", {
       avatarImageDefault:
         "https://avatars.dicebear.com/api/pixel-art/:seed.svg",
       isAdmin: false,
+      errorToShow: null,
     };
   },
   actions: {
+    showError(message: string) {
+      this.errorToShow = message;
+      setTimeout(() => {
+        this.errorToShow = null;
+      }, 5000);
+    },
     async getUserParams() {
       const db = getDatabase();
       let userParam = fireRef(db, `users/${userId}/isAdmin`);

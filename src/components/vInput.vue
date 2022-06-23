@@ -9,13 +9,18 @@ const props = defineProps<{
   type: "text" | "number" | "password";
   error?: string | undefined;
 }>();
+const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
+  (e: "input-value", value: string): void;
+}>();
 
 const inputValue = ref("");
+watch(inputValue, (value) => emit("input-value", value));
 const inputIsFocused = ref(false);
 const inputLabelUpCondition = computed(
   () => inputValue.value.length != 0 || inputIsFocused.value
 );
-
+const input = ref<HTMLInputElement | null>(null);
 const focusAndBlur = () => (inputIsFocused.value = !inputIsFocused.value);
 
 const errorMessageRef = ref(null);
@@ -26,15 +31,17 @@ watch(props, (nValue) => {
 });
 </script>
 <template>
-  <form class="v_form">
+  <form ref="fromRef" class="v_form">
     <label
       for="v_input"
       :class="{ v_form_label_up: inputLabelUpCondition }"
       class="v_form_label"
+      @click="input?.focus()"
       >{{ props.label }}</label
     >
     <div class="v_form_wrapper">
       <input
+        ref="input"
         v-model="inputValue"
         class="v_form_input"
         :class="{ v_input_error: props.error }"
@@ -110,11 +117,13 @@ watch(props, (nValue) => {
     color: rgba(255, 255, 255, 0.568);
     transition: 0.3s ease-in-out;
     border-radius: $border-minimal;
+    cursor: text;
   }
   &_error {
     margin: 0;
     color: $color-red;
     position: relative;
+    font-size: 0.9rem;
   }
 }
 .v_form_wrapper {

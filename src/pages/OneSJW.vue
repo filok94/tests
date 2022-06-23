@@ -72,12 +72,12 @@ let keyContolls = (e: KeyboardEvent) => {
   <router-view @is-button-shown="isButtonShownMethod"></router-view>
   <!-- <transition @enter="test($event)" @leave="testAway($event)" mode="out-in"> -->
   <v-button
-    ref="button"
-    @click.prevent="nextQuestion(String(route.params.step))"
-    :disable="!isButtonShown"
-    @entered="keyContolls($event)"
     id="test"
+    ref="button"
+    :disable="!isButtonShown"
     :purpose="isButtonPrimary"
+    @click.prevent="nextQuestion(String(route.params.step))"
+    @entered="keyContolls($event)"
     >{{ buttonName }}</v-button
   >
   <!-- </transition> -->

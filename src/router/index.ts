@@ -13,6 +13,7 @@ import CLientError from "../pages/OneCLientError.vue";
 import Trigger from "../pages/OneTrigger.vue";
 import TriggerGame from "../pages/OneTriggerGame.vue";
 import TriggerConclusion from "../pages/OneTriggerConclusion.vue";
+import OneRegWindowVue from "../pages/OneSigninUpModal.vue";
 const routes = [
   {
     path: "/",
@@ -32,6 +33,18 @@ const routes = [
     path: "/login",
     name: "Home",
     component: RegAndAuth,
+    children: [
+      {
+        name: "Sign_in",
+        path: "sign_in",
+        component: OneRegWindowVue,
+      },
+      {
+        name: "Sign_up",
+        path: "sign_up",
+        component: OneRegWindowVue,
+      },
+    ],
   },
   {
     path: "/:userName/profile",
@@ -115,9 +128,10 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const requireAuth = to.matched.some((record) => record.meta.requireAuth);
-  const isAuthed: boolean = window.localStorage.getItem("user") != null;
+  const isAuthed: boolean =
+    window.localStorage.getItem("access_token") != undefined;
   if (requireAuth && !isAuthed) {
-    next("/login");
+    next("/login/sign_in");
   } else {
     next();
   }
