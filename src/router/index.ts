@@ -3,9 +3,9 @@ import {
   createWebHistory,
   RouteLocationNormalized,
 } from "vue-router";
-import RegAndAuth from "../pages/OneRegAndAuth.vue";
+import OneAuthPage from "../pages/OneAuthPage.vue";
+import MainPage from "../pages/OneMainPage.vue";
 import SJW from "../pages/OneSJW.vue";
-import User from "../pages/OneUser.vue";
 import SJWQuestion from "../pages/OneSJWQuestion.vue";
 import Conclusion from "../pages/OneTestConclusion.vue";
 import Avatar from "../pages/OneAvatar.vue";
@@ -19,20 +19,20 @@ const routes = [
     path: "/",
     name: "redirect",
     redirect: {
-      name: "User",
+      name: "MainPage",
       params: {
-        userName: window.localStorage.getItem("isAuthedBy")
-          ? window.localStorage.getItem("isAuthedBy")
+        userName: window.localStorage.getItem("user")
+          ? window.localStorage.getItem("user")
           : "noneAuth",
       },
-      component: User,
+      component: MainPage,
       meta: { requireAuth: true },
     },
   },
   {
     path: "/login",
-    name: "Home",
-    component: RegAndAuth,
+    name: "Login",
+    component: OneAuthPage,
     children: [
       {
         name: "Sign_in",
@@ -48,8 +48,8 @@ const routes = [
   },
   {
     path: "/:userName/profile",
-    name: "User",
-    component: User,
+    name: "MainPage",
+    component: MainPage,
     meta: { requireAuth: true },
   },
   {
@@ -72,7 +72,7 @@ const routes = [
             next({
               name: "sjw-question",
               params: {
-                userName: window.localStorage.getItem("isAuthedBy"),
+                userName: window.localStorage.getItem("user"),
                 step: 1,
               },
             });
@@ -91,7 +91,7 @@ const routes = [
   },
   {
     path: "/:userName/trigger",
-    name: "trigger",
+    name: "Trigger",
     component: Trigger,
     meta: { requireAuth: true },
     children: [
@@ -128,10 +128,9 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const requireAuth = to.matched.some((record) => record.meta.requireAuth);
-  const isAuthed: boolean =
-    window.localStorage.getItem("access_token") != undefined;
+  const isAuthed = window.localStorage.getItem("access_token") != undefined;
   if (requireAuth && !isAuthed) {
-    next("/login/sign_in");
+    next("/login");
   } else {
     next();
   }

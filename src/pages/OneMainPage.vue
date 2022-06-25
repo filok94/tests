@@ -7,6 +7,7 @@ import GameCollection from "../components/OneGameCollection.vue";
 import oneAdmin from "../components/OneAdmin.vue";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { TabsUser } from "../types/testsTypes.interface";
+import { useAxios } from "@vueuse/integrations/useAxios";
 
 const globalStore = useGlobal();
 const activeTabIndex = ref(0);
@@ -41,6 +42,8 @@ onMounted(async () => {
     isUserAdmin.value ? tabs.push(new Tab(2, "Admin")) : null;
   });
 });
+
+useAxios();
 </script>
 
 <template>

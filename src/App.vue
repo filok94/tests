@@ -4,8 +4,8 @@ const router = useRouter();
 
 const goHomeByLogo = () => {
   router.push({
-    name: "User",
-    params: { userName: window.localStorage.getItem("isAuthedBy") },
+    name: "MainPage",
+    params: { userName: window.localStorage.getItem("user") },
   });
 };
 </script>

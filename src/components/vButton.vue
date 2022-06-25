@@ -7,6 +7,7 @@ let props = defineProps<{
   disable?: boolean;
   purpose: "cancel" | "primary";
   size?: "small" | "medium" | "large";
+  isLoading?: boolean;
 }>();
 
 let emit = defineEmits<{
@@ -37,6 +38,7 @@ const dynamicClasses = reactive({
   v_button_small: props.size == "small",
   v_button_medium: props.size == "medium" || props.size == undefined,
   v_button_large: props.size == "large",
+  v_button_loading: props.isLoading,
 });
 </script>
 
@@ -102,6 +104,9 @@ const dynamicClasses = reactive({
   &_large {
     max-width: 16rem;
     font-size: 1.5rem;
+  }
+  &_loading {
+    color: $color-black;
   }
 }
 </style>

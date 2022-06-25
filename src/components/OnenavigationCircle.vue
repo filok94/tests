@@ -2,11 +2,11 @@
 import { ref, onMounted, watch, Ref, computed } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
-import { getAuth, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 import { TabsUser } from "../types/testsTypes.interface";
 import { useGlobal } from "../stores/global";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
+
 let globalStore = useGlobal();
 let props = defineProps<{
   tabs: Array<TabsUser>;
@@ -137,15 +137,11 @@ let keyControls = (e: KeyboardEvent) => {
 };
 
 //signOut method
-const auth = getAuth();
 let signOutFromNavCircle = () => {
-  signOut(auth)
-    .then(() => {
-      router.push({ name: "Home" });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("user");
+  router.push({ name: "Sign_in" });
 };
 
 //main-user-actions tabs

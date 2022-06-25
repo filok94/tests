@@ -2,13 +2,13 @@ import { Ref } from "vue";
 import { errors } from "../../locales/errors";
 
 export const loginPageErrorHandler = (
-  err: string,
+  errStatus: number,
   passwordRef: Ref<string | undefined>,
   loginRef: Ref<string | undefined>
 ) => {
-  if (err.includes("409")) {
+  if (errStatus == 409) {
     loginRef.value = errors.loginIsUsed;
-  } else if (err.includes("401")) {
+  } else if (errStatus == 401) {
     passwordRef.value = errors.incorrectCredentials;
   } else {
     loginRef.value = errors.unknowError;
