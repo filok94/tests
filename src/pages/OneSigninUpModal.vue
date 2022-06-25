@@ -2,13 +2,12 @@
 import { reactive, computed, ref, watch, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import VButton from "../components/vButton.vue";
-import { signInRequestData, ISignInResponse } from "../api/auth/api.auth";
 import VInput from "../components/vInput.vue";
 import VPanel from "../components/vPanel.vue";
 import { loginPageErrorHandler } from "../Helpers/errorHandlers/loginPageErrorHandler";
 import { loginPage } from "../locales/loginPage";
-import { useAxios } from "@vueuse/integrations/useAxios";
-import { authInstance } from "../api/auth/api.auth";
+import { useSignIn } from "../api/auth/UseSignIn";
+import { SIGN_URLS } from "../api/auth/api.auth";
 
 const router = useRouter();
 const route = useRoute();
@@ -20,13 +19,7 @@ let userInputs = reactive({
 });
 const { login, password, confirmationPassowrd } = toRefs(userInputs);
 
-const { data, error, execute, isLoading } = useAxios<ISignInResponse>(
-  {
-    method: "POST",
-  },
-  authInstance
-);
-
+const { data, error, execution, isLoading } = useSignIn();
 const passwordError = ref<string | undefined>(undefined);
 const loginError = ref<string | undefined>(undefined);
 watch(password, (nValue, oValue) => {
@@ -73,9 +66,9 @@ const disableButtonCondition = computed(() => {
 });
 
 const signByButton = () => {
-  const data = signInRequestData(login.value, password.value);
-  let urlMethod = route.name == "Sign_in" ? "sign_in" : "sign_up";
-  execute(urlMethod, { data });
+  const methodUrl =
+    route.name == "Sign_in" ? SIGN_URLS.sign_in : SIGN_URLS.sign_up;
+  execution(methodUrl, { login, password });
 };
 </script>
 

@@ -1,22 +1,20 @@
 import axios from "axios";
+import { Ref } from "vue";
 export const authInstance = axios.create({
   baseURL: `${import.meta.env.VITE_AUTH_URL}`,
 });
-export const urls = {
+
+export const SIGN_URLS = {
   sign_in: "sign_in",
   sign_up: "sign_up",
-  refresh_tokens: "refresh_tokens",
-};
+} as const;
+// eslint-disable-next-line no-redeclare
+export type SIGN_URLS = typeof SIGN_URLS[keyof typeof SIGN_URLS];
+
 export interface ISignInRequest {
-  login: string;
-  password: string;
+  login: Ref<string>;
+  password: Ref<string>;
 }
-export const signInRequestData = (
-  login: string,
-  password: string
-): ISignInRequest => {
-  return { login, password };
-};
 
 export interface ISignInResponse {
   access_token: string;
@@ -27,6 +25,3 @@ export interface ISignInResponse {
 export interface IRefreshTokensRequest {
   token: string;
 }
-export const refreshTokensData = (token: string): IRefreshTokensRequest => {
-  return { token };
-};
