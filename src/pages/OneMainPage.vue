@@ -7,10 +7,11 @@ import GameCollection from "../components/OneGameCollection.vue";
 import oneAdmin from "../components/OneAdmin.vue";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { TabsUser } from "../types/testsTypes.interface";
-import { useAxios } from "@vueuse/integrations/useAxios";
+import { useGetAllGames } from "../api/gameController/useGames.api";
 
 const globalStore = useGlobal();
 const activeTabIndex = ref(0);
+const { data, error, execute } = useGetAllGames();
 const activeTarget = (target: number) => {
   activeTabIndex.value = target;
 };
@@ -32,6 +33,9 @@ const leave = (el: HTMLElement) => Animations.fromBottom(100, el);
 
 const header = ref<null | HTMLHeadingElement>(null);
 
+watch(data, (nValue) => globalStore.getAllGames(nValue));
+watch(error, (nValue) => globalStore.showError(nValue?.message));
+
 const isUserAdmin = computed(() => globalStore.isAdmin);
 watch(activeTabIndex, () => Animations.fromTop(50, header.value));
 onMounted(async () => {
@@ -41,9 +45,8 @@ onMounted(async () => {
   await globalStore.getUserParams().then(() => {
     isUserAdmin.value ? tabs.push(new Tab(2, "Admin")) : null;
   });
+  execute();
 });
-
-useAxios();
 </script>
 
 <template>

@@ -6,8 +6,8 @@ import VInput from "../components/vInput.vue";
 import VPanel from "../components/vPanel.vue";
 import { loginPageErrorHandler } from "../Helpers/errorHandlers/loginPageErrorHandler";
 import { loginPage } from "../locales/loginPage";
-import { useSignIn } from "../api/auth/UseSignIn";
-import { SIGN_URLS } from "../api/auth/api.auth";
+import { setAuthDataToStorage, useSignIn } from "../api/auth/useAuth.api";
+import { SIGN_URLS } from "../api/auth/auth.interfaces";
 
 const router = useRouter();
 const route = useRoute();
@@ -19,7 +19,7 @@ let userInputs = reactive({
 });
 const { login, password, confirmationPassowrd } = toRefs(userInputs);
 
-const { data, error, execution, isLoading } = useSignIn();
+const { data, error, execution, isLoading, isFinished } = useSignIn();
 const passwordError = ref<string | undefined>(undefined);
 const loginError = ref<string | undefined>(undefined);
 watch(password, (nValue, oValue) => {
@@ -43,11 +43,9 @@ watch(error, () => {
     );
   }
 });
-watch(data, () => {
-  if (data.value) {
-    localStorage.setItem("user", data.value.user);
-    localStorage.setItem("access_token", data.value.access_token);
-    localStorage.setItem("refresh_token", data.value.refresh_token);
+watch(isFinished, (nValue) => {
+  if (nValue) {
+    setAuthDataToStorage(data);
     router.push({
       name: "MainPage",
       params: { userName: window.localStorage.getItem("user") },
@@ -77,25 +75,26 @@ const signByButton = () => {
     <div class="left-side">
       <VInput
         ref="panel"
+        v-model="login"
         :label="'Login'"
         :max-length="20"
         :min-length="6"
         :type="'text'"
         :error="loginError"
-        @input-value="(e) => (login = e)"
       ></VInput>
     </div>
     <div class="right-side">
       <VInput
+        v-model="password"
         :label="'Password'"
         :max-length="20"
         :min-length="6"
         :type="'password'"
         :error="passwordError"
-        @input-value="(e) => (password = e)"
       ></VInput>
       <VInput
         v-if="route.name == 'Sign_up'"
+        v-model="confirmationPassowrd"
         :label="'Confirm password'"
         :max-length="20"
         :min-length="6"
@@ -103,7 +102,6 @@ const signByButton = () => {
         :error="
           confirmPasswordWrongCondition ? 'Passwords are different' : undefined
         "
-        @input-value="(e) => (confirmationPassowrd = e)"
       ></VInput>
     </div>
     <VButton

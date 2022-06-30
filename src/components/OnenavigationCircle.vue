@@ -2,16 +2,16 @@
 import { ref, onMounted, watch, Ref, computed } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
-import { useRouter } from "vue-router";
 import { TabsUser } from "../types/testsTypes.interface";
 import { useGlobal } from "../stores/global";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
+import { useSignOut } from "../api/auth/useSignOut";
 
 let globalStore = useGlobal();
 let props = defineProps<{
   tabs: Array<TabsUser>;
 }>();
-let router = useRouter();
+
 //avatar in the circle
 let avatarImage = computed(() => {
   return globalStore.avatarImage
@@ -137,12 +137,8 @@ let keyControls = (e: KeyboardEvent) => {
 };
 
 //signOut method
-let signOutFromNavCircle = () => {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-  localStorage.removeItem("user");
-  router.push({ name: "Sign_in" });
-};
+const { signOut } = useSignOut();
+let signOutFromNavCircle = () => signOut();
 
 //main-user-actions tabs
 const logoutTab = { name: "Logout", action: () => signOutFromNavCircle() };

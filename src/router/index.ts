@@ -14,6 +14,7 @@ import Trigger from "../pages/OneTrigger.vue";
 import TriggerGame from "../pages/OneTriggerGame.vue";
 import TriggerConclusion from "../pages/OneTriggerConclusion.vue";
 import OneRegWindowVue from "../pages/OneSigninUpModal.vue";
+import { USER_STORAGE } from "../api/auth/auth.interfaces";
 const routes = [
   {
     path: "/",
@@ -128,7 +129,8 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const requireAuth = to.matched.some((record) => record.meta.requireAuth);
-  const isAuthed = window.localStorage.getItem("access_token") != undefined;
+  const isAuthed =
+    window.localStorage.getItem(USER_STORAGE.access_token) != undefined;
   if (requireAuth && !isAuthed) {
     next("/login");
   } else {

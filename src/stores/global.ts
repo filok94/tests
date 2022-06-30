@@ -1,3 +1,4 @@
+import { IGetAllGamesResponse } from "./../api/gameController/games.intrfaces";
 import { defineStore } from "pinia";
 import { getDatabase, onValue, ref as fireRef } from "firebase/database";
 import { PersonType } from "../types/testsTypes.interface";
@@ -29,7 +30,8 @@ interface State {
   avatarImage: null | string;
   avatarImageDefault: string;
   isAdmin: boolean;
-  errorToShow: string | null;
+  errorToShow: string | undefined;
+  gamesNew: undefined | IGetAllGamesResponse[];
 }
 
 export const useGlobal = defineStore("global", {
@@ -42,15 +44,19 @@ export const useGlobal = defineStore("global", {
       avatarImageDefault:
         "https://avatars.dicebear.com/api/pixel-art/:seed.svg",
       isAdmin: false,
-      errorToShow: null,
+      errorToShow: undefined,
+      gamesNew: undefined,
     };
   },
   actions: {
-    showError(message: string) {
+    showError(message: string | undefined) {
       this.errorToShow = message;
       setTimeout(() => {
-        this.errorToShow = null;
+        this.errorToShow = undefined;
       }, 5000);
+    },
+    getAllGames(games: IGetAllGamesResponse[] | undefined): void {
+      this.gamesNew = games;
     },
     async getUserParams() {
       const db = getDatabase();

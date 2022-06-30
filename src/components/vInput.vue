@@ -8,17 +8,20 @@ const props = defineProps<{
   minLength?: number;
   type: "text" | "number" | "password";
   error?: string | undefined;
+  modelValue: string;
 }>();
 const emit = defineEmits<{
   // eslint-disable-next-line no-unused-vars
-  (e: "input-value", value: string): void;
+  (e: "update:modelValue", value: string): void;
 }>();
 
-const inputValue = ref("");
-watch(inputValue, (value) => emit("input-value", value));
+const updateInput = (event: Event) => {
+  emit("update:modelValue", (event.target as HTMLInputElement).value);
+};
+
 const inputIsFocused = ref(false);
 const inputLabelUpCondition = computed(
-  () => inputValue.value.length != 0 || inputIsFocused.value
+  () => props.modelValue.length != 0 || inputIsFocused.value
 );
 const input = ref<HTMLInputElement | null>(null);
 const focusAndBlur = () => (inputIsFocused.value = !inputIsFocused.value);
@@ -41,8 +44,7 @@ watch(props, (nValue) => {
     >
     <div class="v_form_wrapper">
       <input
-        ref="input"
-        v-model="inputValue"
+        :value="modelValue"
         class="v_form_input"
         :class="{ v_input_error: props.error }"
         :type="props.type"
@@ -50,6 +52,7 @@ watch(props, (nValue) => {
         :minlength="props.minLength"
         @focus="focusAndBlur"
         @blur="focusAndBlur"
+        @input="updateInput"
       />
       <svg
         width="25"
