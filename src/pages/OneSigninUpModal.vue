@@ -6,8 +6,9 @@ import VInput from "../components/vInput.vue";
 import VPanel from "../components/vPanel.vue";
 import { loginPageErrorHandler } from "../Helpers/errorHandlers/loginPageErrorHandler";
 import { loginPage } from "../locales/loginPage";
-import { setAuthDataToStorage, useSignIn } from "../api/auth/useAuth.api";
+import { setAuthDataToStorage, useSignIn } from "../api/auth/auth.api";
 import { SIGN_URLS } from "../api/auth/auth.interfaces";
+import { ROUTER_NAMES } from "../router";
 
 const router = useRouter();
 const route = useRoute();
@@ -47,8 +48,8 @@ watch(isFinished, (nValue) => {
   if (nValue) {
     setAuthDataToStorage(data);
     router.push({
-      name: "MainPage",
-      params: { userName: window.localStorage.getItem("user") },
+      name: ROUTER_NAMES.main,
+      params: { userId: window.localStorage.getItem("user") },
     });
   }
 });
@@ -58,14 +59,16 @@ const confirmPasswordWrongCondition = computed(
 );
 const disableButtonCondition = computed(() => {
   const lengthCondition = login.value.length < 6 || password.value.length < 8;
-  return route.name == "Sign_in"
+  return route.name == ROUTER_NAMES.login.sign_in
     ? lengthCondition
     : lengthCondition || confirmPasswordWrongCondition.value;
 });
 
 const signByButton = () => {
   const methodUrl =
-    route.name == "Sign_in" ? SIGN_URLS.sign_in : SIGN_URLS.sign_up;
+    route.name == ROUTER_NAMES.login.sign_in
+      ? SIGN_URLS.sign_in
+      : SIGN_URLS.sign_up;
   execution(methodUrl, { login, password });
 };
 </script>
@@ -93,7 +96,7 @@ const signByButton = () => {
         :error="passwordError"
       ></VInput>
       <VInput
-        v-if="route.name == 'Sign_up'"
+        v-if="route.name == ROUTER_NAMES.login.sign_up"
         v-model="confirmationPassowrd"
         :label="'Confirm password'"
         :max-length="20"
@@ -112,7 +115,11 @@ const signByButton = () => {
       @click.prevent="signByButton"
       @entered="signByButton"
     >
-      {{ route.name == "Sign_in" ? loginPage.authButton : loginPage.regButton }}
+      {{
+        route.name == ROUTER_NAMES.login.sign_in
+          ? loginPage.authButton
+          : loginPage.regButton
+      }}
     </VButton>
   </VPanel>
 </template>

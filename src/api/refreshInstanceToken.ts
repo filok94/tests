@@ -1,14 +1,21 @@
 import { USER_STORAGE } from "./auth/auth.interfaces";
-import { AxiosError, AxiosInstance } from "axios";
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { watch } from "vue";
-import { useRefreshToken, removeAuthDataFromStorage } from "./auth/useAuth.api";
+import { useRefreshToken, removeAuthDataFromStorage } from "./auth/auth.api";
 import { useSignOut } from "./auth/useSignOut";
 
 const { signOut } = useSignOut();
 
 let requestRetries: Array<string | undefined> = [];
 
-export function refreshInstanceToken(
+export function onResponeClearRetries(res: AxiosResponse) {
+  if (requestRetries.includes(res.config.url) && res.status == 200) {
+    const indexToRemove = requestRetries.findIndex((e) => e == res.config.url);
+    requestRetries.splice(indexToRemove, 1);
+  }
+}
+
+export function onResponeRefreshInstanceToken(
   instance: AxiosInstance,
   error: AxiosError
 ) {
@@ -34,7 +41,7 @@ export function refreshInstanceToken(
     const indexToRemove = requestRetries.findIndex(
       (e) => e == originalRequest.url
     );
-    requestRetries.splice(indexToRemove);
+    requestRetries.splice(indexToRemove, 1);
     signOut();
   }
 }

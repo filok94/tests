@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from "vue";
 import Loading from "../components/OneLoading.vue";
 
 import { Animations } from "../Helpers/Animations/CommonAnimations";
-import { cardScrolling } from "../Helpers/Animations/AnimationsSJW";
+import { cardScrolling } from "../Helpers/Animations/AnimationsGame";
 import { usePointerSwipe } from "@vueuse/core";
 import VCard from "../components/vCard.vue";
 

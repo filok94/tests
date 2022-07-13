@@ -2,22 +2,23 @@
 import { ref, onMounted, watch, Ref, computed } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useDraggable } from "@vueuse/core";
-import { TabsUser } from "../types/testsTypes.interface";
+
 import { useGlobal } from "../stores/global";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { useSignOut } from "../api/auth/useSignOut";
+import { useGetMyAvatar } from "../api/avatarControllet/avatar.api";
+import { useAvatarStore } from "../stores/avatar_store";
+import { Tab } from "../types/testsTypes.interface";
 
 let globalStore = useGlobal();
 let props = defineProps<{
-  tabs: Array<TabsUser>;
+  tabs: Array<Tab>;
 }>();
 
 //avatar in the circle
-let avatarImage = computed(() => {
-  return globalStore.avatarImage
-    ? globalStore.avatarImage
-    : globalStore.avatarImageDefault;
-});
+let avatarImage = computed(() =>
+  avatarStore.avatarLink ? avatarStore.avatarLink : ""
+);
 
 //default borders
 let stringifiedBordersOfMainCircle = ref("76px 53px 45px 92px");
@@ -156,8 +157,17 @@ watch(
     }
   }
 );
+
+const avatarStore = useAvatarStore();
+const { data, execute, isFinished } = useGetMyAvatar();
+watch(isFinished, (newValue) => {
+  if (newValue && data.value) avatarStore.setAvatarLink(data.value?.ref_link);
+});
+
 onMounted(() => {
+  execute();
   globalStore.getAvatarImageForCircle();
+
   setInterval(() => changingBorders(stringifiedBordersOfMainCircle), 20000);
 });
 </script>

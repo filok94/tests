@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useEventListener } from "@vueuse/core";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { loginPage } from "../locales/loginPage";
+import { ROUTER_NAMES } from "../router";
 
 const route = useRoute();
 
@@ -11,9 +12,9 @@ const route = useRoute();
 let arrowDirections = (e: KeyboardEvent) => {
   if (!document.activeElement?.classList.contains("v_form_input")) {
     if (e.code == "ArrowLeft") {
-      router.push({ name: "Sign_in" });
+      router.push({ name: ROUTER_NAMES.login.sign_in });
     } else if (e.code == "ArrowRight") {
-      router.push({ name: "Sign_up" });
+      router.push({ name: ROUTER_NAMES.login.sign_up });
     }
   }
 };
@@ -22,18 +23,18 @@ useEventListener(document, "keydown", (ev) => arrowDirections(ev));
 const router = useRouter();
 onMounted(() => {
   router.push({
-    name: "Sign_in",
+    name: ROUTER_NAMES.login.sign_in,
   });
 });
 const panelEntering = (el: HTMLDivElement) => {
-  if (route.name == "Sign_in") {
+  if (route.name == ROUTER_NAMES.login.sign_in) {
     Animations.fromLeft(100, el);
   } else {
     Animations.fromRight(100, el);
   }
 };
 const panelAway = (el: HTMLDivElement) => {
-  if (route.name == "Sign_in") {
+  if (route.name == ROUTER_NAMES.login.sign_in) {
     Animations.toRight(100, el);
   } else {
     Animations.toLeft(100, el);
@@ -44,14 +45,14 @@ const panelAway = (el: HTMLDivElement) => {
 <template>
   <div class="home-navigation">
     <div
-      :class="{ active: route.name == 'Sign_in' }"
-      @click="router.push({ name: 'Sign_in' })"
+      :class="{ active: route.name == ROUTER_NAMES.login.sign_in }"
+      @click="router.push({ name: ROUTER_NAMES.login.sign_in })"
     >
       {{ loginPage.auth }}
     </div>
     <div
-      :class="{ active: route.name == 'Sign_up' }"
-      @click="router.push({ name: 'Sign_up' })"
+      :class="{ active: route.name == ROUTER_NAMES.login.sign_up }"
+      @click="router.push({ name: ROUTER_NAMES.login.sign_up })"
     >
       {{ loginPage.reg }}
     </div>

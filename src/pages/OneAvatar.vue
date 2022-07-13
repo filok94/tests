@@ -9,7 +9,6 @@ import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { useGlobal } from "../stores/global";
 import VButton from "../components/vButton.vue";
 import { OptionEmit } from "../types/testsTypes.interface";
-import { useAxios } from "@vueuse/integrations/useAxios";
 
 const globalStore = useGlobal();
 const router = useRouter();
@@ -17,8 +16,6 @@ const router = useRouter();
 // Pull avatar options from backend and render it
 onMounted(async () => {
   globalStore.getAvatars();
-  const { data } = await useAxios("http://localhost:4040/auth/sign_in'");
-  console.log(data);
 });
 let avatar = computed(() => (globalStore.avatar ? globalStore.avatar : null));
 
@@ -75,7 +72,7 @@ let saveTheRenderedAvatarAndGoBack = async () => {
     await set(fireRef(db, `users/${userId}/avatar`), avatarImageToSave);
     await router.push({
       name: "User",
-      params: { userName: window.localStorage.getItem("isAuthedBy") },
+      params: { userId: window.localStorage.getItem("isAuthedBy") },
     });
   } catch (err: any) {
     console.log(err.message);

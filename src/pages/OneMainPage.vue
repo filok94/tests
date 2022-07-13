@@ -6,46 +6,33 @@ import OneSettings from "../components/OneSettings.vue";
 import GameCollection from "../components/OneGameCollection.vue";
 import oneAdmin from "../components/OneAdmin.vue";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
-import { TabsUser } from "../types/testsTypes.interface";
-import { useGetAllGames } from "../api/gameController/useGames.api";
+import { Tab } from "../types/testsTypes.interface";
+import { useGamesStore } from "../stores/games_store";
 
 const globalStore = useGlobal();
 const activeTabIndex = ref(0);
-const { data, error, execute } = useGetAllGames();
+
 const activeTarget = (target: number) => {
   activeTabIndex.value = target;
 };
-
-class Tab {
-  constructor(public id: number, public name: string) {
-    this.name = name;
-    this.id = id;
-  }
-}
 const components = [GameCollection, OneSettings, oneAdmin];
-const tabs = reactive<TabsUser[]>([
-  new Tab(0, "Games"),
-  new Tab(1, "Settings"),
-]);
+const tabs = reactive<Tab[]>([new Tab(0, "Games"), new Tab(1, "Settings")]);
 
 const enter = (el: HTMLElement) => Animations.fromTop(100, el);
 const leave = (el: HTMLElement) => Animations.fromBottom(100, el);
 
 const header = ref<null | HTMLHeadingElement>(null);
 
-watch(data, (nValue) => globalStore.getAllGames(nValue));
-watch(error, (nValue) => globalStore.showError(nValue?.message));
-
 const isUserAdmin = computed(() => globalStore.isAdmin);
 watch(activeTabIndex, () => Animations.fromTop(50, header.value));
+
+const gamesStore = useGamesStore();
 onMounted(async () => {
-  if (!globalStore.games) {
-    await globalStore.getGames();
-  }
+  await gamesStore.getAllGames();
   await globalStore.getUserParams().then(() => {
     isUserAdmin.value ? tabs.push(new Tab(2, "Admin")) : null;
   });
-  execute();
+
 });
 </script>
 

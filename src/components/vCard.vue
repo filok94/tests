@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import {
+  Animations,
   hoverEffectOnText,
   hoverTransformScale,
 } from "../Helpers/Animations/CommonAnimations";
@@ -13,6 +14,7 @@ let props = defineProps<{
     isHoverable: boolean;
     onElement?: "title" | "description";
   };
+  appearsFrom?: "left" | "right" | "top" | "bottom" | null;
 }>();
 let hoverableElement = computed(() =>
   props.hover?.onElement == "title" ? titleRef.value : descriptionRef.value
@@ -31,6 +33,35 @@ let hover = (e: MouseEvent) => {
   }
 };
 defineExpose({ card });
+
+onMounted(() => {
+  switch (props.appearsFrom) {
+    case "bottom": {
+      Animations.fromBottom(100, card.value);
+      break;
+    }
+    case "top": {
+      Animations.fromTop(100, card.value);
+      break;
+    }
+    case "right": {
+      Animations.fromRight(100, card.value);
+      break;
+    }
+    case "left": {
+      Animations.fromLeft(100, card.value);
+      break;
+    }
+    case null: {
+      null;
+      break;
+    }
+    default: {
+      null;
+      break;
+    }
+  }
+});
 </script>
 <template>
   <div
@@ -70,9 +101,7 @@ defineExpose({ card });
 
   border-radius: $border-prime;
   box-shadow: $shadow-black;
-  @include blur-bcg;
-  background: $color-black-opacity;
-  max-width: 30rem;
+  background: $color-black;
 
   .vcard-description {
     color: $color-grey;

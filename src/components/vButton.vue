@@ -88,8 +88,7 @@ const dynamicClasses = reactive({
   }
   &_primary {
     background: $gradient;
-    box-shadow: -1px 1px 8px 1px $color-violet,
-      1px -1px 13px 1px $color-violet-5;
+    box-shadow: -1px 1px 3px 1px $color-violet, 1px -1px 3px 1px $color-violet-5;
   }
   &_small {
     max-width: 6rem;

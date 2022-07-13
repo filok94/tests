@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
+import { ROUTER_NAMES } from "../router";
 const router = useRouter();
 const backToMainPage = () => {
   router.push({
-    name: "User",
-    params: { userName: window.localStorage.getItem("isAuthedBy") },
+    name: ROUTER_NAMES.main,
+    params: { userId: window.localStorage.getItem("user") },
   });
 };
 </script>

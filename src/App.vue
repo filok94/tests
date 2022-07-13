@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
+import { ROUTER_NAMES } from "./router";
 const router = useRouter();
 
 const goHomeByLogo = () => {
   router.push({
-    name: "MainPage",
-    params: { userName: window.localStorage.getItem("user") },
+    name: ROUTER_NAMES.main,
+    params: { userId: window.localStorage.getItem("user") },
   });
 };
 </script>
@@ -100,7 +101,6 @@ nav {
     #text-logo {
       margin: 0;
       cursor: pointer;
-      align-self: flex-start;
       @include bcg-for-text();
       background-image: $gradient;
       align-self: center;

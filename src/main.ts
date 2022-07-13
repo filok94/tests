@@ -30,7 +30,6 @@ onAuthStateChanged(auth, async (user) => {
     localStorageSet("isAuthed", false);
     localStorageSet("isAuthedBy", null);
     localStorageSet("isAuthedById", null);
-    console.log("не залогинен");
   }
 });
 getDatabase(fireApp);

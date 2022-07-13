@@ -7,6 +7,7 @@ import { onClickOutside } from "@vueuse/core";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import Loading from "../components/OneLoading.vue";
 import VButton from "../components/vButton.vue";
+import { ROUTER_NAMES } from "../router";
 
 let router = useRouter();
 let triggerStore = useTriggerStore();
@@ -43,8 +44,8 @@ let goBackToMainMenu = () => {
     triggerStore.postResults();
   }
   router.push({
-    name: "User",
-    params: { userName: window.localStorage.getItem("isAuthedBy") },
+    name: ROUTER_NAMES.main,
+    params: { userId: window.localStorage.getItem("isAuthedBy") },
   });
 };
 let enterEventListener = (e: KeyboardEvent) => {

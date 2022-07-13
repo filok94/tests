@@ -1,27 +1,3 @@
-export interface TabsUser {
-  id: number;
-  name: string;
-}
-
-export interface ListedGame {
-  firstStep: number;
-  id: number;
-  img: string;
-  linkToPerson: string;
-  route: string;
-  routeToConclusion: string;
-  subtitle: string;
-  title: string;
-}
-
-export interface PersonType {
-  description: string;
-  img: string;
-  src: string;
-  title: string;
-  value: number;
-}
-
 export interface ChooseSjwAnswer {
   answer: number;
   number: number;
@@ -50,4 +26,17 @@ export type OptionEmit = {
 export interface IInputError {
   message: string;
   showSeconds: number;
+}
+
+export interface IAnswersList {
+  answer: 0 | 1 | 2 | 3;
+  index: number;
+}
+
+export type Nullable<T> = T | null | undefined;
+export class Tab {
+  constructor(public id: number, public name: string) {
+    this.name = name;
+    this.id = id;
+  }
 }

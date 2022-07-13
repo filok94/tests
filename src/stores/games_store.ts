@@ -1,11 +1,11 @@
 import {
   IGetAllGamesResponse,
   IGetQuestionsResponse,
-} from "./../api/gameController/games.api.interfaces";
+} from "../api/gameController/games.api.interfaces";
 import { defineStore } from "pinia";
 import { getAllGames, getGameQusetions } from "../api/gameController/games.api";
+import { IAnswersList, Nullable } from "../types/testsTypes.interface";
 
-type Nullable<T> = T | null | undefined;
 interface GamesState {
   games: Nullable<IGetAllGamesResponse[]>;
   activeGame: Nullable<{
@@ -13,6 +13,7 @@ interface GamesState {
     title: string;
     questions: Nullable<IGetQuestionsResponse[]>;
   }>;
+  anserwsList: IAnswersList[];
 }
 
 export const useGamesStore = defineStore("games", {
@@ -20,6 +21,7 @@ export const useGamesStore = defineStore("games", {
     return {
       games: null,
       activeGame: null,
+      anserwsList: [],
     };
   },
   actions: {
@@ -34,10 +36,12 @@ export const useGamesStore = defineStore("games", {
         };
       }
     },
-
     async getAllGames() {
-      const gameData = await getAllGames();
-      this.games = gameData;
+      this.games = await getAllGames();
+    },
+
+    pushAnswerToList(param: IAnswersList) {
+      this.anserwsList.push(param);
     },
   },
 });

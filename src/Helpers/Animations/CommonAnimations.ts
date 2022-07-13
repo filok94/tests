@@ -67,6 +67,11 @@ export class Animations {
     gsap.to(element, { opacity: opacity, x: -toX, ease: "ease" });
   };
 
+  static toTop = (toY: number, element: HTMLElement | null) => {
+    gsap.to(element, { opacity: 0, y: -toY, ease: "ease" });
+    gsap.set(element, { y: 0 });
+  };
+
   static toBottom = (toY: number, element: HTMLElement | null) => {
     gsap.to(element, { opacity: 0, y: toY, ease: "ease" });
     gsap.set(element, { y: 0 });
