@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import Loading from "../components/OneLoading.vue";
 import { WarriorCardType } from "../types/testsTypes.interface";
-import VButton from "../components/vButton.vue";
+import VButton from "../components/common/vButton.vue";
 
 let triggerStore = useTriggerStore();
 let router = useRouter();

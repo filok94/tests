@@ -5,7 +5,7 @@ import Loading from "./OneLoading.vue";
 import { AnimationFlickeringOnText } from "../Helpers/Animations/GameCollection";
 import { useGamesStore } from "../stores/games_store";
 import { ROUTER_NAMES } from "../router";
-import vCard from "./vCard.vue";
+import vCard from "./common/vCard.vue";
 
 const router = useRouter();
 const gamesStore = useGamesStore();

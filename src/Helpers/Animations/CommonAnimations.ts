@@ -57,6 +57,7 @@ export class Animations {
 
   static toRight = (toX: number, element: HTMLElement | null) => {
     gsap.to(element, { opacity: 0, x: toX, ease: "ease" });
+    gsap.set(element, { x: 0 });
   };
 
   static toLeft = (

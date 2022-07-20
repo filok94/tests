@@ -12,15 +12,24 @@ export let cardScrolling = (
 };
 
 export let cardFadingWithText = (el: HTMLElement | null) => {
-  let tl = gsap.timeline({ defaults: { ease: "ease", duration: 0.3 } });
-  tl.to(el, { color: "transparent", zIndex: -2 })
-    .to(
-      el,
-      {
-        opacity: 0,
-        y: -50,
-      },
-      "<25%"
-    )
-    .set(el, { y: 0 });
+  let tl = gsap.timeline({
+    defaults: { ease: "ease", duration: 0.4 },
+  });
+  tl.to(el, {
+    color: "transparent",
+    zIndex: -2,
+    opacity: 0,
+    y: -50,
+    ease: "ease",
+  }).set(el, { y: 0 });
+};
+
+export const cardGoLeft = (el: HTMLElement | null, isFinal: boolean) => {
+  let tl = gsap.timeline({
+    defaults: { ease: "ease", duration: 0.4 },
+  });
+  tl.to(el, { x: 50, opacity: 0, zIndex: -1 }).set(el, { x: -100, opacity: 0 });
+  if (!isFinal) {
+    tl.to(el, { x: 0, opacity: 1 }).set(el, { x: 0, opacity: 1, zIndex: 2 });
+  }
 };

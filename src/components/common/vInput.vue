@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { Animations } from "../Helpers/Animations/CommonAnimations";
+import { Animations } from "../../Helpers/Animations/CommonAnimations";
 
 const props = defineProps<{
   label: string;
@@ -53,6 +53,7 @@ watch(props, (nValue) => {
         @focus="focusAndBlur"
         @blur="focusAndBlur"
         @input="updateInput"
+        @keydown.enter.prevent
       />
       <svg
         width="25"

@@ -28,9 +28,10 @@ let mouseHoverEvent = (event: string) => {
   });
 };
 
-useEventListener(document, "keyup", (ev: KeyboardEvent) =>
-  ev.code == "Enter" ? emit("entered", ev) : undefined
-);
+useEventListener(document, "keyup", (ev: KeyboardEvent) => {
+  ev.preventDefault();
+  ev.code == "Enter" ? emit("entered", ev) : undefined;
+});
 
 const dynamicClasses = reactive({
   v_button_cancel: props.purpose == "cancel",

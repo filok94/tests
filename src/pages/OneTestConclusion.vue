@@ -6,7 +6,7 @@ import Loading from "../components/OneLoading.vue";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import { cardScrolling } from "../Helpers/Animations/AnimationsGame";
 import { usePointerSwipe } from "@vueuse/core";
-import VCard from "../components/vCard.vue";
+import VCard from "../components/common/vCard.vue";
 
 //store vars
 const emit = defineEmits(["is-button-shown"]);

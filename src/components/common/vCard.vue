@@ -4,7 +4,7 @@ import {
   Animations,
   hoverEffectOnText,
   hoverTransformScale,
-} from "../Helpers/Animations/CommonAnimations";
+} from "../../Helpers/Animations/CommonAnimations";
 
 let props = defineProps<{
   title?: string;
@@ -94,9 +94,9 @@ onMounted(() => {
   display: grid;
   grid-template-columns: 1fr;
 
-  grid-gap: 0;
+  gap: 0;
   justify-items: start;
-  align-items: end;
+  align-items: start;
   text-align: start;
 
   border-radius: $border-prime;

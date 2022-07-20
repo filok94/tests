@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { reactive, computed, ref, watch, toRefs } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import VButton from "../components/vButton.vue";
-import VInput from "../components/vInput.vue";
-import VPanel from "../components/vPanel.vue";
+import VButton from "../components/common/vButton.vue";
+import VInput from "../components/common/vInput.vue";
+import VPanel from "../components/common/vPanel.vue";
 import { loginPageErrorHandler } from "../Helpers/errorHandlers/loginPageErrorHandler";
 import { loginPage } from "../locales/loginPage";
 import { setAuthDataToStorage, useSignIn } from "../api/auth/auth.api";
@@ -65,11 +65,13 @@ const disableButtonCondition = computed(() => {
 });
 
 const signByButton = () => {
-  const methodUrl =
-    route.name == ROUTER_NAMES.login.sign_in
-      ? SIGN_URLS.sign_in
-      : SIGN_URLS.sign_up;
-  execution(methodUrl, { login, password });
+  if (!disableButtonCondition.value) {
+    const methodUrl =
+      route.name == ROUTER_NAMES.login.sign_in
+        ? SIGN_URLS.sign_in
+        : SIGN_URLS.sign_up;
+    execution(methodUrl, { login, password });
+  }
 };
 </script>
 

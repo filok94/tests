@@ -6,7 +6,7 @@ import { TriggerPerson } from "../types/testsTypes.interface";
 import { onClickOutside } from "@vueuse/core";
 import { Animations } from "../Helpers/Animations/CommonAnimations";
 import Loading from "../components/OneLoading.vue";
-import VButton from "../components/vButton.vue";
+import VButton from "../components/common/vButton.vue";
 import { ROUTER_NAMES } from "../router";
 
 let router = useRouter();
